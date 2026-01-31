@@ -1,0 +1,287 @@
+{
+  "common": {
+    "appName": "Norosera",
+    "login": "Giris Yap",
+    "register": "Kayit Ol",
+    "logout": "Cikis Yap",
+    "email": "E-posta",
+    "password": "Sifre",
+    "firstName": "Ad",
+    "lastName": "Soyad",
+    "phone": "Telefon",
+    "save": "Kaydet",
+    "cancel": "Iptal",
+    "delete": "Sil",
+    "edit": "Duzenle",
+    "loading": "Yukleniyor...",
+    "error": "Bir hata olustu",
+    "success": "Basarili",
+    "back": "Geri",
+    "next": "Ileri",
+    "submit": "Gonder",
+    "search": "Ara",
+    "noResults": "Sonuc bulunamadi",
+    "yes": "Evet",
+    "no": "Hayir",
+    "add": "Ekle",
+    "close": "Kapat",
+    "confirm": "Onayla",
+    "today": "Bugun",
+    "thisWeek": "Bu Hafta",
+    "thisMonth": "Bu Ay",
+    "total": "Toplam",
+    "active": "Aktif",
+    "inactive": "Pasif",
+    "completed": "Tamamlandi",
+    "pending": "Bekliyor",
+    "points": "Puan",
+    "streak": "Seri"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "about": "Hakkimizda",
+    "blog": "Blog",
+    "education": "Egitim",
+    "store": "Magaza",
+    "contact": "Iletisim",
+    "dashboard": "Panel",
+    "patients": "Hastalar",
+    "modules": "Moduller",
+    "tasks": "Gorevler",
+    "tracking": "Takip",
+    "medications": "Ilaclar",
+    "progress": "Ilerleme",
+    "settings": "Ayarlar",
+    "alerts": "Uyarilar",
+    "migraine": "Migren",
+    "symptoms": "Semptomlar",
+    "dementia": "Bilissel Saglik"
+  },
+  "home": {
+    "hero": {
+      "title": "Kronik Hastaliklar Icin Dijital Takip Platformu",
+      "subtitle": "Migren, epilepsi, parkinson ve demans hastalari icin ev egitimi, semptom takibi ve hekim paneli.",
+      "cta": "Hemen Baslayin"
+    },
+    "features": {
+      "tracking": "Semptom Takibi",
+      "trackingDesc": "Gunluk semptomlarinizi kolayca kaydedin ve trendleri takip edin.",
+      "education": "Ev Egitimi",
+      "educationDesc": "Hastalik bazli egitim icerikleri ve ev calismalari.",
+      "doctor": "Hekim Paneli",
+      "doctorDesc": "Hekiminiz ilerlemenizi takip eder ve size yol gosterir.",
+      "reminders": "Hatirlatmalar",
+      "remindersDesc": "Ilac ve gorev hatirlatmalari ile hicbir seyi kacirmayin."
+    }
+  },
+  "auth": {
+    "loginTitle": "Giris Yap",
+    "registerTitle": "Hesap Olustur",
+    "emailPlaceholder": "ornek@email.com",
+    "passwordPlaceholder": "Sifrenizi girin",
+    "confirmPassword": "Sifre Tekrar",
+    "forgotPassword": "Sifremi Unuttum",
+    "noAccount": "Hesabiniz yok mu?",
+    "hasAccount": "Zaten hesabiniz var mi?",
+    "registerAs": "Kayit Turu",
+    "patient": "Hasta",
+    "doctor": "Hekim",
+    "kvkkConsent": "Kisisel verilerimin islenmesine onay veriyorum.",
+    "healthDataConsent": "Saglik verilerimin takip amacli islenmesini kabul ediyorum.",
+    "termsConsent": "Kullanim kosullarini okudum ve kabul ediyorum."
+  },
+  "disclaimer": {
+    "text": "Bu platform tibbi tani araci degildir. Saglik sorunlariniz icin mutlaka doktorunuza basvurunuz.",
+    "emergency": "Acil durumlarda 112'yi arayin."
+  },
+  "patient": {
+    "dashboard": {
+      "title": "Hos Geldiniz",
+      "todayTasks": "Bugunun Gorevleri",
+      "recentActivity": "Son Aktiviteler",
+      "quickStats": "Hizli Istatistikler",
+      "completedToday": "Bugun Tamamlanan",
+      "weeklyProgress": "Haftalik Ilerleme",
+      "currentStreak": "Mevcut Seri",
+      "days": "gun",
+      "noTasks": "Bugun icin gorev yok. Bir modul secin!",
+      "selectModule": "Modul Sec"
+    },
+    "modules": {
+      "title": "Hastalik Modulleri",
+      "subtitle": "Takip etmek istediginiz hastaliklari secin.",
+      "enrolled": "Kayitli",
+      "enroll": "Kayit Ol",
+      "unenroll": "Kaydi Kaldir",
+      "comingSoon": "Yakinda",
+      "myModules": "Modullerim"
+    },
+    "tasks": {
+      "title": "Gorevler",
+      "todaysTasks": "Bugunun Gorevleri",
+      "weeklyTasks": "Haftalik Gorevler",
+      "complete": "Tamamla",
+      "completed": "Tamamlandi",
+      "daily": "Gunluk",
+      "weekly": "Haftalik",
+      "taskTypes": {
+        "diary_entry": "Gunluk",
+        "checklist": "Kontrol Listesi",
+        "education": "Egitim",
+        "exercise": "Egzersiz",
+        "medication": "Ilac",
+        "survey": "Anket"
+      },
+      "pointsEarned": "{points} puan kazanildi"
+    },
+    "symptoms": {
+      "title": "Semptom Takibi",
+      "logSymptoms": "Semptom Kaydet",
+      "todaysEntries": "Bugunun Kayitlari",
+      "noEntries": "Bugun henuz kayit yok.",
+      "trend": "Semptom Trendi",
+      "last30Days": "Son 30 Gun"
+    },
+    "medications": {
+      "title": "Ilac Yonetimi",
+      "activeMeds": "Aktif Ilaclar",
+      "addMedication": "Ilac Ekle",
+      "name": "Ilac Adi",
+      "dosage": "Doz",
+      "frequency": "Siklik",
+      "taken": "Alindi",
+      "missed": "Kacirildi",
+      "adherence": "Ilac Uyumu",
+      "adherenceRate": "Uyum Orani",
+      "logMedication": "Ilac Kaydet",
+      "todaysLog": "Bugunun Ilac Kaydi"
+    },
+    "migraine": {
+      "title": "Migren Takibi",
+      "logAttack": "Atak Kaydet",
+      "attackDiary": "Atak Gunlugu",
+      "triggers": "Tetikleyiciler",
+      "stats": "Istatistikler",
+      "intensity": "Siddet",
+      "duration": "Sure (dk)",
+      "location": "Agri Bolgesi",
+      "aura": "Aura",
+      "nausea": "Bulanti",
+      "vomiting": "Kusma",
+      "photophobia": "Isiga Duyarlilik",
+      "phonophobia": "Sese Duyarlilik",
+      "medicationTaken": "Alinan Ilac",
+      "medicationEffective": "Ilac Etkili mi?",
+      "selectTriggers": "Tetikleyici Sec",
+      "attacksThisMonth": "Bu Ayki Ataklar",
+      "avgIntensity": "Ort. Siddet",
+      "avgDuration": "Ort. Sure",
+      "auraRate": "Aura Orani",
+      "commonTriggers": "En Sik Tetikleyiciler",
+      "noAttacks": "Henuz atak kaydi yok.",
+      "locations": {
+        "left": "Sol",
+        "right": "Sag",
+        "bilateral": "Iki Tarafli",
+        "frontal": "On",
+        "occipital": "Arka",
+        "other": "Diger"
+      },
+      "triggerCategories": {
+        "dietary": "Beslenme",
+        "environmental": "Cevresel",
+        "hormonal": "Hormonal",
+        "emotional": "Duygusal",
+        "physical": "Fiziksel",
+        "sleep": "Uyku",
+        "other": "Diger"
+      }
+    }
+  },
+  "doctor": {
+    "dashboard": {
+      "title": "Hekim Paneli",
+      "totalPatients": "Toplam Hasta",
+      "activePatients": "Aktif Hastalar (7 Gun)",
+      "criticalAlerts": "Kritik Uyari",
+      "warnings": "Uyari",
+      "taskCompletion": "Gorev Tamamlama",
+      "attacks30d": "Atak (30 Gun)",
+      "activeAlerts": "Aktif Uyarilar",
+      "recentAlerts": "Son Uyarilar",
+      "recentActivity": "Son Aktiviteler",
+      "viewAll": "Tumunu Gor",
+      "noAlerts": "Aktif uyari yok"
+    },
+    "patients": {
+      "title": "Hastalarim",
+      "search": "Hasta ara...",
+      "showAll": "Tumunu Goster",
+      "withAlerts": "Uyarili Hastalar",
+      "noPatients": "Hasta bulunamadi",
+      "lastActive": "Son Giris",
+      "neverActive": "Hic giris yapmadi",
+      "modules": "Moduller"
+    },
+    "patientDetail": {
+      "back": "Hastalara Don",
+      "timeline": "Timeline",
+      "notes": "Notlar",
+      "addNote": "Not Ekle",
+      "notePlaceholder": "Hastaniz hakkinda not yazin...",
+      "noteType": "Not Turu",
+      "noteTypes": {
+        "general": "Genel",
+        "follow_up": "Takip",
+        "medication_change": "Tedavi Degisikligi",
+        "alert_response": "Uyari Yaniti"
+      },
+      "emergencyContact": "Acil Durum Iletisimi",
+      "dateOfBirth": "Dogum Tarihi",
+      "gender": "Cinsiyet",
+      "memberSince": "Uyelik Tarihi",
+      "noTimeline": "Timeline kaydi yok",
+      "noNotes": "Henuz not eklenmemis"
+    },
+    "alerts": {
+      "title": "Uyarilar",
+      "critical": "Kritik",
+      "warning": "Uyari",
+      "noAlerts": "Aktif uyari yok",
+      "types": {
+        "inactive": "Inaktif",
+        "low_task_completion": "Dusuk Gorev Tamamlama",
+        "high_attack_frequency": "Yuksek Atak Sikligi"
+      }
+    }
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "consent": {
+      "title": "KVKK Riza Tercihleri",
+      "health_data": "Saglik Verisi Isleme",
+      "health_data_desc": "Saglik verilerinizin takip amacli islenmesine izin verin.",
+      "doctor_sharing": "Hekim ile Paylasim",
+      "doctor_sharing_desc": "Verilerinizin hekiminizle paylasilmasina izin verin.",
+      "marketing": "Pazarlama Iletisimi",
+      "marketing_desc": "Promosyon ve bilgilendirme e-postalari alin.",
+      "cookies": "Cerez Kullanimi",
+      "cookies_desc": "Analitik cerezlerin kullanimina izin verin."
+    }
+  },
+  "legal": {
+    "kvkk": "KVKK Aydinlatma Metni",
+    "privacy": "Gizlilik Politikasi",
+    "terms": "Kullanim Kosullari"
+  },
+  "store": {
+    "title": "Dijital Magaza",
+    "addToCart": "Sepete Ekle",
+    "cart": "Sepet",
+    "checkout": "Odeme",
+    "price": "Fiyat",
+    "monthly": "Aylik",
+    "yearly": "Yillik",
+    "oneTime": "Tek Seferlik"
+  }
+}

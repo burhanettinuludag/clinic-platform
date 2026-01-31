@@ -1,0 +1,318 @@
+from django.core.management.base import BaseCommand
+from apps.wellness.models import BreathingExercise, RelaxationExercise
+
+
+class Command(BaseCommand):
+    help = 'Seed wellness exercises data'
+
+    def handle(self, *args, **options):
+        self.seed_breathing_exercises()
+        self.seed_relaxation_exercises()
+        self.stdout.write(self.style.SUCCESS('Wellness data seeded successfully!'))
+
+    def seed_breathing_exercises(self):
+        exercises = [
+            {
+                'name_tr': '4-7-8 Nefes Tekniği',
+                'name_en': '4-7-8 Breathing Technique',
+                'description_tr': 'Gevşeme ve uyku için ideal olan bu teknik, sinir sistemini sakinleştirir.',
+                'description_en': 'This technique is ideal for relaxation and sleep, calming the nervous system.',
+                'inhale_seconds': 4,
+                'hold_seconds': 7,
+                'exhale_seconds': 8,
+                'hold_after_exhale_seconds': 0,
+                'cycles': 4,
+                'difficulty': 'beginner',
+                'benefits_tr': 'Stresi azaltır, uykuyu kolaylaştırır, kan basıncını düşürür',
+                'benefits_en': 'Reduces stress, aids sleep, lowers blood pressure',
+                'icon': 'moon',
+                'color': 'indigo',
+                'order': 1,
+            },
+            {
+                'name_tr': 'Kutu Nefes',
+                'name_en': 'Box Breathing',
+                'description_tr': 'Navy SEAL tarafından kullanılan bu teknik, odaklanma ve sakinlik sağlar.',
+                'description_en': 'Used by Navy SEALs, this technique provides focus and calmness.',
+                'inhale_seconds': 4,
+                'hold_seconds': 4,
+                'exhale_seconds': 4,
+                'hold_after_exhale_seconds': 4,
+                'cycles': 5,
+                'difficulty': 'beginner',
+                'benefits_tr': 'Odaklanmayı artırır, anksiyeteyi azaltır, performansı iyileştirir',
+                'benefits_en': 'Improves focus, reduces anxiety, enhances performance',
+                'icon': 'square',
+                'color': 'blue',
+                'order': 2,
+            },
+            {
+                'name_tr': 'Diyafram Nefesi',
+                'name_en': 'Diaphragmatic Breathing',
+                'description_tr': 'Karın ile derin nefes alarak diyaframı güçlendiren temel teknik.',
+                'description_en': 'Basic technique that strengthens the diaphragm through deep belly breathing.',
+                'inhale_seconds': 4,
+                'hold_seconds': 2,
+                'exhale_seconds': 6,
+                'hold_after_exhale_seconds': 0,
+                'cycles': 6,
+                'difficulty': 'beginner',
+                'benefits_tr': 'Oksijen alımını artırır, diyaframı güçlendirir, gevşeme sağlar',
+                'benefits_en': 'Increases oxygen intake, strengthens diaphragm, promotes relaxation',
+                'icon': 'wind',
+                'color': 'cyan',
+                'order': 3,
+            },
+            {
+                'name_tr': 'Alternatif Burun Nefesi',
+                'name_en': 'Alternate Nostril Breathing',
+                'description_tr': 'Yoga geleneğinden gelen bu teknik, beynin iki yarısını dengeler.',
+                'description_en': 'From yoga tradition, this technique balances both brain hemispheres.',
+                'inhale_seconds': 4,
+                'hold_seconds': 2,
+                'exhale_seconds': 4,
+                'hold_after_exhale_seconds': 0,
+                'cycles': 8,
+                'difficulty': 'intermediate',
+                'benefits_tr': 'Zihni berraklaştırır, stresi azaltır, enerjiyi dengeler',
+                'benefits_en': 'Clears the mind, reduces stress, balances energy',
+                'icon': 'sparkles',
+                'color': 'purple',
+                'order': 4,
+            },
+            {
+                'name_tr': 'Enerji Veren Nefes',
+                'name_en': 'Energizing Breath',
+                'description_tr': 'Sabahları veya yorgunluk hissedildiğinde enerji veren hızlı nefes tekniği.',
+                'description_en': 'Quick breathing technique that energizes in the morning or when feeling tired.',
+                'inhale_seconds': 2,
+                'hold_seconds': 0,
+                'exhale_seconds': 2,
+                'hold_after_exhale_seconds': 0,
+                'cycles': 10,
+                'difficulty': 'intermediate',
+                'benefits_tr': 'Enerji verir, uyanıklığı artırır, metabolizmayı hızlandırır',
+                'benefits_en': 'Provides energy, increases alertness, speeds up metabolism',
+                'icon': 'zap',
+                'color': 'yellow',
+                'order': 5,
+            },
+            {
+                'name_tr': 'Sakinleştirici Uzun Nefes',
+                'name_en': 'Calming Extended Exhale',
+                'description_tr': 'Nefes verme süresini uzatarak parasempatik sistemi aktive eder.',
+                'description_en': 'Activates the parasympathetic system by extending the exhale.',
+                'inhale_seconds': 3,
+                'hold_seconds': 0,
+                'exhale_seconds': 6,
+                'hold_after_exhale_seconds': 2,
+                'cycles': 6,
+                'difficulty': 'beginner',
+                'benefits_tr': 'Derin gevşeme sağlar, kalp hızını düşürür, sakinlik verir',
+                'benefits_en': 'Provides deep relaxation, lowers heart rate, brings calmness',
+                'icon': 'heart',
+                'color': 'pink',
+                'order': 6,
+            },
+        ]
+
+        for ex_data in exercises:
+            BreathingExercise.objects.update_or_create(
+                name_tr=ex_data['name_tr'],
+                defaults=ex_data
+            )
+        self.stdout.write(f'  Created {len(exercises)} breathing exercises')
+
+    def seed_relaxation_exercises(self):
+        exercises = [
+            {
+                'name_tr': 'Progresif Kas Gevşetme',
+                'name_en': 'Progressive Muscle Relaxation',
+                'description_tr': 'Sırayla her kas grubunu gerip gevşeterek tüm vücudu rahatlatan teknik.',
+                'description_en': 'Technique that relaxes the whole body by tensing and releasing each muscle group.',
+                'exercise_type': 'pmr',
+                'duration_minutes': 15,
+                'steps_tr': [
+                    'Rahat bir pozisyonda oturun veya uzanın',
+                    'Birkaç derin nefes alın',
+                    'Ayak parmaklarınızı 5 saniye sıkın, sonra gevşetin',
+                    'Baldır kaslarınızı 5 saniye sıkın, sonra gevşetin',
+                    'Uyluk kaslarınızı 5 saniye sıkın, sonra gevşetin',
+                    'Karın kaslarınızı 5 saniye sıkın, sonra gevşetin',
+                    'Ellerinizi yumruk yapıp 5 saniye sıkın, sonra gevşetin',
+                    'Kollarınızı 5 saniye sıkın, sonra gevşetin',
+                    'Omuzlarınızı kulaklarınıza doğru 5 saniye kaldırın, sonra gevşetin',
+                    'Yüz kaslarınızı 5 saniye sıkın, sonra gevşetin',
+                    'Tüm vücudunuzun gevşediğini hissedin'
+                ],
+                'steps_en': [
+                    'Sit or lie in a comfortable position',
+                    'Take a few deep breaths',
+                    'Tense your toes for 5 seconds, then relax',
+                    'Tense your calf muscles for 5 seconds, then relax',
+                    'Tense your thigh muscles for 5 seconds, then relax',
+                    'Tense your abdominal muscles for 5 seconds, then relax',
+                    'Make fists and tense for 5 seconds, then relax',
+                    'Tense your arms for 5 seconds, then relax',
+                    'Raise shoulders to ears for 5 seconds, then relax',
+                    'Tense facial muscles for 5 seconds, then relax',
+                    'Feel your whole body relaxed'
+                ],
+                'benefits_tr': 'Kas gerginliğini azaltır, migren tetikleyicilerini hafifletir, uyku kalitesini artırır',
+                'benefits_en': 'Reduces muscle tension, relieves migraine triggers, improves sleep quality',
+                'icon': 'accessibility',
+                'color': 'green',
+                'order': 1,
+            },
+            {
+                'name_tr': 'Vücut Tarama Meditasyonu',
+                'name_en': 'Body Scan Meditation',
+                'description_tr': 'Vücudunuzun her bölümüne dikkat ederek farkındalık geliştiren teknik.',
+                'description_en': 'Technique that develops awareness by paying attention to each part of your body.',
+                'exercise_type': 'body_scan',
+                'duration_minutes': 10,
+                'steps_tr': [
+                    'Rahat bir şekilde uzanın',
+                    'Gözlerinizi kapatın ve birkaç derin nefes alın',
+                    'Dikkatinizi ayak tabanlarınıza verin',
+                    'Yavaşça dikkatinizi bacaklarınıza kaydırın',
+                    'Kalça ve bel bölgenizi hissedin',
+                    'Karın ve göğüs bölgenize odaklanın',
+                    'Ellerinizi ve kollarınızı fark edin',
+                    'Omuzlarınızı ve boynunuzu hissedin',
+                    'Yüzünüze ve başınıza dikkat edin',
+                    'Tüm vücudunuzu bir bütün olarak hissedin'
+                ],
+                'steps_en': [
+                    'Lie down comfortably',
+                    'Close your eyes and take a few deep breaths',
+                    'Bring attention to the soles of your feet',
+                    'Slowly move attention to your legs',
+                    'Feel your hips and lower back',
+                    'Focus on your abdomen and chest',
+                    'Notice your hands and arms',
+                    'Feel your shoulders and neck',
+                    'Pay attention to your face and head',
+                    'Feel your whole body as one'
+                ],
+                'benefits_tr': 'Stres ve gerginliği azaltır, farkındalığı artırır, ağrı yönetimine yardımcı olur',
+                'benefits_en': 'Reduces stress and tension, increases awareness, helps with pain management',
+                'icon': 'search',
+                'color': 'blue',
+                'order': 2,
+            },
+            {
+                'name_tr': 'Huzurlu Yer Görselleştirmesi',
+                'name_en': 'Peaceful Place Visualization',
+                'description_tr': 'Zihinsel olarak sakin bir yere giderek rahatlama sağlayan teknik.',
+                'description_en': 'Technique that provides relaxation by mentally going to a calm place.',
+                'exercise_type': 'visualization',
+                'duration_minutes': 8,
+                'steps_tr': [
+                    'Rahat bir pozisyonda oturun ve gözlerinizi kapatın',
+                    'Birkaç derin nefes alarak gevşeyin',
+                    'Kendinizi çok sevdiğiniz sakin bir yerde hayal edin',
+                    'Bu yerin renklerini ve şekillerini görün',
+                    'Oradaki sesleri duyun',
+                    'Kokuları hissedin',
+                    'Cildinize dokunan hava veya güneşi hissedin',
+                    'Bu huzurlu yerde birkaç dakika kalın',
+                    'Yavaşça odaya geri dönün',
+                    'Gözlerinizi açmadan önce birkaç derin nefes alın'
+                ],
+                'steps_en': [
+                    'Sit comfortably and close your eyes',
+                    'Take a few deep breaths to relax',
+                    'Imagine yourself in a calm place you love',
+                    'See the colors and shapes of this place',
+                    'Hear the sounds there',
+                    'Feel the smells',
+                    'Feel the air or sun touching your skin',
+                    'Stay in this peaceful place for a few minutes',
+                    'Slowly return to the room',
+                    'Take a few deep breaths before opening your eyes'
+                ],
+                'benefits_tr': 'Zihinsel kaçış sağlar, anksiyeteyi azaltır, pozitif duygular uyandırır',
+                'benefits_en': 'Provides mental escape, reduces anxiety, evokes positive emotions',
+                'icon': 'image',
+                'color': 'teal',
+                'order': 3,
+            },
+            {
+                'name_tr': '5-4-3-2-1 Topraklama',
+                'name_en': '5-4-3-2-1 Grounding',
+                'description_tr': 'Duyularınızı kullanarak anksiyete ve panik anlarında şimdiki ana dönmenizi sağlar.',
+                'description_en': 'Uses your senses to bring you back to the present during anxiety and panic.',
+                'exercise_type': 'grounding',
+                'duration_minutes': 5,
+                'steps_tr': [
+                    'Derin bir nefes alın',
+                    'Etrafınızda görebildiğiniz 5 şeyi fark edin ve adlandırın',
+                    'Dokunabileceğiniz 4 şeyi hissedin',
+                    'Duyabildiğiniz 3 sesi dinleyin',
+                    'Koklayabildiğiniz 2 koku bulun',
+                    'Tadabileceğiniz 1 şey düşünün',
+                    'Tekrar derin bir nefes alın',
+                    'Şu anda, güvende olduğunuzu hatırlayın'
+                ],
+                'steps_en': [
+                    'Take a deep breath',
+                    'Notice and name 5 things you can see around you',
+                    'Feel 4 things you can touch',
+                    'Listen to 3 sounds you can hear',
+                    'Find 2 smells you can smell',
+                    'Think of 1 thing you can taste',
+                    'Take another deep breath',
+                    'Remember that you are safe right now'
+                ],
+                'benefits_tr': 'Panik ataklarını hafifletir, anksiyeteyi azaltır, şimdiki ana odaklanmayı sağlar',
+                'benefits_en': 'Relieves panic attacks, reduces anxiety, helps focus on the present',
+                'icon': 'anchor',
+                'color': 'brown',
+                'order': 4,
+            },
+            {
+                'name_tr': 'Farkındalık Meditasyonu',
+                'name_en': 'Mindfulness Meditation',
+                'description_tr': 'Nefese odaklanarak düşünceleri yargılamadan gözlemleme pratiği.',
+                'description_en': 'Practice of observing thoughts without judgment by focusing on breath.',
+                'exercise_type': 'mindfulness',
+                'duration_minutes': 10,
+                'steps_tr': [
+                    'Rahat bir şekilde oturun, sırtınız dik olsun',
+                    'Gözlerinizi kapatın veya yumuşak bir noktaya bakın',
+                    'Dikkatinizi nefesinize verin',
+                    'Nefesin burnunuzdan girip çıkışını hissedin',
+                    'Düşünceler geldiğinde, onları fark edin',
+                    'Düşünceleri yargılamadan bırakın',
+                    'Nazikçe dikkatinizi tekrar nefese getirin',
+                    'Bu döngüyü sürdürün',
+                    'Süre dolduğunda, yavaşça çevrenize dönün',
+                    'Gözlerinizi açmadan önce bir an bekleyin'
+                ],
+                'steps_en': [
+                    'Sit comfortably with your back straight',
+                    'Close your eyes or gaze at a soft point',
+                    'Bring attention to your breath',
+                    'Feel the breath entering and leaving your nose',
+                    'When thoughts come, notice them',
+                    'Let thoughts go without judgment',
+                    'Gently bring attention back to breath',
+                    'Continue this cycle',
+                    'When time is up, slowly return to surroundings',
+                    'Wait a moment before opening your eyes'
+                ],
+                'benefits_tr': 'Stresi azaltır, odaklanmayı artırır, duygusal düzenlemeyi iyileştirir',
+                'benefits_en': 'Reduces stress, improves focus, enhances emotional regulation',
+                'icon': 'brain',
+                'color': 'purple',
+                'order': 5,
+            },
+        ]
+
+        for ex_data in exercises:
+            RelaxationExercise.objects.update_or_create(
+                name_tr=ex_data['name_tr'],
+                defaults=ex_data
+            )
+        self.stdout.write(f'  Created {len(exercises)} relaxation exercises')

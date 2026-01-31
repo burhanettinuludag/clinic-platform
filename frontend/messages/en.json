@@ -1,0 +1,287 @@
+{
+  "common": {
+    "appName": "Norosera",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phone": "Phone",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "search": "Search",
+    "noResults": "No results found",
+    "yes": "Yes",
+    "no": "No",
+    "add": "Add",
+    "close": "Close",
+    "confirm": "Confirm",
+    "today": "Today",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "total": "Total",
+    "active": "Active",
+    "inactive": "Inactive",
+    "completed": "Completed",
+    "pending": "Pending",
+    "points": "Points",
+    "streak": "Streak"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "blog": "Blog",
+    "education": "Education",
+    "store": "Store",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "patients": "Patients",
+    "modules": "Modules",
+    "tasks": "Tasks",
+    "tracking": "Tracking",
+    "medications": "Medications",
+    "progress": "Progress",
+    "settings": "Settings",
+    "alerts": "Alerts",
+    "migraine": "Migraine",
+    "symptoms": "Symptoms",
+    "dementia": "Cognitive Health"
+  },
+  "home": {
+    "hero": {
+      "title": "Digital Tracking Platform for Chronic Diseases",
+      "subtitle": "Home education, symptom tracking, and physician panel for migraine, epilepsy, Parkinson's, and dementia patients.",
+      "cta": "Get Started"
+    },
+    "features": {
+      "tracking": "Symptom Tracking",
+      "trackingDesc": "Easily log your daily symptoms and track trends.",
+      "education": "Home Education",
+      "educationDesc": "Disease-specific educational content and exercises.",
+      "doctor": "Physician Panel",
+      "doctorDesc": "Your doctor monitors your progress and guides you.",
+      "reminders": "Reminders",
+      "remindersDesc": "Never miss a medication or task with smart reminders."
+    }
+  },
+  "auth": {
+    "loginTitle": "Login",
+    "registerTitle": "Create Account",
+    "emailPlaceholder": "example@email.com",
+    "passwordPlaceholder": "Enter your password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "registerAs": "Register As",
+    "patient": "Patient",
+    "doctor": "Doctor",
+    "kvkkConsent": "I consent to the processing of my personal data.",
+    "healthDataConsent": "I accept the processing of my health data for tracking purposes.",
+    "termsConsent": "I have read and accept the terms of service."
+  },
+  "disclaimer": {
+    "text": "This platform is not a diagnostic tool. Please consult your doctor for health concerns.",
+    "emergency": "In emergencies, call 112."
+  },
+  "patient": {
+    "dashboard": {
+      "title": "Welcome",
+      "todayTasks": "Today's Tasks",
+      "recentActivity": "Recent Activity",
+      "quickStats": "Quick Stats",
+      "completedToday": "Completed Today",
+      "weeklyProgress": "Weekly Progress",
+      "currentStreak": "Current Streak",
+      "days": "days",
+      "noTasks": "No tasks for today. Select a module!",
+      "selectModule": "Select Module"
+    },
+    "modules": {
+      "title": "Disease Modules",
+      "subtitle": "Select the diseases you want to track.",
+      "enrolled": "Enrolled",
+      "enroll": "Enroll",
+      "unenroll": "Unenroll",
+      "comingSoon": "Coming Soon",
+      "myModules": "My Modules"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "todaysTasks": "Today's Tasks",
+      "weeklyTasks": "Weekly Tasks",
+      "complete": "Complete",
+      "completed": "Completed",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "taskTypes": {
+        "diary_entry": "Diary",
+        "checklist": "Checklist",
+        "education": "Education",
+        "exercise": "Exercise",
+        "medication": "Medication",
+        "survey": "Survey"
+      },
+      "pointsEarned": "{points} points earned"
+    },
+    "symptoms": {
+      "title": "Symptom Tracking",
+      "logSymptoms": "Log Symptoms",
+      "todaysEntries": "Today's Entries",
+      "noEntries": "No entries yet today.",
+      "trend": "Symptom Trend",
+      "last30Days": "Last 30 Days"
+    },
+    "medications": {
+      "title": "Medication Management",
+      "activeMeds": "Active Medications",
+      "addMedication": "Add Medication",
+      "name": "Medication Name",
+      "dosage": "Dosage",
+      "frequency": "Frequency",
+      "taken": "Taken",
+      "missed": "Missed",
+      "adherence": "Medication Adherence",
+      "adherenceRate": "Adherence Rate",
+      "logMedication": "Log Medication",
+      "todaysLog": "Today's Medication Log"
+    },
+    "migraine": {
+      "title": "Migraine Tracking",
+      "logAttack": "Log Attack",
+      "attackDiary": "Attack Diary",
+      "triggers": "Triggers",
+      "stats": "Statistics",
+      "intensity": "Intensity",
+      "duration": "Duration (min)",
+      "location": "Pain Location",
+      "aura": "Aura",
+      "nausea": "Nausea",
+      "vomiting": "Vomiting",
+      "photophobia": "Light Sensitivity",
+      "phonophobia": "Sound Sensitivity",
+      "medicationTaken": "Medication Taken",
+      "medicationEffective": "Was medication effective?",
+      "selectTriggers": "Select Triggers",
+      "attacksThisMonth": "Attacks This Month",
+      "avgIntensity": "Avg. Intensity",
+      "avgDuration": "Avg. Duration",
+      "auraRate": "Aura Rate",
+      "commonTriggers": "Most Common Triggers",
+      "noAttacks": "No attacks recorded yet.",
+      "locations": {
+        "left": "Left",
+        "right": "Right",
+        "bilateral": "Bilateral",
+        "frontal": "Frontal",
+        "occipital": "Occipital",
+        "other": "Other"
+      },
+      "triggerCategories": {
+        "dietary": "Dietary",
+        "environmental": "Environmental",
+        "hormonal": "Hormonal",
+        "emotional": "Emotional",
+        "physical": "Physical",
+        "sleep": "Sleep",
+        "other": "Other"
+      }
+    }
+  },
+  "doctor": {
+    "dashboard": {
+      "title": "Physician Panel",
+      "totalPatients": "Total Patients",
+      "activePatients": "Active Patients (7 Days)",
+      "criticalAlerts": "Critical Alerts",
+      "warnings": "Warnings",
+      "taskCompletion": "Task Completion",
+      "attacks30d": "Attacks (30 Days)",
+      "activeAlerts": "Active Alerts",
+      "recentAlerts": "Recent Alerts",
+      "recentActivity": "Recent Activity",
+      "viewAll": "View All",
+      "noAlerts": "No active alerts"
+    },
+    "patients": {
+      "title": "My Patients",
+      "search": "Search patients...",
+      "showAll": "Show All",
+      "withAlerts": "With Alerts",
+      "noPatients": "No patients found",
+      "lastActive": "Last Active",
+      "neverActive": "Never logged in",
+      "modules": "Modules"
+    },
+    "patientDetail": {
+      "back": "Back to Patients",
+      "timeline": "Timeline",
+      "notes": "Notes",
+      "addNote": "Add Note",
+      "notePlaceholder": "Write a note about your patient...",
+      "noteType": "Note Type",
+      "noteTypes": {
+        "general": "General",
+        "follow_up": "Follow Up",
+        "medication_change": "Medication Change",
+        "alert_response": "Alert Response"
+      },
+      "emergencyContact": "Emergency Contact",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender",
+      "memberSince": "Member Since",
+      "noTimeline": "No timeline entries",
+      "noNotes": "No notes yet"
+    },
+    "alerts": {
+      "title": "Alerts",
+      "critical": "Critical",
+      "warning": "Warning",
+      "noAlerts": "No active alerts",
+      "types": {
+        "inactive": "Inactive",
+        "low_task_completion": "Low Task Completion",
+        "high_attack_frequency": "High Attack Frequency"
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "consent": {
+      "title": "KVKK Consent Preferences",
+      "health_data": "Health Data Processing",
+      "health_data_desc": "Allow processing of your health data for tracking purposes.",
+      "doctor_sharing": "Doctor Sharing",
+      "doctor_sharing_desc": "Allow sharing your data with your assigned doctor.",
+      "marketing": "Marketing Communications",
+      "marketing_desc": "Receive promotional and informational emails.",
+      "cookies": "Cookie Usage",
+      "cookies_desc": "Allow the use of analytics cookies."
+    }
+  },
+  "legal": {
+    "kvkk": "KVKK Information Notice",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "store": {
+    "title": "Digital Store",
+    "addToCart": "Add to Cart",
+    "cart": "Cart",
+    "checkout": "Checkout",
+    "price": "Price",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "oneTime": "One-Time"
+  }
+}
