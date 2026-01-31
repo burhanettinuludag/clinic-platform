@@ -8,6 +8,8 @@ import {
   useExerciseStats,
   useRecentExerciseSessions,
   useTodayAssessment,
+  useExerciseChart,
+  useExerciseTypeStats,
 } from '@/hooks/useDementiaData';
 import {
   Brain,
@@ -155,7 +157,7 @@ function ExercisesTab({
             {group.exercises.map((exercise) => (
               <Link
                 key={exercise.id}
-                href={`/tr/patient/dementia/exercise/${exercise.slug}`}
+                href={`/patient/dementia/exercise/${exercise.slug}`}
                 className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 hover:shadow-md transition group"
               >
                 <div className="flex items-start justify-between">
@@ -200,6 +202,18 @@ function ProgressTab({
   recentSessions: any[] | undefined;
   stats: any;
 }) {
+  const { data: chartData } = useExerciseChart(30);
+  const { data: typeStats } = useExerciseTypeStats();
+
+  const EXERCISE_TYPE_LABELS: Record<string, string> = {
+    memory: 'Hafıza',
+    attention: 'Dikkat',
+    language: 'Dil',
+    problem_solving: 'Problem Çözme',
+    calculation: 'Hesaplama',
+    orientation: 'Yönelim',
+  };
+
   if (!recentSessions || recentSessions.length === 0) {
     return (
       <div className="text-center py-12">
@@ -214,6 +228,68 @@ function ProgressTab({
 
   return (
     <div className="space-y-6">
+      {/* Performance Chart */}
+      {chartData && chartData.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Son 30 Gün Performans</h3>
+          <div className="h-32 flex items-end gap-1">
+            {chartData.map((day: { started_at__date: string; avg_score: number | null; sessions_count: number }, index: number) => (
+              <div
+                key={index}
+                className="flex-1 bg-indigo-100 rounded-t hover:bg-indigo-300 transition relative group cursor-pointer"
+                style={{
+                  height: day.avg_score ? `${day.avg_score}%` : '5%',
+                  backgroundColor: day.avg_score ? undefined : '#f3f4f6',
+                }}
+              >
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none z-10">
+                  {new Date(day.started_at__date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                  <br />
+                  {day.avg_score ? `%${Math.round(day.avg_score)} (${day.sessions_count} egzersiz)` : 'Egzersiz yok'}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between text-xs text-gray-400 mt-2">
+            <span>30 gün önce</span>
+            <span>Bugün</span>
+          </div>
+        </div>
+      )}
+
+      {/* Exercise Type Performance */}
+      {typeStats && Object.keys(typeStats).length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Kategorilere Göre Performans</h3>
+          <div className="space-y-3">
+            {Object.entries(typeStats).map(([type, data]) => (
+              <div key={type}>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm text-gray-700">
+                    {EXERCISE_TYPE_LABELS[type] || type}
+                  </span>
+                  <span className="text-sm font-medium text-gray-900">
+                    %{Math.round((data as any).avgScore)} ({(data as any).count} egzersiz)
+                  </span>
+                </div>
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      (data as any).avgScore >= 80
+                        ? 'bg-green-500'
+                        : (data as any).avgScore >= 60
+                        ? 'bg-yellow-500'
+                        : 'bg-red-500'
+                    }`}
+                    style={{ width: `${(data as any).avgScore}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Recent Sessions */}
       <div>
         <h3 className="text-sm font-semibold text-gray-900 mb-3">Son Egzersizler</h3>
@@ -287,7 +363,7 @@ function AssessmentTab({ todayAssessment }: { todayAssessment: any }) {
 
         {!hasAssessment && (
           <Link
-            href="/tr/patient/dementia/assessment"
+            href="/patient/dementia/assessment"
             className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition"
           >
             Değerlendirmeyi Başlat
@@ -320,7 +396,7 @@ function AssessmentTab({ todayAssessment }: { todayAssessment: any }) {
             )}
           </div>
           <Link
-            href="/tr/patient/dementia/assessment"
+            href="/patient/dementia/assessment"
             className="mt-4 text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
           >
             Detayları Görüntüle
@@ -332,20 +408,28 @@ function AssessmentTab({ todayAssessment }: { todayAssessment: any }) {
       {/* Quick Links */}
       <div className="grid grid-cols-2 gap-3">
         <Link
-          href="/tr/patient/dementia/notes"
+          href="/patient/dementia/screening"
+          className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition"
+        >
+          <Brain className="w-5 h-5 text-purple-600 mb-2" />
+          <div className="font-medium text-gray-900">Bilissel Tarama</div>
+          <div className="text-xs text-gray-500">Kapsamli bilissel degerlendirme</div>
+        </Link>
+        <Link
+          href="/patient/dementia/notes"
           className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition"
         >
           <ClipboardList className="w-5 h-5 text-indigo-600 mb-2" />
           <div className="font-medium text-gray-900">Notlar</div>
-          <div className="text-xs text-gray-500">Gözlem ve notları görüntüle</div>
+          <div className="text-xs text-gray-500">Gozlem ve notlari goruntule</div>
         </Link>
         <Link
-          href="/tr/patient/dementia/history"
+          href="/patient/dementia/history"
           className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition"
         >
           <TrendingUp className="w-5 h-5 text-green-600 mb-2" />
-          <div className="font-medium text-gray-900">Geçmiş</div>
-          <div className="text-xs text-gray-500">Tüm değerlendirmeleri gör</div>
+          <div className="font-medium text-gray-900">Gecmis</div>
+          <div className="text-xs text-gray-500">Tum degerlendirmeleri gor</div>
         </Link>
       </div>
     </div>

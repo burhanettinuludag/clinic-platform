@@ -11,6 +11,7 @@ from apps.accounts.permissions import IsDoctor
 from apps.patients.models import TaskCompletion, TaskTemplate
 from apps.tracking.models import SymptomEntry, MedicationLog
 from apps.migraine.models import MigraineAttack
+from apps.dementia.models import ExerciseSession, DailyAssessment, CaregiverNote, CognitiveScore
 from .models import DoctorNote
 from .serializers import (
     PatientListSerializer,
@@ -318,3 +319,218 @@ class DashboardStatsView(generics.GenericAPIView):
         }
         serializer = self.get_serializer(data)
         return Response(serializer.data)
+
+
+class DementiaReportView(generics.GenericAPIView):
+    """Demans hastası ilerleme raporu."""
+    permission_classes = [IsAuthenticated, IsDoctor]
+
+    def get(self, request, patient_id):
+        # Hasta kontrolü
+        try:
+            patient = CustomUser.objects.get(
+                id=patient_id,
+                patient_profile__assigned_doctor=request.user,
+                role='patient',
+            )
+        except CustomUser.DoesNotExist:
+            return Response({'error': 'Hasta bulunamadı'}, status=status.HTTP_404_NOT_FOUND)
+
+        now = timezone.now()
+        days = int(request.query_params.get('days', 30))
+        since = now - timedelta(days=days)
+
+        # Egzersiz istatistikleri
+        sessions = ExerciseSession.objects.filter(
+            patient=patient,
+            started_at__gte=since
+        ).select_related('exercise')
+
+        total_sessions = sessions.count()
+        completed_sessions = sessions.filter(completed_at__isnull=False).count()
+        avg_accuracy = sessions.aggregate(avg=Avg('accuracy_percent'))['avg']
+        total_duration = sum(s.duration_seconds or 0 for s in sessions)
+
+        # Egzersiz türlerine göre dağılım
+        exercise_by_type = {}
+        for session in sessions:
+            ex_type = session.exercise.exercise_type
+            if ex_type not in exercise_by_type:
+                exercise_by_type[ex_type] = {
+                    'type': ex_type,
+                    'type_display': session.exercise.get_exercise_type_display(),
+                    'count': 0,
+                    'total_score': 0,
+                    'avg_score': 0,
+                }
+            exercise_by_type[ex_type]['count'] += 1
+            if session.accuracy_percent:
+                exercise_by_type[ex_type]['total_score'] += float(session.accuracy_percent)
+
+        for ex_type in exercise_by_type:
+            count = exercise_by_type[ex_type]['count']
+            if count > 0:
+                exercise_by_type[ex_type]['avg_score'] = round(
+                    exercise_by_type[ex_type]['total_score'] / count, 1
+                )
+
+        # Günlük değerlendirmeler
+        assessments = DailyAssessment.objects.filter(
+            patient=patient,
+            assessment_date__gte=since.date()
+        ).order_by('-assessment_date')
+
+        assessment_count = assessments.count()
+        avg_mood = assessments.aggregate(avg=Avg('mood_score'))['avg']
+        avg_confusion = assessments.aggregate(avg=Avg('confusion_level'))['avg']
+        avg_sleep_quality = assessments.aggregate(avg=Avg('sleep_quality'))['avg']
+
+        # Olaylar
+        falls = assessments.filter(fall_occurred=True).count()
+        wanderings = assessments.filter(wandering_occurred=True).count()
+        missed_meds = assessments.filter(medication_missed=True).count()
+
+        # ADL (Günlük yaşam aktiviteleri) ortalamaları
+        adl_stats = assessments.aggregate(
+            eating=Avg('eating_independence'),
+            dressing=Avg('dressing_independence'),
+            hygiene=Avg('hygiene_independence'),
+            mobility=Avg('mobility_independence'),
+            communication=Avg('verbal_communication'),
+        )
+
+        # Bakıcı notları (doktora iletilen)
+        flagged_notes = CaregiverNote.objects.filter(
+            patient=patient,
+            is_flagged_for_doctor=True,
+            created_at__gte=since
+        ).order_by('-created_at')
+
+        unreviewed_notes = flagged_notes.filter(doctor_reviewed=False).count()
+
+        # Bilişsel skor trendi
+        cognitive_scores = CognitiveScore.objects.filter(
+            patient=patient,
+            score_date__gte=since.date()
+        ).order_by('score_date')
+
+        score_trend = []
+        for score in cognitive_scores:
+            score_trend.append({
+                'date': score.score_date,
+                'memory': float(score.memory_score) if score.memory_score else None,
+                'attention': float(score.attention_score) if score.attention_score else None,
+                'language': float(score.language_score) if score.language_score else None,
+                'problem_solving': float(score.problem_solving_score) if score.problem_solving_score else None,
+                'overall': float(score.overall_score) if score.overall_score else None,
+            })
+
+        # Haftalık performans trendi
+        weekly_performance = []
+        for i in range(min(4, days // 7)):
+            week_start = now - timedelta(days=(i + 1) * 7)
+            week_end = now - timedelta(days=i * 7)
+            week_sessions = sessions.filter(
+                started_at__gte=week_start,
+                started_at__lt=week_end
+            )
+            week_avg = week_sessions.aggregate(avg=Avg('accuracy_percent'))['avg']
+            weekly_performance.append({
+                'week': i + 1,
+                'start_date': week_start.date(),
+                'end_date': week_end.date(),
+                'sessions_count': week_sessions.count(),
+                'avg_accuracy': round(float(week_avg), 1) if week_avg else None,
+            })
+
+        # Son egzersiz oturumları
+        recent_sessions = []
+        for session in sessions.order_by('-started_at')[:10]:
+            recent_sessions.append({
+                'id': str(session.id),
+                'exercise_name': session.exercise.name_tr,
+                'exercise_type': session.exercise.get_exercise_type_display(),
+                'date': session.started_at,
+                'score': session.score,
+                'accuracy': float(session.accuracy_percent) if session.accuracy_percent else None,
+                'duration_minutes': round(session.duration_seconds / 60, 1) if session.duration_seconds else None,
+            })
+
+        # Son değerlendirmeler
+        recent_assessments = []
+        for assessment in assessments[:7]:
+            recent_assessments.append({
+                'date': assessment.assessment_date,
+                'mood_score': assessment.mood_score,
+                'confusion_level': assessment.confusion_level,
+                'sleep_quality': assessment.sleep_quality,
+                'sleep_hours': float(assessment.sleep_hours) if assessment.sleep_hours else None,
+                'fall_occurred': assessment.fall_occurred,
+                'wandering_occurred': assessment.wandering_occurred,
+                'medication_missed': assessment.medication_missed,
+                'notes': assessment.notes,
+                'concerns': assessment.concerns,
+            })
+
+        # Flagged notları formatla
+        notes_list = []
+        for note in flagged_notes[:10]:
+            notes_list.append({
+                'id': str(note.id),
+                'title': note.title,
+                'content': note.content,
+                'note_type': note.note_type,
+                'severity': note.severity,
+                'created_at': note.created_at,
+                'doctor_reviewed': note.doctor_reviewed,
+            })
+
+        report = {
+            'patient': {
+                'id': str(patient.id),
+                'full_name': patient.get_full_name(),
+                'email': patient.email,
+                'date_of_birth': patient.date_of_birth,
+            },
+            'report_period': {
+                'days': days,
+                'start_date': since.date(),
+                'end_date': now.date(),
+            },
+            'exercise_summary': {
+                'total_sessions': total_sessions,
+                'completed_sessions': completed_sessions,
+                'avg_accuracy': round(float(avg_accuracy), 1) if avg_accuracy else None,
+                'total_duration_minutes': round(total_duration / 60, 1),
+                'by_type': list(exercise_by_type.values()),
+            },
+            'assessment_summary': {
+                'total_assessments': assessment_count,
+                'avg_mood_score': round(float(avg_mood), 1) if avg_mood else None,
+                'avg_confusion_level': round(float(avg_confusion), 1) if avg_confusion else None,
+                'avg_sleep_quality': round(float(avg_sleep_quality), 1) if avg_sleep_quality else None,
+                'incidents': {
+                    'falls': falls,
+                    'wanderings': wanderings,
+                    'missed_medications': missed_meds,
+                },
+                'adl_scores': {
+                    'eating': round(float(adl_stats['eating']), 1) if adl_stats['eating'] else None,
+                    'dressing': round(float(adl_stats['dressing']), 1) if adl_stats['dressing'] else None,
+                    'hygiene': round(float(adl_stats['hygiene']), 1) if adl_stats['hygiene'] else None,
+                    'mobility': round(float(adl_stats['mobility']), 1) if adl_stats['mobility'] else None,
+                    'communication': round(float(adl_stats['communication']), 1) if adl_stats['communication'] else None,
+                },
+            },
+            'caregiver_notes': {
+                'total_flagged': flagged_notes.count(),
+                'unreviewed': unreviewed_notes,
+                'notes': notes_list,
+            },
+            'cognitive_score_trend': score_trend,
+            'weekly_performance': weekly_performance,
+            'recent_sessions': recent_sessions,
+            'recent_assessments': recent_assessments,
+        }
+
+        return Response(report)

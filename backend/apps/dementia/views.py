@@ -14,6 +14,7 @@ from .models import (
     DailyAssessment,
     CaregiverNote,
     CognitiveScore,
+    CognitiveScreening,
 )
 from .serializers import (
     CognitiveExerciseSerializer,
@@ -23,6 +24,8 @@ from .serializers import (
     CaregiverNoteSerializer,
     CognitiveScoreSerializer,
     CognitiveStatsSerializer,
+    CognitiveScreeningSerializer,
+    CognitiveScreeningCreateSerializer,
 )
 
 
@@ -298,3 +301,46 @@ class CognitiveScoreViewSet(viewsets.ReadOnlyModelViewSet):
         ).order_by('score_date')
 
         return Response(list(scores))
+
+
+class CognitiveScreeningViewSet(viewsets.ModelViewSet):
+    """
+    Cognitive Screening assessments - custom copyright-free assessment.
+    Evaluates: orientation, memory, attention, language, and executive function.
+    """
+    permission_classes = [permissions.IsAuthenticated, IsPatient]
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return CognitiveScreeningCreateSerializer
+        return CognitiveScreeningSerializer
+
+    def get_queryset(self):
+        return CognitiveScreening.objects.filter(
+            patient=self.request.user
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(
+            patient=self.request.user,
+            administered_by=self.request.user
+        )
+
+    @action(detail=False, methods=['get'])
+    def latest(self, request):
+        """Get latest cognitive screening assessment."""
+        assessment = self.get_queryset().first()
+        if assessment:
+            serializer = CognitiveScreeningSerializer(assessment)
+            return Response(serializer.data)
+        return Response(None)
+
+    @action(detail=False, methods=['get'])
+    def history(self, request):
+        """Get cognitive screening score history for charting."""
+        assessments = self.get_queryset().values(
+            'assessment_date', 'total_score',
+            'orientation_score', 'memory_score', 'attention_score',
+            'language_score', 'executive_score'
+        ).order_by('assessment_date')
+        return Response(list(assessments))

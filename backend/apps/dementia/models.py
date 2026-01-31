@@ -264,3 +264,124 @@ class CognitiveScore(TimeStampedModel):
 
     def __str__(self):
         return f"{self.patient} - {self.score_date}: {self.overall_score}"
+
+
+class CognitiveScreening(TimeStampedModel):
+    """
+    Custom cognitive screening assessment - original questions without copyright issues.
+    Evaluates: orientation, memory, attention, language, and executive function.
+    Total score: 0-100 (percentage based).
+    """
+    patient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='cognitive_screenings',
+    )
+    assessment_date = models.DateField()
+    administered_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='administered_screenings',
+    )
+
+    # Scores by domain (0-100 each)
+    orientation_score = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True,
+        help_text='Time and place awareness'
+    )
+    memory_score = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True,
+        help_text='Short-term and recall memory'
+    )
+    attention_score = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True,
+        help_text='Focus and concentration'
+    )
+    language_score = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True,
+        help_text='Naming and comprehension'
+    )
+    executive_score = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True,
+        help_text='Planning and problem solving'
+    )
+
+    # Overall calculated score
+    total_score = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+
+    # Detailed responses stored as JSON
+    responses = models.JSONField(default=dict, blank=True)
+
+    # Metadata
+    duration_minutes = models.PositiveSmallIntegerField(null=True, blank=True)
+    notes = models.TextField(blank=True, default='')
+
+    class Meta:
+        ordering = ['-assessment_date']
+        indexes = [
+            models.Index(fields=['patient', '-assessment_date']),
+        ]
+
+    def calculate_total_score(self):
+        """Calculate weighted average of domain scores."""
+        scores = [
+            self.orientation_score,
+            self.memory_score,
+            self.attention_score,
+            self.language_score,
+            self.executive_score,
+        ]
+        valid_scores = [s for s in scores if s is not None]
+        if valid_scores:
+            return sum(valid_scores) / len(valid_scores)
+        return 0
+
+    def save(self, *args, **kwargs):
+        self.total_score = self.calculate_total_score()
+        super().save(*args, **kwargs)
+
+    def get_interpretation(self):
+        """Return interpretation of the screening score."""
+        score = float(self.total_score)
+        if score >= 80:
+            return 'normal', 'Normal bilişsel fonksiyon'
+        elif score >= 60:
+            return 'mild', 'Hafif bilişsel zorluk'
+        elif score >= 40:
+            return 'moderate', 'Orta düzey bilişsel zorluk'
+        else:
+            return 'severe', 'Ciddi bilişsel zorluk'
+
+    def get_domain_scores(self):
+        """Return formatted domain scores."""
+        return {
+            'orientation': {
+                'score': float(self.orientation_score) if self.orientation_score else 0,
+                'max': 100,
+                'label': 'Yönelim',
+            },
+            'memory': {
+                'score': float(self.memory_score) if self.memory_score else 0,
+                'max': 100,
+                'label': 'Bellek',
+            },
+            'attention': {
+                'score': float(self.attention_score) if self.attention_score else 0,
+                'max': 100,
+                'label': 'Dikkat',
+            },
+            'language': {
+                'score': float(self.language_score) if self.language_score else 0,
+                'max': 100,
+                'label': 'Dil',
+            },
+            'executive': {
+                'score': float(self.executive_score) if self.executive_score else 0,
+                'max': 100,
+                'label': 'Yürütücü İşlevler',
+            },
+        }
+
+    def __str__(self):
+        return f"{self.patient} - Tarama {self.assessment_date}: {self.total_score}%"

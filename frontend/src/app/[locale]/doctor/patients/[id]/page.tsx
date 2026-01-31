@@ -20,6 +20,7 @@ import {
   Activity,
   MessageSquare,
   Send,
+  FileText,
 } from 'lucide-react';
 
 type Tab = 'timeline' | 'notes';
@@ -102,7 +103,16 @@ export default function DoctorPatientDetailPage() {
 
       {/* Patient Header */}
       <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h1 className="text-2xl font-bold mb-4">{patient.full_name}</h1>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold">{patient.full_name}</h1>
+          <Link
+            href={`/doctor/patients/${patientId}/dementia-report`}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition"
+          >
+            <FileText className="h-4 w-4" />
+            Demans Raporu
+          </Link>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
           <div>
             <span className="text-gray-500">E-posta:</span>{' '}

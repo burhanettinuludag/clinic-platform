@@ -5,6 +5,7 @@ from .models import (
     DailyAssessment,
     CaregiverNote,
     CognitiveScore,
+    CognitiveScreening,
 )
 
 
@@ -137,3 +138,44 @@ class CognitiveStatsSerializer(serializers.Serializer):
     score_trend = serializers.CharField()  # 'improving', 'stable', 'declining'
     favorite_exercise_type = serializers.CharField(allow_null=True)
     last_assessment_date = serializers.DateField(allow_null=True)
+
+
+class CognitiveScreeningSerializer(serializers.ModelSerializer):
+    interpretation = serializers.SerializerMethodField()
+    interpretation_label = serializers.SerializerMethodField()
+    domain_scores = serializers.SerializerMethodField()
+    administered_by_name = serializers.CharField(source='administered_by.get_full_name', read_only=True)
+
+    class Meta:
+        model = CognitiveScreening
+        fields = [
+            'id', 'assessment_date', 'administered_by', 'administered_by_name',
+            'orientation_score', 'memory_score', 'attention_score',
+            'language_score', 'executive_score', 'total_score',
+            'responses', 'duration_minutes', 'notes',
+            'interpretation', 'interpretation_label', 'domain_scores',
+            'created_at', 'updated_at',
+        ]
+        read_only_fields = ['total_score', 'created_at', 'updated_at']
+
+    def get_interpretation(self, obj):
+        code, _ = obj.get_interpretation()
+        return code
+
+    def get_interpretation_label(self, obj):
+        _, label = obj.get_interpretation()
+        return label
+
+    def get_domain_scores(self, obj):
+        return obj.get_domain_scores()
+
+
+class CognitiveScreeningCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CognitiveScreening
+        fields = [
+            'assessment_date',
+            'orientation_score', 'memory_score', 'attention_score',
+            'language_score', 'executive_score',
+            'responses', 'duration_minutes', 'notes',
+        ]

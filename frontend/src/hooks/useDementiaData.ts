@@ -292,3 +292,176 @@ export function useCreateCaregiverNote() {
     },
   });
 }
+
+// ==================== COGNITIVE SCORES ====================
+
+export interface CognitiveScore {
+  id: string;
+  score_date: string;
+  memory_score: number | null;
+  attention_score: number | null;
+  language_score: number | null;
+  problem_solving_score: number | null;
+  orientation_score: number | null;
+  overall_score: number | null;
+  exercises_completed: number;
+  total_exercise_minutes: number;
+}
+
+export function useCognitiveScores() {
+  return useQuery<CognitiveScore[]>({
+    queryKey: ['cognitive-scores'],
+    queryFn: async () => {
+      const { data } = await api.get('/dementia/scores/');
+      return data.results ?? data;
+    },
+  });
+}
+
+export function useLatestCognitiveScore() {
+  return useQuery<CognitiveScore | null>({
+    queryKey: ['cognitive-scores', 'latest'],
+    queryFn: async () => {
+      const { data } = await api.get('/dementia/scores/latest/');
+      return data;
+    },
+  });
+}
+
+export function useCognitiveScoreChart(months = 6) {
+  return useQuery({
+    queryKey: ['cognitive-score-chart', months],
+    queryFn: async () => {
+      const { data } = await api.get('/dementia/scores/chart/', { params: { months } });
+      return data;
+    },
+  });
+}
+
+// ==================== EXERCISE TYPE STATS ====================
+
+export function useExerciseTypeStats() {
+  return useQuery({
+    queryKey: ['exercise-type-stats'],
+    queryFn: async () => {
+      const { data } = await api.get('/dementia/sessions/');
+      const sessions = data.results ?? data;
+
+      // Group by exercise type
+      const typeStats: Record<string, { count: number; avgScore: number; totalScore: number }> = {};
+
+      sessions.forEach((session: ExerciseSession) => {
+        const type = session.exercise_type;
+        if (!typeStats[type]) {
+          typeStats[type] = { count: 0, avgScore: 0, totalScore: 0 };
+        }
+        typeStats[type].count += 1;
+        if (session.accuracy_percent) {
+          typeStats[type].totalScore += session.accuracy_percent;
+        }
+      });
+
+      // Calculate averages
+      Object.keys(typeStats).forEach((type) => {
+        if (typeStats[type].count > 0) {
+          typeStats[type].avgScore = typeStats[type].totalScore / typeStats[type].count;
+        }
+      });
+
+      return typeStats;
+    },
+  });
+}
+
+// ==================== COGNITIVE SCREENING ASSESSMENTS ====================
+
+export interface ScreeningDomainScore {
+  score: number;
+  max: number;
+  label: string;
+}
+
+export interface CognitiveScreening {
+  id: string;
+  assessment_date: string;
+  administered_by: string;
+  administered_by_name: string;
+  // Domain scores (0-100 each)
+  orientation_score: number | null;
+  memory_score: number | null;
+  attention_score: number | null;
+  language_score: number | null;
+  executive_score: number | null;
+  // Overall
+  total_score: number;
+  // Metadata
+  responses: Record<string, unknown>;
+  duration_minutes: number | null;
+  notes: string;
+  interpretation: 'normal' | 'mild' | 'moderate' | 'severe';
+  interpretation_label: string;
+  domain_scores: Record<string, ScreeningDomainScore>;
+  created_at: string;
+  updated_at: string;
+}
+
+export function useCognitiveScreenings() {
+  return useQuery<CognitiveScreening[]>({
+    queryKey: ['cognitive-screenings'],
+    queryFn: async () => {
+      const { data } = await api.get('/dementia/screening/');
+      return data.results ?? data;
+    },
+  });
+}
+
+export function useLatestCognitiveScreening() {
+  return useQuery<CognitiveScreening | null>({
+    queryKey: ['cognitive-screenings', 'latest'],
+    queryFn: async () => {
+      const { data } = await api.get('/dementia/screening/latest/');
+      return data;
+    },
+  });
+}
+
+export function useCognitiveScreeningHistory() {
+  return useQuery<Array<{
+    assessment_date: string;
+    total_score: number;
+    orientation_score: number | null;
+    memory_score: number | null;
+    attention_score: number | null;
+    language_score: number | null;
+    executive_score: number | null;
+  }>>({
+    queryKey: ['cognitive-screenings', 'history'],
+    queryFn: async () => {
+      const { data } = await api.get('/dementia/screening/history/');
+      return data;
+    },
+  });
+}
+
+export function useCreateCognitiveScreening() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (assessment: {
+      assessment_date: string;
+      orientation_score?: number;
+      memory_score?: number;
+      attention_score?: number;
+      language_score?: number;
+      executive_score?: number;
+      responses?: Record<string, unknown>;
+      duration_minutes?: number;
+      notes?: string;
+    }) => {
+      const { data } = await api.post('/dementia/screening/', assessment);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cognitive-screenings'] });
+    },
+  });
+}

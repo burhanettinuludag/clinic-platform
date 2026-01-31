@@ -108,7 +108,7 @@ export default function AssessmentPage() {
       }
       setSaved(true);
       setTimeout(() => {
-        router.push('/tr/patient/dementia?tab=progress');
+        router.push('/patient/dementia?tab=progress');
       }, 1500);
     } catch (error) {
       console.error('Failed to save assessment:', error);
@@ -224,7 +224,7 @@ export default function AssessmentPage() {
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <Link
-          href="/tr/patient/dementia"
+          href="/patient/dementia"
           className="p-2 hover:bg-gray-100 rounded-lg transition"
         >
           <ArrowLeft className="w-5 h-5 text-gray-600" />
