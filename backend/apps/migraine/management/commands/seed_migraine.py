@@ -169,18 +169,21 @@ class Command(BaseCommand):
                 created_count += 1
         self.stdout.write(f"Created {created_count} task templates (total: {len(tasks_data)})")
 
-        # Also seed inactive modules for future
-        future_modules = [
+        # Also seed other modules
+        # Dementia is active, others are inactive for future
+        other_modules = [
             ('epilepsy', 'Epilepsi', 'Epilepsy', 'Nöbet takibi ve yönetimi.',
-             'Seizure tracking and management.', 'zap', 2),
+             'Seizure tracking and management.', 'zap', 3, False),
             ('parkinson', 'Parkinson', 'Parkinson', 'Motor semptom takibi ve egzersizler.',
-             'Motor symptom tracking and exercises.', 'activity', 3),
-            ('dementia', 'Demans', 'Dementia', 'Bilişsel takip ve bakıcı desteği.',
-             'Cognitive tracking and caregiver support.', 'brain', 4),
+             'Motor symptom tracking and exercises.', 'activity', 4, False),
+            ('dementia', 'Demans (Bilişsel Sağlık)', 'Dementia (Cognitive Health)',
+             'Bilişsel egzersizler, günlük değerlendirmeler ve bakıcı desteği ile demans takibi.',
+             'Dementia tracking with cognitive exercises, daily assessments and caregiver support.',
+             'brain', 2, True),
         ]
 
-        for slug, name_tr, name_en, desc_tr, desc_en, icon, order in future_modules:
-            DiseaseModule.objects.get_or_create(
+        for slug, name_tr, name_en, desc_tr, desc_en, icon, order, is_active in other_modules:
+            obj, created = DiseaseModule.objects.update_or_create(
                 slug=slug,
                 defaults={
                     'disease_type': slug,
@@ -189,9 +192,10 @@ class Command(BaseCommand):
                     'description_tr': desc_tr,
                     'description_en': desc_en,
                     'icon': icon,
-                    'is_active': False,
+                    'is_active': is_active,
                     'order': order,
                 },
             )
+            self.stdout.write(f"{'Created' if created else 'Updated'} module: {obj.name_en} (active: {is_active})")
 
         self.stdout.write(self.style.SUCCESS('Migraine seed data created successfully!'))

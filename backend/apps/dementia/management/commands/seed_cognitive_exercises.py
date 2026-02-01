@@ -4,12 +4,30 @@ Usage: python manage.py seed_cognitive_exercises
 """
 from django.core.management.base import BaseCommand
 from apps.dementia.models import CognitiveExercise
+from apps.patients.models import DiseaseModule
 
 
 class Command(BaseCommand):
     help = 'Seeds cognitive exercises for dementia module'
 
     def handle(self, *args, **options):
+        # First, ensure the dementia disease module exists and is active
+        self.stdout.write('Setting up dementia disease module...')
+        module, created = DiseaseModule.objects.update_or_create(
+            slug='dementia',
+            defaults={
+                'disease_type': 'dementia',
+                'name_tr': 'Demans (Bilişsel Sağlık)',
+                'name_en': 'Dementia (Cognitive Health)',
+                'description_tr': 'Bilişsel egzersizler, günlük değerlendirmeler ve bakıcı desteği ile demans takibi.',
+                'description_en': 'Dementia tracking with cognitive exercises, daily assessments and caregiver support.',
+                'icon': 'brain',
+                'is_active': True,
+                'order': 2,
+            },
+        )
+        self.stdout.write(f"{'Created' if created else 'Updated'} dementia module (is_active: True)")
+
         self.stdout.write('Seeding cognitive exercises...')
 
         exercises = [
