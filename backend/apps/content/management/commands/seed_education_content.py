@@ -224,13 +224,46 @@ Sık atak geçirenlerde (ayda 4+):
 - Botoks enjeksiyonları
 
 ## İlaç Dışı Tedaviler
+
+### Davranışsal Tedaviler
 - Akupunktur
 - Biofeedback
 - Bilişsel davranışçı terapi
 - Gevşeme teknikleri
 - Düzenli egzersiz
 
-⚠️ **Önemli**: Tüm tedaviler doktorunuz tarafından belirlenmelidir.''',
+### Nöromodülasyon Tedavileri
+Beyin ve sinir aktivitesini elektriksel veya manyetik uyarılarla düzenleyen yenilikçi tedavi yöntemleridir:
+
+**TMS (Transkraniyal Manyetik Stimülasyon)**
+- Kafa derisine yerleştirilen bir cihazla manyetik dalgalar gönderilir
+- Auralı migrende atak başlangıcında kullanılabilir
+- Önleyici tedavi olarak da uygulanabilir
+- FDA onaylı, evde kullanılabilen cihazlar mevcuttur
+
+**tDCS (Transkraniyal Doğru Akım Stimülasyonu)**
+- Düşük yoğunluklu elektrik akımı ile beyin uyarılır
+- Migren sıklığını ve şiddetini azaltabilir
+- Genellikle klinik ortamda uygulanır
+
+**Vagal Sinir Stimülasyonu (VNS)**
+- Boyundaki vagus siniri elektriksel olarak uyarılır
+- Atak tedavisi ve önleyici tedavi olarak kullanılabilir
+- Taşınabilir, invaziv olmayan cihazlar mevcuttur
+- Ağrı sinyallerini ve inflamasyonu azaltır
+
+**GON Blokajı (Büyük Oksipital Sinir)**
+- Ense bölgesindeki sinire lokal anestezik enjeksiyonu
+- Kronik migren ve küme baş ağrısında etkili
+- Hızlı etki başlangıcı (birkaç dakika)
+- Etkisi birkaç hafta sürebilir
+
+**SPG Stimülasyonu (Sfenopalatin Ganglion)**
+- Burun arkasındaki sinir düğümü uyarılır
+- Özellikle küme baş ağrısında kullanılır
+- İmplante edilebilir veya harici cihazlarla uygulanır
+
+⚠️ **Önemli**: Nöromodülasyon tedavileri uzman hekim tarafından değerlendirilmeli ve uygulanmalıdır. Tüm tedaviler doktorunuz tarafından belirlenmelidir.''',
                 'body_en': '''Migraine treatment includes two main approaches: acute treatment and preventive treatment.
 
 ## Acute Treatment
@@ -260,17 +293,50 @@ For frequent attacks (4+ per month):
 - Botox injections
 
 ## Non-Drug Treatments
+
+### Behavioral Therapies
 - Acupuncture
 - Biofeedback
 - Cognitive behavioral therapy
 - Relaxation techniques
 - Regular exercise
 
-⚠️ **Important**: All treatments should be determined by your doctor.''',
+### Neuromodulation Therapies
+Innovative treatment methods that regulate brain and nerve activity through electrical or magnetic stimulation:
+
+**TMS (Transcranial Magnetic Stimulation)**
+- Magnetic waves are delivered through a device placed on the scalp
+- Can be used at the onset of an attack in migraine with aura
+- Can also be applied as preventive treatment
+- FDA-approved devices available for home use
+
+**tDCS (Transcranial Direct Current Stimulation)**
+- Brain stimulation with low-intensity electrical current
+- Can reduce migraine frequency and severity
+- Usually performed in clinical settings
+
+**Vagus Nerve Stimulation (VNS)**
+- Electrical stimulation of the vagus nerve in the neck
+- Can be used for acute and preventive treatment
+- Portable, non-invasive devices available
+- Reduces pain signals and inflammation
+
+**GON Block (Greater Occipital Nerve)**
+- Local anesthetic injection to the nerve at the back of the head
+- Effective for chronic migraine and cluster headache
+- Rapid onset of action (few minutes)
+- Effects can last several weeks
+
+**SPG Stimulation (Sphenopalatine Ganglion)**
+- Stimulation of the nerve cluster behind the nose
+- Particularly used for cluster headache
+- Applied with implantable or external devices
+
+⚠️ **Important**: Neuromodulation treatments should be evaluated and applied by specialist physicians. All treatments should be determined by your doctor.''',
                 'content_type': 'text',
                 'category': categories['treatment'],
                 'order': 3,
-                'estimated_duration_minutes': 8,
+                'estimated_duration_minutes': 12,
             },
             {
                 'slug': 'migraine-lifestyle',

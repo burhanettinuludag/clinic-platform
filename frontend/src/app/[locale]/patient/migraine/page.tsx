@@ -8,8 +8,10 @@ import {
   useMigraineStats,
   useMigraineTriggers,
   useTriggerAnalysis,
+  useCreateTrigger,
 } from '@/hooks/usePatientData';
-import { Brain, Plus, BarChart3, List, Target, X } from 'lucide-react';
+import { Brain, Plus, BarChart3, List, Target, X, PlusCircle, Check, Loader2, BookOpen } from 'lucide-react';
+import { Link } from '@/i18n/navigation';
 import MigraineChart from '@/components/patient/MigraineChart';
 import type { MigraineAttack } from '@/lib/types/patient';
 
@@ -27,12 +29,20 @@ export default function MigrainePage() {
           <Brain className="w-6 h-6 text-purple-600" />
           <h1 className="text-2xl font-bold text-gray-900">{t('patient.migraine.title')}</h1>
         </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700"
-        >
-          <Plus className="w-4 h-4" /> {t('patient.migraine.logAttack')}
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/patient/migraine/education"
+            className="flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 text-sm font-medium rounded-lg hover:bg-purple-200 transition"
+          >
+            <BookOpen className="w-4 h-4" /> Egitim
+          </Link>
+          <button
+            onClick={() => setShowForm(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700"
+          >
+            <Plus className="w-4 h-4" /> {t('patient.migraine.logAttack')}
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -360,10 +370,48 @@ function TriggersView() {
   const t = useTranslations();
   const { data: analysis, isLoading } = useTriggerAnalysis();
   const { data: allTriggers } = useMigraineTriggers();
+  const createTrigger = useCreateTrigger();
+
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newTriggerName, setNewTriggerName] = useState('');
+  const [newTriggerCategory, setNewTriggerCategory] = useState<string>('other');
+  const [addSuccess, setAddSuccess] = useState(false);
+
+  const handleAddTrigger = () => {
+    if (!newTriggerName.trim()) return;
+
+    createTrigger.mutate(
+      {
+        name_tr: newTriggerName.trim(),
+        name_en: newTriggerName.trim(),
+        category: newTriggerCategory,
+      },
+      {
+        onSuccess: () => {
+          setNewTriggerName('');
+          setAddSuccess(true);
+          setTimeout(() => {
+            setAddSuccess(false);
+            setShowAddForm(false);
+          }, 1500);
+        },
+      }
+    );
+  };
 
   if (isLoading) return <div className="text-center py-8 text-gray-500">{t('common.loading')}</div>;
 
-  const categories = ['dietary', 'environmental', 'hormonal', 'emotional', 'physical', 'sleep'] as const;
+  const categories = ['dietary', 'environmental', 'hormonal', 'emotional', 'physical', 'sleep', 'other'] as const;
+
+  const categoryLabels: Record<string, string> = {
+    dietary: 'Beslenme',
+    environmental: 'Çevresel',
+    hormonal: 'Hormonal',
+    emotional: 'Duygusal',
+    physical: 'Fiziksel',
+    sleep: 'Uyku',
+    other: 'Diğer',
+  };
 
   return (
     <div className="space-y-6">
@@ -377,7 +425,7 @@ function TriggersView() {
                 <span className="text-sm text-gray-700">{item.name_tr}</span>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-400">
-                    {t(`patient.migraine.triggerCategories.${item.category}`)}
+                    {categoryLabels[item.category] || item.category}
                   </span>
                   <span className="text-sm font-medium text-orange-600">{item.attack_count}x</span>
                 </div>
@@ -394,7 +442,7 @@ function TriggersView() {
         return (
           <div key={cat}>
             <h3 className="text-sm font-semibold text-gray-500 mb-2">
-              {t(`patient.migraine.triggerCategories.${cat}`)}
+              {categoryLabels[cat] || cat}
             </h3>
             <div className="flex flex-wrap gap-2">
               {catTriggers.map((trigger) => (
@@ -406,6 +454,96 @@ function TriggersView() {
           </div>
         );
       })}
+
+      {/* Add Custom Trigger Section */}
+      <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border-2 border-orange-200 p-5">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900">Kendi Tetikleyicinizi Ekleyin</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Listede olmayan bir tetikleyici mi var? Buradan ekleyebilirsiniz.
+            </p>
+          </div>
+          {!showAddForm && (
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 transition"
+            >
+              <PlusCircle className="w-4 h-4" />
+              Tetikleyici Ekle
+            </button>
+          )}
+        </div>
+
+        {showAddForm && (
+          <div className="mt-4 p-4 bg-white rounded-lg border border-orange-200">
+            {addSuccess ? (
+              <div className="flex items-center justify-center gap-2 py-4 text-green-600">
+                <Check className="w-5 h-5" />
+                <span className="font-medium">Tetikleyici eklendi!</span>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Tetikleyici Adı</label>
+                    <input
+                      type="text"
+                      value={newTriggerName}
+                      onChange={(e) => setNewTriggerName(e.target.value)}
+                      placeholder="Örn: Parfüm kokusu"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      autoFocus
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Kategori</label>
+                    <select
+                      value={newTriggerCategory}
+                      onChange={(e) => setNewTriggerCategory(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    >
+                      {categories.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {categoryLabels[cat]}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleAddTrigger}
+                    disabled={!newTriggerName.trim() || createTrigger.isPending}
+                    className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    {createTrigger.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Ekleniyor...
+                      </>
+                    ) : (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Ekle
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowAddForm(false);
+                      setNewTriggerName('');
+                    }}
+                    className="px-4 py-2 text-gray-500 text-sm rounded-lg hover:bg-gray-100 transition"
+                  >
+                    İptal
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

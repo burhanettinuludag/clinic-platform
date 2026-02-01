@@ -1,9 +1,10 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useCognitiveExercises, useCreateExerciseSession } from '@/hooks/useDementiaData';
 import { ArrowLeft, Clock, Trophy } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import MemoryCardsGame from '@/components/dementia/games/MemoryCardsGame';
 import SequenceRecallGame from '@/components/dementia/games/SequenceRecallGame';
 import ColorWordGame from '@/components/dementia/games/ColorWordGame';
@@ -12,6 +13,12 @@ import WordPairsGame from '@/components/dementia/games/WordPairsGame';
 import PatternRecognitionGame from '@/components/dementia/games/PatternRecognitionGame';
 import CategorySortingGame from '@/components/dementia/games/CategorySortingGame';
 import FaceRecognitionGame from '@/components/dementia/games/FaceRecognitionGame';
+import RealFaceRecognitionGame from '@/components/dementia/games/RealFaceRecognitionGame';
+import VirtualHomeNavigationGame from '@/components/dementia/games/VirtualHomeNavigationGame';
+import MapReadingGame from '@/components/dementia/games/MapReadingGame';
+import DirectionFollowingGame from '@/components/dementia/games/DirectionFollowingGame';
+import SpotDifferenceGame from '@/components/dementia/games/SpotDifferenceGame';
+import VisualSearchGame from '@/components/dementia/games/VisualSearchGame';
 import GenericExercise from '@/components/dementia/games/GenericExercise';
 
 export default function ExercisePage() {
@@ -45,7 +52,7 @@ export default function ExercisePage() {
       },
       {
         onSuccess: () => {
-          router.push('/tr/patient/dementia?tab=progress');
+          router.push('/patient/dementia?tab=progress');
         },
       }
     );
@@ -65,7 +72,7 @@ export default function ExercisePage() {
         <h1 className="text-xl font-bold text-gray-900 mb-2">Egzersiz Bulunamadı</h1>
         <p className="text-gray-500 mb-4">Bu egzersiz mevcut değil veya kaldırılmış olabilir.</p>
         <Link
-          href="/tr/patient/dementia"
+          href="/patient/dementia"
           className="text-indigo-600 hover:text-indigo-700 flex items-center gap-2 justify-center"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -81,7 +88,7 @@ export default function ExercisePage() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <Link
-            href="/tr/patient/dementia"
+            href="/patient/dementia"
             className="p-2 hover:bg-gray-100 rounded-lg transition"
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
@@ -165,7 +172,49 @@ export default function ExercisePage() {
             onComplete={handleComplete}
           />
         )}
-        {!['memory-cards', 'sequence-recall', 'color-word', 'simple-math', 'word-pairs', 'pattern-recognition', 'category-sorting', 'face-recognition'].includes(exercise.slug) && (
+        {exercise.slug === 'real-face-recognition' && (
+          <RealFaceRecognitionGame
+            config={exercise.config}
+            difficulty={exercise.difficulty}
+            onComplete={handleComplete}
+          />
+        )}
+        {exercise.slug === 'virtual-home-navigation' && (
+          <VirtualHomeNavigationGame
+            config={exercise.config}
+            difficulty={exercise.difficulty}
+            onComplete={handleComplete}
+          />
+        )}
+        {exercise.slug === 'map-reading' && (
+          <MapReadingGame
+            config={exercise.config}
+            difficulty={exercise.difficulty}
+            onComplete={handleComplete}
+          />
+        )}
+        {exercise.slug === 'direction-following' && (
+          <DirectionFollowingGame
+            config={exercise.config}
+            difficulty={exercise.difficulty}
+            onComplete={handleComplete}
+          />
+        )}
+        {exercise.slug === 'spot-difference' && (
+          <SpotDifferenceGame
+            config={exercise.config}
+            difficulty={exercise.difficulty}
+            onComplete={handleComplete}
+          />
+        )}
+        {exercise.slug === 'visual-search' && (
+          <VisualSearchGame
+            config={exercise.config}
+            difficulty={exercise.difficulty}
+            onComplete={handleComplete}
+          />
+        )}
+        {!['memory-cards', 'sequence-recall', 'color-word', 'simple-math', 'word-pairs', 'pattern-recognition', 'category-sorting', 'face-recognition', 'real-face-recognition', 'virtual-home-navigation', 'map-reading', 'direction-following', 'spot-difference', 'visual-search'].includes(exercise.slug) && (
           <GenericExercise
             exercise={exercise}
             config={exercise.config}

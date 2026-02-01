@@ -390,3 +390,112 @@ export function useTriggerAnalysis() {
     },
   });
 }
+
+// ==================== EDUCATION ====================
+
+export interface EducationItem {
+  id: string;
+  slug: string;
+  title: string;
+  body: string;
+  content_type: 'video' | 'text' | 'infographic' | 'interactive';
+  video_url: string;
+  image: string;
+  disease_module: string | null;
+  disease_module_slug?: string;
+  category: string | null;
+  category_name?: string;
+  order: number;
+  estimated_duration_minutes: number;
+  progress: {
+    id: string;
+    progress_percent: number;
+    completed_at: string | null;
+  } | null;
+}
+
+export interface EducationProgress {
+  id: string;
+  education_item: string;
+  started_at: string;
+  completed_at: string | null;
+  progress_percent: number;
+}
+
+export function useEducationItems(params?: { disease_module?: string; category?: string }) {
+  return useQuery<EducationItem[]>({
+    queryKey: ['education-items', params],
+    queryFn: async () => {
+      const { data } = await api.get('/content/education/', { params });
+      return data.results ?? data;
+    },
+  });
+}
+
+export function useEducationItem(slug: string) {
+  return useQuery<EducationItem>({
+    queryKey: ['education-items', slug],
+    queryFn: async () => {
+      const { data } = await api.get(`/content/education/${slug}/`);
+      return data;
+    },
+    enabled: !!slug,
+  });
+}
+
+export function useEducationProgress() {
+  return useQuery<EducationProgress[]>({
+    queryKey: ['education-progress'],
+    queryFn: async () => {
+      const { data } = await api.get('/content/education-progress/');
+      return data.results ?? data;
+    },
+  });
+}
+
+export function useStartEducation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (educationItemId: string) => {
+      const { data } = await api.post('/content/education-progress/', {
+        education_item: educationItemId,
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['education-progress'] });
+      queryClient.invalidateQueries({ queryKey: ['education-items'] });
+    },
+  });
+}
+
+export function useCompleteEducation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (progressId: string) => {
+      const { data } = await api.post(`/content/education-progress/${progressId}/complete/`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['education-progress'] });
+      queryClient.invalidateQueries({ queryKey: ['education-items'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    },
+  });
+}
+
+export function useUpdateEducationProgress() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, progress_percent }: { id: string; progress_percent: number }) => {
+      const { data } = await api.patch(`/content/education-progress/${id}/`, {
+        progress_percent,
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['education-progress'] });
+      queryClient.invalidateQueries({ queryKey: ['education-items'] });
+    },
+  });
+}

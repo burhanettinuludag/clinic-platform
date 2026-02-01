@@ -50,12 +50,19 @@ class EducationItemViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = 'slug'
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['disease_module', 'content_type', 'category']
+    filterset_fields = ['content_type', 'category']
 
     def get_queryset(self):
-        return EducationItem.objects.filter(
+        qs = EducationItem.objects.filter(
             is_published=True
         ).select_related('disease_module', 'category')
+
+        # Filter by disease_module slug
+        disease_module = self.request.query_params.get('disease_module')
+        if disease_module:
+            qs = qs.filter(disease_module__slug=disease_module)
+
+        return qs
 
 
 class EducationProgressViewSet(viewsets.ModelViewSet):

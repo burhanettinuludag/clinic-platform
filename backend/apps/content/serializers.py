@@ -91,12 +91,14 @@ class EducationItemSerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     body = serializers.SerializerMethodField()
     progress = serializers.SerializerMethodField()
+    disease_module_slug = serializers.SerializerMethodField()
+    category_name = serializers.SerializerMethodField()
 
     class Meta:
         model = EducationItem
         fields = [
             'id', 'slug', 'title', 'body', 'content_type', 'video_url',
-            'image', 'disease_module', 'category', 'order',
+            'image', 'disease_module', 'disease_module_slug', 'category', 'category_name', 'order',
             'estimated_duration_minutes', 'progress',
         ]
 
@@ -112,12 +114,23 @@ class EducationItemSerializer(serializers.ModelSerializer):
     def get_body(self, obj):
         return getattr(obj, f'body_{self._get_lang()}', obj.body_tr)
 
+    def get_disease_module_slug(self, obj):
+        if obj.disease_module:
+            return obj.disease_module.slug
+        return None
+
+    def get_category_name(self, obj):
+        if obj.category:
+            return getattr(obj.category, f'name_{self._get_lang()}', obj.category.name_tr)
+        return None
+
     def get_progress(self, obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
             prog = obj.progress_records.filter(patient=request.user).first()
             if prog:
                 return {
+                    'id': str(prog.id),
                     'progress_percent': prog.progress_percent,
                     'completed_at': prog.completed_at,
                 }

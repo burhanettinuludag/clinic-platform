@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import Cookies from 'js-cookie';
 import {
   useCognitiveExercisesByType,
   useExerciseStats,
@@ -16,11 +17,18 @@ import {
   Gamepad2,
   ClipboardList,
   TrendingUp,
+  TrendingDown,
+  Minus,
   Calendar,
   Clock,
   Flame,
   ChevronRight,
   Play,
+  LogIn,
+  AlertCircle,
+  ArrowUpRight,
+  ArrowDownRight,
+  ArrowRight,
 } from 'lucide-react';
 
 const EXERCISE_TYPE_ICONS: Record<string, string> = {
@@ -35,11 +43,81 @@ const EXERCISE_TYPE_ICONS: Record<string, string> = {
 export default function DementiaPage() {
   const t = useTranslations();
   const [activeTab, setActiveTab] = useState<'exercises' | 'progress' | 'assessment'>('exercises');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  const { data: exercisesByType, isLoading: exercisesLoading } = useCognitiveExercisesByType();
+  const { data: exercisesByType, isLoading: exercisesLoading, error: exercisesError } = useCognitiveExercisesByType();
   const { data: stats } = useExerciseStats();
   const { data: recentSessions } = useRecentExerciseSessions();
   const { data: todayAssessment } = useTodayAssessment();
+
+  // Giriş durumunu kontrol et
+  useEffect(() => {
+    const token = Cookies.get('access_token');
+    setIsAuthenticated(!!token);
+  }, []);
+
+  // Giriş yapılmamışsa uyarı göster
+  if (isAuthenticated === false) {
+    return (
+      <div className="max-w-lg mx-auto py-12">
+        <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-8 text-center">
+          <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-8 h-8 text-amber-600" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Giriş Yapmanız Gerekiyor</h2>
+          <p className="text-gray-600 mb-6">
+            Bilişsel sağlık egzersizlerine ve testlere erişmek için lütfen hesabınıza giriş yapın.
+          </p>
+          <Link
+            href="/auth/login"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition"
+          >
+            <LogIn className="w-5 h-5" />
+            Giriş Yap
+          </Link>
+          <p className="text-sm text-gray-500 mt-4">
+            Hesabınız yok mu?{' '}
+            <Link href="/auth/register" className="text-indigo-600 hover:text-indigo-700 font-medium">
+              Kayıt olun
+            </Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Yükleniyor durumu
+  if (isAuthenticated === null) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-gray-500">Yükleniyor...</div>
+      </div>
+    );
+  }
+
+  // API hatası durumunda da uyarı göster (401 unauthorized)
+  if (exercisesError && (exercisesError as any)?.response?.status === 401) {
+    return (
+      <div className="max-w-lg mx-auto py-12">
+        <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-8 text-center">
+          <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-8 h-8 text-amber-600" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Oturum Süreniz Dolmuş</h2>
+          <p className="text-gray-600 mb-6">
+            Güvenliğiniz için oturumunuz sonlandırıldı. Lütfen tekrar giriş yapın.
+          </p>
+          <Link
+            href="/auth/login"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition"
+          >
+            <LogIn className="w-5 h-5" />
+            Tekrar Giriş Yap
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -70,18 +148,43 @@ export default function DementiaPage() {
             <div className="text-xs text-gray-500">gün</div>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <div className="flex items-center gap-2 text-green-600 mb-1">
-              <TrendingUp className="w-4 h-4" />
-              <span className="text-xs font-medium">Ortalama</span>
+          <div className={`bg-white rounded-xl border-2 p-4 ${
+            stats.score_trend === 'improving'
+              ? 'border-green-300 bg-green-50'
+              : stats.score_trend === 'declining'
+              ? 'border-red-300 bg-red-50'
+              : 'border-gray-200'
+          }`}>
+            <div className={`flex items-center gap-2 mb-1 ${
+              stats.score_trend === 'improving'
+                ? 'text-green-600'
+                : stats.score_trend === 'declining'
+                ? 'text-red-600'
+                : 'text-gray-600'
+            }`}>
+              {stats.score_trend === 'improving' && <ArrowUpRight className="w-4 h-4" />}
+              {stats.score_trend === 'declining' && <ArrowDownRight className="w-4 h-4" />}
+              {stats.score_trend === 'stable' && <ArrowRight className="w-4 h-4" />}
+              <span className="text-xs font-medium">Eğilim</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">
-              {stats.avg_score_this_week ? `%${Math.round(stats.avg_score_this_week)}` : '-'}
+            <div className={`text-xl font-bold ${
+              stats.score_trend === 'improving'
+                ? 'text-green-700'
+                : stats.score_trend === 'declining'
+                ? 'text-red-700'
+                : 'text-gray-700'
+            }`}>
+              {stats.score_trend === 'improving' && 'İyiye Gidiyor'}
+              {stats.score_trend === 'declining' && 'Düşüşte'}
+              {stats.score_trend === 'stable' && 'Stabil'}
             </div>
-            <div className="text-xs text-gray-500">
-              {stats.score_trend === 'improving' && '↑ Yükseliyor'}
-              {stats.score_trend === 'declining' && '↓ Düşüyor'}
-              {stats.score_trend === 'stable' && '→ Sabit'}
+            <div className="text-xs text-gray-500 mt-1">
+              {stats.avg_score_this_week && stats.avg_score_last_week && (
+                <>
+                  Bu hafta %{Math.round(stats.avg_score_this_week)}
+                  {stats.avg_score_last_week && ` (geçen hafta %${Math.round(stats.avg_score_last_week)})`}
+                </>
+              )}
             </div>
           </div>
 
@@ -257,75 +360,116 @@ function ProgressTab({
         </div>
       )}
 
-      {/* Exercise Type Performance */}
+      {/* Exercise Type Performance with Trend */}
       {typeStats && Object.keys(typeStats).length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">Kategorilere Göre Performans</h3>
-          <div className="space-y-3">
-            {Object.entries(typeStats).map(([type, data]) => (
-              <div key={type}>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm text-gray-700">
-                    {EXERCISE_TYPE_LABELS[type] || type}
-                  </span>
-                  <span className="text-sm font-medium text-gray-900">
-                    %{Math.round((data as any).avgScore)} ({(data as any).count} egzersiz)
-                  </span>
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Kategorilere Göre Eğilim</h3>
+          <div className="space-y-4">
+            {Object.entries(typeStats).map(([type, data]) => {
+              const trend = (data as any).trend;
+              return (
+                <div key={type} className={`p-3 rounded-lg border-2 ${
+                  trend === 'improving'
+                    ? 'border-green-200 bg-green-50'
+                    : trend === 'declining'
+                    ? 'border-red-200 bg-red-50'
+                    : 'border-gray-200 bg-gray-50'
+                }`}>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">{EXERCISE_TYPE_ICONS[type] || '🎯'}</span>
+                      <div>
+                        <span className="text-sm font-medium text-gray-900">
+                          {EXERCISE_TYPE_LABELS[type] || type}
+                        </span>
+                        <div className="text-xs text-gray-500">
+                          {(data as any).count} egzersiz tamamlandı
+                        </div>
+                      </div>
+                    </div>
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${
+                      trend === 'improving'
+                        ? 'bg-green-100 text-green-700'
+                        : trend === 'declining'
+                        ? 'bg-red-100 text-red-700'
+                        : 'bg-gray-100 text-gray-700'
+                    }`}>
+                      {trend === 'improving' && <ArrowUpRight className="w-4 h-4" />}
+                      {trend === 'declining' && <ArrowDownRight className="w-4 h-4" />}
+                      {trend === 'stable' && <ArrowRight className="w-4 h-4" />}
+                      <span className="text-sm font-medium">
+                        {trend === 'improving' && 'İyiye Gidiyor'}
+                        {trend === 'declining' && 'Düşüşte'}
+                        {trend === 'stable' && 'Stabil'}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${
-                      (data as any).avgScore >= 80
-                        ? 'bg-green-500'
-                        : (data as any).avgScore >= 60
-                        ? 'bg-yellow-500'
-                        : 'bg-red-500'
-                    }`}
-                    style={{ width: `${(data as any).avgScore}%` }}
-                  />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Recent Sessions */}
+      {/* Recent Sessions - Trend-focused display */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Son Egzersizler</h3>
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">Son Aktiviteler</h3>
         <div className="space-y-2">
-          {recentSessions.slice(0, 10).map((session) => (
-            <div
-              key={session.id}
-              className="bg-white rounded-lg border border-gray-200 p-3 flex items-center justify-between"
-            >
-              <div>
-                <div className="font-medium text-gray-900">{session.exercise_name}</div>
-                <div className="text-xs text-gray-500">
-                  {new Date(session.started_at).toLocaleDateString('tr-TR', {
-                    day: 'numeric',
-                    month: 'short',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+          {recentSessions.slice(0, 10).map((session, index) => {
+            // Compare with previous session of same type
+            const previousSameType = recentSessions
+              .slice(index + 1)
+              .find((s) => s.exercise_type === session.exercise_type);
+
+            let sessionTrend: 'improving' | 'stable' | 'declining' = 'stable';
+            if (previousSameType && session.accuracy_percent && previousSameType.accuracy_percent) {
+              const diff = session.accuracy_percent - previousSameType.accuracy_percent;
+              if (diff > 5) sessionTrend = 'improving';
+              else if (diff < -5) sessionTrend = 'declining';
+            }
+
+            return (
+              <div
+                key={session.id}
+                className={`rounded-lg border-2 p-3 flex items-center justify-between ${
+                  sessionTrend === 'improving'
+                    ? 'border-green-200 bg-green-50'
+                    : sessionTrend === 'declining'
+                    ? 'border-red-200 bg-red-50'
+                    : 'border-gray-200 bg-white'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">{EXERCISE_TYPE_ICONS[session.exercise_type] || '🎯'}</span>
+                  <div>
+                    <div className="font-medium text-gray-900">{session.exercise_name}</div>
+                    <div className="text-xs text-gray-500">
+                      {new Date(session.started_at).toLocaleDateString('tr-TR', {
+                        day: 'numeric',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="text-right">
-                <div className={`text-lg font-bold ${
-                  session.accuracy_percent >= 80
-                    ? 'text-green-600'
-                    : session.accuracy_percent >= 60
-                    ? 'text-yellow-600'
-                    : 'text-red-600'
+                <div className={`flex items-center gap-1 px-2 py-1 rounded-full ${
+                  sessionTrend === 'improving'
+                    ? 'bg-green-100 text-green-700'
+                    : sessionTrend === 'declining'
+                    ? 'bg-red-100 text-red-700'
+                    : 'bg-gray-100 text-gray-700'
                 }`}>
-                  %{Math.round(session.accuracy_percent || 0)}
-                </div>
-                <div className="text-xs text-gray-400">
-                  {session.duration_seconds ? `${Math.round(session.duration_seconds / 60)} dk` : '-'}
+                  {sessionTrend === 'improving' && <ArrowUpRight className="w-4 h-4" />}
+                  {sessionTrend === 'declining' && <ArrowDownRight className="w-4 h-4" />}
+                  {sessionTrend === 'stable' && <ArrowRight className="w-4 h-4" />}
+                  <span className="text-sm font-medium">
+                    {session.duration_seconds ? `${Math.round(session.duration_seconds / 60)} dk` : '-'}
+                  </span>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

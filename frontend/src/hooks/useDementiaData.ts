@@ -347,13 +347,31 @@ export function useExerciseTypeStats() {
       const { data } = await api.get('/dementia/sessions/');
       const sessions = data.results ?? data;
 
-      // Group by exercise type
-      const typeStats: Record<string, { count: number; avgScore: number; totalScore: number }> = {};
+      // Group by exercise type with time-based trend analysis
+      const typeStats: Record<string, {
+        count: number;
+        avgScore: number;
+        totalScore: number;
+        trend: 'improving' | 'stable' | 'declining';
+        recentAvg: number;
+        olderAvg: number;
+      }> = {};
+
+      // Get current date
+      const now = new Date();
+      const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
 
       sessions.forEach((session: ExerciseSession) => {
         const type = session.exercise_type;
         if (!typeStats[type]) {
-          typeStats[type] = { count: 0, avgScore: 0, totalScore: 0 };
+          typeStats[type] = {
+            count: 0,
+            avgScore: 0,
+            totalScore: 0,
+            trend: 'stable',
+            recentAvg: 0,
+            olderAvg: 0,
+          };
         }
         typeStats[type].count += 1;
         if (session.accuracy_percent) {
@@ -361,10 +379,65 @@ export function useExerciseTypeStats() {
         }
       });
 
-      // Calculate averages
+      // Calculate averages and trends
       Object.keys(typeStats).forEach((type) => {
+        const typeSessions = sessions.filter((s: ExerciseSession) => s.exercise_type === type);
+
         if (typeStats[type].count > 0) {
           typeStats[type].avgScore = typeStats[type].totalScore / typeStats[type].count;
+        }
+
+        // Calculate recent vs older averages for trend
+        const recentSessions = typeSessions.filter((s: ExerciseSession) =>
+          new Date(s.started_at) >= twoWeeksAgo
+        );
+        const olderSessions = typeSessions.filter((s: ExerciseSession) =>
+          new Date(s.started_at) < twoWeeksAgo
+        );
+
+        if (recentSessions.length > 0) {
+          const recentTotal = recentSessions.reduce((sum: number, s: ExerciseSession) =>
+            sum + (s.accuracy_percent || 0), 0
+          );
+          typeStats[type].recentAvg = recentTotal / recentSessions.length;
+        }
+
+        if (olderSessions.length > 0) {
+          const olderTotal = olderSessions.reduce((sum: number, s: ExerciseSession) =>
+            sum + (s.accuracy_percent || 0), 0
+          );
+          typeStats[type].olderAvg = olderTotal / olderSessions.length;
+        }
+
+        // Determine trend
+        if (typeStats[type].recentAvg && typeStats[type].olderAvg) {
+          const diff = typeStats[type].recentAvg - typeStats[type].olderAvg;
+          if (diff > 5) {
+            typeStats[type].trend = 'improving';
+          } else if (diff < -5) {
+            typeStats[type].trend = 'declining';
+          } else {
+            typeStats[type].trend = 'stable';
+          }
+        } else if (recentSessions.length >= 3) {
+          // If only recent sessions exist, check if improving over time
+          const sortedRecent = [...recentSessions].sort((a: ExerciseSession, b: ExerciseSession) =>
+            new Date(a.started_at).getTime() - new Date(b.started_at).getTime()
+          );
+          const firstHalf = sortedRecent.slice(0, Math.floor(sortedRecent.length / 2));
+          const secondHalf = sortedRecent.slice(Math.floor(sortedRecent.length / 2));
+
+          const firstAvg = firstHalf.reduce((sum: number, s: ExerciseSession) =>
+            sum + (s.accuracy_percent || 0), 0) / firstHalf.length;
+          const secondAvg = secondHalf.reduce((sum: number, s: ExerciseSession) =>
+            sum + (s.accuracy_percent || 0), 0) / secondHalf.length;
+
+          const diff = secondAvg - firstAvg;
+          if (diff > 5) {
+            typeStats[type].trend = 'improving';
+          } else if (diff < -5) {
+            typeStats[type].trend = 'declining';
+          }
         }
       });
 

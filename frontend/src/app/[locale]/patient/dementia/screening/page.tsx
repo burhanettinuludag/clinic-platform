@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import {
   Brain,
   Clock,
@@ -115,6 +115,7 @@ export default function CognitiveScreeningPage() {
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [showMemoryPhase, setShowMemoryPhase] = useState(false);
   const [memoryTimer, setMemoryTimer] = useState(0);
+  const [hideQuestion, setHideQuestion] = useState(false); // Soru gizleme durumu
 
   const section = SCREENING_SECTIONS[currentSection];
   const question = section?.questions[currentQuestion];
@@ -220,6 +221,7 @@ export default function CognitiveScreeningPage() {
     setMemoryWords([]);
     setSerialNumbers([]);
     setFluencyAnswers([]);
+    setHideQuestion(false); // Soruyu tekrar göster
 
     // Move to next question or section
     if (currentQuestion < section.questions.length - 1) {
@@ -447,14 +449,34 @@ export default function CognitiveScreeningPage() {
         </div>
 
         <div className="mb-6">
-          <p className="text-lg text-gray-800 mb-4">{question?.text}</p>
+          {/* Soru metni - yazma başladığında gizlenebilir */}
+          {!hideQuestion ? (
+            <p className="text-lg text-gray-800 mb-4">{question?.text}</p>
+          ) : (
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg mb-4">
+              <p className="text-amber-700 text-sm flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" />
+                Soru gizlendi. Hatırladıklarınızı yazın.
+              </p>
+            </div>
+          )}
 
           {/* Text input */}
           {question?.type === 'text' && (
             <input
               type="text"
               value={currentAnswer}
-              onChange={(e) => setCurrentAnswer(e.target.value)}
+              onChange={(e) => {
+                setCurrentAnswer(e.target.value);
+                // Yazma başladığında soruyu gizle (belirli soru türleri için)
+                if (e.target.value.length === 1 && !hideQuestion) {
+                  // Sadece bellek ve dikkat sorularında gizle
+                  const memoryQuestions = ['mem1', 'mem2', 'att2'];
+                  if (question && memoryQuestions.includes(question.id)) {
+                    setHideQuestion(true);
+                  }
+                }
+              }}
               placeholder="Cevabinizi yazin..."
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               autoFocus
@@ -492,6 +514,10 @@ export default function CognitiveScreeningPage() {
                     const newWords = [...memoryWords];
                     newWords[idx] = e.target.value;
                     setMemoryWords(newWords);
+                    // İlk karakter yazıldığında soruyu gizle
+                    if (e.target.value.length === 1 && !hideQuestion) {
+                      setHideQuestion(true);
+                    }
                   }}
                   placeholder={`${idx + 1}. kelime`}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -512,6 +538,10 @@ export default function CognitiveScreeningPage() {
                     const newNumbers = [...serialNumbers];
                     newNumbers[idx] = parseInt(e.target.value) || 0;
                     setSerialNumbers(newNumbers);
+                    // İlk sayı yazıldığında soruyu gizle
+                    if (e.target.value.length === 1 && !hideQuestion) {
+                      setHideQuestion(true);
+                    }
                   }}
                   placeholder={`${idx + 1}.`}
                   className="w-full px-3 py-3 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -525,7 +555,13 @@ export default function CognitiveScreeningPage() {
             <input
               type="text"
               value={currentAnswer}
-              onChange={(e) => setCurrentAnswer(e.target.value)}
+              onChange={(e) => {
+                setCurrentAnswer(e.target.value);
+                // İlk karakter yazıldığında soruyu gizle
+                if (e.target.value.length === 1 && !hideQuestion) {
+                  setHideQuestion(true);
+                }
+              }}
               placeholder="Ortak ozelligi yazin..."
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               autoFocus

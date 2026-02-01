@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, Link } from '@/i18n/navigation';
 import { useTodayAssessment, useCreateAssessment, useUpdateAssessment } from '@/hooks/useDementiaData';
 import { ArrowLeft, Save, CheckCircle, AlertCircle, Moon, Heart, Brain, User } from 'lucide-react';
-import Link from 'next/link';
 
 interface AssessmentFormData {
   mood_score: number | null;
