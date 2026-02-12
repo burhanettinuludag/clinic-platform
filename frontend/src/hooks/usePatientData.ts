@@ -20,6 +20,10 @@ import type {
   MigraineStats,
   MigraineChartData,
   TriggerAnalysis,
+  SeizureEvent,
+  SeizureEventListItem,
+  EpilepsyTrigger,
+  SeizureStats,
 } from '@/lib/types/patient';
 
 // ==================== MODULES ====================
@@ -386,6 +390,112 @@ export function useTriggerAnalysis() {
     queryKey: ['trigger-analysis'],
     queryFn: async () => {
       const { data } = await api.get('/migraine/triggers/analysis/');
+      return data.results ?? data;
+    },
+  });
+}
+
+// ==================== EPILEPSY ====================
+
+export function useSeizureEvents(params?: { start_date?: string; end_date?: string }) {
+  return useQuery<SeizureEventListItem[]>({
+    queryKey: ['seizure-events', params],
+    queryFn: async () => {
+      const { data } = await api.get('/epilepsy/seizures/', { params });
+      return data.results ?? data;
+    },
+  });
+}
+
+export function useSeizureEvent(id: string) {
+  return useQuery<SeizureEvent>({
+    queryKey: ['seizure-events', id],
+    queryFn: async () => {
+      const { data } = await api.get(`/epilepsy/seizures/${id}/`);
+      return data;
+    },
+    enabled: !!id,
+  });
+}
+
+export function useCreateSeizure() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (seizure: Partial<SeizureEvent>) => {
+      const { data } = await api.post('/epilepsy/seizures/', seizure);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['seizure-events'] });
+      queryClient.invalidateQueries({ queryKey: ['seizure-stats'] });
+    },
+  });
+}
+
+export function useUpdateSeizure() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...seizure }: Partial<SeizureEvent> & { id: string }) => {
+      const { data } = await api.patch(`/epilepsy/seizures/${id}/`, seizure);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['seizure-events'] });
+      queryClient.invalidateQueries({ queryKey: ['seizure-stats'] });
+    },
+  });
+}
+
+export function useSeizureStats() {
+  return useQuery<SeizureStats>({
+    queryKey: ['seizure-stats'],
+    queryFn: async () => {
+      const { data } = await api.get('/epilepsy/seizures/stats/');
+      return data;
+    },
+  });
+}
+
+export function useSeizureChart(months = 6) {
+  return useQuery<{ month: string; count: number; avg_intensity: number }[]>({
+    queryKey: ['seizure-chart', months],
+    queryFn: async () => {
+      const { data } = await api.get('/epilepsy/seizures/chart/', {
+        params: { months },
+      });
+      return data;
+    },
+  });
+}
+
+export function useEpilepsyTriggers() {
+  return useQuery<EpilepsyTrigger[]>({
+    queryKey: ['epilepsy-triggers'],
+    queryFn: async () => {
+      const { data } = await api.get('/epilepsy/triggers/');
+      return data.results ?? data;
+    },
+  });
+}
+
+export function useCreateEpilepsyTrigger() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (trigger: { name_tr: string; name_en: string; category: string }) => {
+      const { data } = await api.post('/epilepsy/triggers/', trigger);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['epilepsy-triggers'] });
+    },
+  });
+}
+
+export function useEpilepsyTriggerAnalysis() {
+  return useQuery<{ id: string; name_tr: string; name_en: string; category: string; seizure_count: number }[]>({
+    queryKey: ['epilepsy-trigger-analysis'],
+    queryFn: async () => {
+      const { data } = await api.get('/epilepsy/triggers/analysis/');
       return data.results ?? data;
     },
   });

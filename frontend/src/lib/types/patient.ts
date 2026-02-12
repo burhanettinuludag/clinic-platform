@@ -184,6 +184,55 @@ export interface TriggerAnalysis {
   attack_count: number;
 }
 
+// Epilepsy Types
+export interface EpilepsyTrigger {
+  id: string;
+  name: string;
+  name_tr: string;
+  name_en: string;
+  category: 'sleep' | 'stress' | 'substance' | 'sensory' | 'physical' | 'hormonal' | 'other';
+  is_predefined: boolean;
+  created_by: number | null;
+}
+
+export interface SeizureEvent {
+  id: string;
+  seizure_datetime: string;
+  seizure_type: 'focal_aware' | 'focal_impaired' | 'generalized_tonic_clonic' | 'generalized_absence' | 'generalized_myoclonic' | 'unknown';
+  duration_seconds: number | null;
+  intensity: number;
+  triggers_identified: EpilepsyTrigger[];
+  trigger_ids?: string[];
+  loss_of_consciousness: boolean;
+  medication_taken: boolean;
+  post_ictal_notes: string;
+  notes: string;
+  created_at: string;
+}
+
+export interface SeizureEventListItem {
+  id: string;
+  seizure_datetime: string;
+  seizure_type: string;
+  duration_seconds: number | null;
+  intensity: number;
+  loss_of_consciousness: boolean;
+  medication_taken: boolean;
+  trigger_count: number;
+  created_at: string;
+}
+
+export interface SeizureStats {
+  total_seizures: number;
+  avg_intensity: number;
+  avg_duration: number;
+  seizures_this_month: number;
+  seizures_last_month: number;
+  most_common_triggers: { name: string; count: number }[];
+  most_common_type: string;
+  consciousness_loss_percentage: number;
+}
+
 // Wellness Types
 export interface BreathingExercise {
   id: string;

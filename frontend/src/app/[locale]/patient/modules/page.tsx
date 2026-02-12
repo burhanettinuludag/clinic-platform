@@ -1,13 +1,21 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { useDiseaseModules, usePatientModules, useEnrollModule, useUnenrollModule } from '@/hooks/usePatientData';
-import { Brain, Zap, Activity, BookOpen, Check } from 'lucide-react';
+import { Brain, Zap, Activity, BookOpen, Check, ArrowRight } from 'lucide-react';
 
 const moduleIcons: Record<string, typeof Brain> = {
   brain: Brain,
   zap: Zap,
   activity: Activity,
+};
+
+const moduleRoutes: Record<string, string> = {
+  migraine: '/patient/migraine',
+  epilepsy: '/patient/epilepsy',
+  dementia: '/patient/dementia',
+  parkinson: '/patient/parkinson',
 };
 
 export default function ModulesPage() {
@@ -37,6 +45,7 @@ export default function ModulesPage() {
           const Icon = moduleIcons[mod.icon] || BookOpen;
           const isEnrolled = enrolledIds.has(mod.id);
           const isActive = mod.is_active;
+          const moduleHref = moduleRoutes[mod.disease_type];
 
           return (
             <div
@@ -59,23 +68,33 @@ export default function ModulesPage() {
                 </div>
               </div>
 
-              <div className="mt-4">
+              <div className="mt-4 space-y-2">
                 {isEnrolled ? (
-                  <div className="flex items-center gap-2">
-                    <span className="flex items-center gap-1.5 text-sm text-blue-600 font-medium">
-                      <Check className="w-4 h-4" /> {t('patient.modules.enrolled')}
-                    </span>
-                    <button
-                      onClick={() => {
-                        const id = getEnrollmentId(mod.id);
-                        if (id) unenrollMutation.mutate(id);
-                      }}
-                      disabled={unenrollMutation.isPending}
-                      className="ml-auto text-xs text-red-500 hover:text-red-600"
-                    >
-                      {t('patient.modules.unenroll')}
-                    </button>
-                  </div>
+                  <>
+                    {moduleHref && (
+                      <Link
+                        href={moduleHref}
+                        className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition"
+                      >
+                        {t('patient.modules.goToModule')} <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <span className="flex items-center gap-1.5 text-sm text-blue-600 font-medium">
+                        <Check className="w-4 h-4" /> {t('patient.modules.enrolled')}
+                      </span>
+                      <button
+                        onClick={() => {
+                          const id = getEnrollmentId(mod.id);
+                          if (id) unenrollMutation.mutate(id);
+                        }}
+                        disabled={unenrollMutation.isPending}
+                        className="ml-auto text-xs text-red-500 hover:text-red-600"
+                      >
+                        {t('patient.modules.unenroll')}
+                      </button>
+                    </div>
+                  </>
                 ) : isActive ? (
                   <button
                     onClick={() => enrollMutation.mutate(mod.id)}

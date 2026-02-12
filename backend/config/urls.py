@@ -11,6 +11,7 @@ urlpatterns = [
     path('api/v1/tasks/', include('apps.patients.urls_tasks')),
     path('api/v1/tracking/', include('apps.tracking.urls')),
     path('api/v1/migraine/', include('apps.migraine.urls')),
+    path('api/v1/epilepsy/', include('apps.epilepsy.urls')),
     path('api/v1/dementia/', include('apps.dementia.urls')),
     path('api/v1/content/', include('apps.content.urls')),
     path('api/v1/store/', include('apps.store.urls')),

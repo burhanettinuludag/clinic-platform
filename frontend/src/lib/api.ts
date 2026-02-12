@@ -34,11 +34,21 @@ api.interceptors.response.use(
           Cookies.set('access_token', data.access);
           originalRequest.headers.Authorization = `Bearer ${data.access}`;
           return api(originalRequest);
+        } else {
+          // No refresh token - redirect to login
+          Cookies.remove('access_token');
+          if (typeof window !== 'undefined') {
+            const locale = Cookies.get('NEXT_LOCALE') || 'tr';
+            window.location.href = `/${locale}/auth/login`;
+          }
         }
       } catch {
         Cookies.remove('access_token');
         Cookies.remove('refresh_token');
-        window.location.href = '/tr/auth/login';
+        if (typeof window !== 'undefined') {
+          const locale = Cookies.get('NEXT_LOCALE') || 'tr';
+          window.location.href = `/${locale}/auth/login`;
+        }
       }
     }
     return Promise.reject(error);

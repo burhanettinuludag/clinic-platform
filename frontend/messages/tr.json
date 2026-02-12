@@ -55,7 +55,8 @@
     "alerts": "Uyarilar",
     "migraine": "Migren",
     "symptoms": "Semptomlar",
-    "dementia": "Bilissel Saglik"
+    "dementia": "Bilissel Saglik",
+    "epilepsy": "Epilepsi"
   },
   "home": {
     "hero": {
@@ -114,7 +115,8 @@
       "enroll": "Kayit Ol",
       "unenroll": "Kaydi Kaldir",
       "comingSoon": "Yakinda",
-      "myModules": "Modullerim"
+      "myModules": "Modullerim",
+      "goToModule": "Module Git"
     },
     "tasks": {
       "title": "Gorevler",
@@ -196,6 +198,62 @@
         "sleep": "Uyku",
         "other": "Diger"
       }
+    },
+    "epilepsy": {
+      "title": "Epilepsi Takibi",
+      "logSeizure": "Nobeti Kaydet",
+      "seizureDiary": "Nobet Gunlugu",
+      "stats": "Istatistikler",
+      "education": "Egitim",
+      "intensity": "Siddet",
+      "duration": "Sure (sn)",
+      "type": "Nobet Turu",
+      "noSeizures": "Henuz nobet kaydi yok.",
+      "seizureTypes": {
+        "focal_aware": "Fokal Farkinda",
+        "focal_impaired": "Fokal Bilinc Bozuklugu",
+        "generalized_tonic_clonic": "Jeneralize Tonik-Klonik",
+        "generalized_absence": "Absans",
+        "generalized_myoclonic": "Miyoklonik",
+        "unknown": "Bilinmiyor"
+      },
+      "triggers": "Tetikleyiciler",
+      "commonTriggers": "En Sik Tetikleyiciler",
+      "commonTriggersList": {
+        "sleep_deprivation": "Uyku Eksikligi",
+        "stress": "Stres",
+        "alcohol": "Alkol",
+        "missed_medication": "Ilac Atlama",
+        "flashing_lights": "Yanip Sonen Isiklar",
+        "fever": "Ates",
+        "other": "Diger"
+      },
+      "medicationTaken": "Ilac Alindi mi?",
+      "medicationTakenLabel": "Ilac alindi",
+      "medicationNotTaken": "Ilac alinmadi",
+      "postIctal": "Nobet Sonrasi Durum",
+      "notes": "Notlar",
+      "attacksThisMonth": "Bu Ay",
+      "avgIntensity": "Ort. Siddet",
+      "consciousnessLossRate": "Bilinc Kaybi Orani",
+      "consciousnessLoss": "Bilinc Kaybi",
+      "monthlyChart": "Aylik Nobet Grafigi",
+      "addCustomTrigger": "Kendi Tetikleyicinizi Ekleyin",
+      "addCustomTriggerDesc": "Listede olmayan bir tetikleyici mi var? Buradan ekleyebilirsiniz.",
+      "triggerName": "Tetikleyici Adi",
+      "triggerAdded": "Tetikleyici eklendi!",
+      "category": "Kategori",
+      "triggerAnalysis": "Tetikleyici Analizi",
+      "categories": {
+        "sleep": "Uyku",
+        "stress": "Stres",
+        "substance": "Madde",
+        "sensory": "Duyusal",
+        "physical": "Fiziksel",
+        "hormonal": "Hormonal",
+        "other": "Diger"
+      },
+      "lastMonth": "Gecen ay"
     }
   },
   "doctor": {

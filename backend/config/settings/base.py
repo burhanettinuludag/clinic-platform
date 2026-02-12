@@ -43,6 +43,7 @@ LOCAL_APPS = [
     'apps.patients',
     'apps.tracking',
     'apps.migraine',
+    'apps.epilepsy',
     'apps.dementia',
     'apps.content',
     'apps.store',

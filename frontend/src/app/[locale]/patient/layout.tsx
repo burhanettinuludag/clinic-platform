@@ -9,6 +9,7 @@ import {
   Activity,
   Pill,
   Brain,
+  Zap,
   Sparkles,
   BookOpen,
   Settings,
@@ -22,6 +23,7 @@ const sidebarItems = [
   { href: '/patient/symptoms', icon: Activity, labelKey: 'symptoms' },
   { href: '/patient/medications', icon: Pill, labelKey: 'medications' },
   { href: '/patient/migraine', icon: Brain, labelKey: 'migraine' },
+  { href: '/patient/epilepsy', icon: Zap, labelKey: 'epilepsy' },
   { href: '/patient/dementia', icon: Sparkles, labelKey: 'dementia' },
 ];
 

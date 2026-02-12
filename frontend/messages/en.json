@@ -55,7 +55,8 @@
     "alerts": "Alerts",
     "migraine": "Migraine",
     "symptoms": "Symptoms",
-    "dementia": "Cognitive Health"
+    "dementia": "Cognitive Health",
+    "epilepsy": "Epilepsy"
   },
   "home": {
     "hero": {
@@ -114,7 +115,8 @@
       "enroll": "Enroll",
       "unenroll": "Unenroll",
       "comingSoon": "Coming Soon",
-      "myModules": "My Modules"
+      "myModules": "My Modules",
+      "goToModule": "Go to Module"
     },
     "tasks": {
       "title": "Tasks",
@@ -196,6 +198,62 @@
         "sleep": "Sleep",
         "other": "Other"
       }
+    },
+    "epilepsy": {
+      "title": "Epilepsy Tracking",
+      "logSeizure": "Log Seizure",
+      "seizureDiary": "Seizure Diary",
+      "stats": "Statistics",
+      "education": "Education",
+      "intensity": "Intensity",
+      "duration": "Duration (sec)",
+      "type": "Seizure Type",
+      "noSeizures": "No seizures recorded yet.",
+      "seizureTypes": {
+        "focal_aware": "Focal Aware",
+        "focal_impaired": "Focal Impaired Awareness",
+        "generalized_tonic_clonic": "Generalized Tonic-Clonic",
+        "generalized_absence": "Absence",
+        "generalized_myoclonic": "Myoclonic",
+        "unknown": "Unknown"
+      },
+      "triggers": "Triggers",
+      "commonTriggers": "Most Common Triggers",
+      "commonTriggersList": {
+        "sleep_deprivation": "Sleep Deprivation",
+        "stress": "Stress",
+        "alcohol": "Alcohol",
+        "missed_medication": "Missed Medication",
+        "flashing_lights": "Flashing Lights",
+        "fever": "Fever",
+        "other": "Other"
+      },
+      "medicationTaken": "Medication Taken?",
+      "medicationTakenLabel": "Medication taken",
+      "medicationNotTaken": "Medication not taken",
+      "postIctal": "Post-Ictal State",
+      "notes": "Notes",
+      "attacksThisMonth": "This Month",
+      "avgIntensity": "Avg. Intensity",
+      "consciousnessLossRate": "Consciousness Loss Rate",
+      "consciousnessLoss": "Consciousness Loss",
+      "monthlyChart": "Monthly Seizure Chart",
+      "addCustomTrigger": "Add Your Own Trigger",
+      "addCustomTriggerDesc": "Can't find your trigger in the list? Add it here.",
+      "triggerName": "Trigger Name",
+      "triggerAdded": "Trigger added!",
+      "category": "Category",
+      "triggerAnalysis": "Trigger Analysis",
+      "categories": {
+        "sleep": "Sleep",
+        "stress": "Stress",
+        "substance": "Substance",
+        "sensory": "Sensory",
+        "physical": "Physical",
+        "hormonal": "Hormonal",
+        "other": "Other"
+      },
+      "lastMonth": "Last month"
     }
   },
   "doctor": {

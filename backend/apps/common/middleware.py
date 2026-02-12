@@ -95,6 +95,7 @@ class LastActiveMiddleware:
             user = request.user
             # Her istekte değil, en az 5 dakikada bir güncelle
             if not user.last_active or (now - user.last_active).total_seconds() > 300:
-                type(user).objects.filter(pk=user.pk).update(last_active=now)
+                from django.contrib.auth import get_user_model
+                get_user_model().objects.filter(pk=user.pk).update(last_active=now)
 
         return response
