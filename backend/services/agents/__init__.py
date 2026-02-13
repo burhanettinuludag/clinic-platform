@@ -13,13 +13,13 @@ from services.registry import agent_registry
 from services.agents.content_agent import ContentAgent
 agent_registry.register(ContentAgent())
 
+from services.agents.seo_agent import SEOAgent
+agent_registry.register(SEOAgent())
+
+from services.agents.legal_agent import LegalAgent
+agent_registry.register(LegalAgent())
+
 # Yeni ajanlar buraya eklenecek:
-# from services.agents.seo_agent import SEOAgent
-# agent_registry.register(SEOAgent())
-#
-# from services.agents.legal_agent import LegalAgent
-# agent_registry.register(LegalAgent())
-#
 # from services.agents.translation_agent import TranslationAgent
 # agent_registry.register(TranslationAgent())
 #
