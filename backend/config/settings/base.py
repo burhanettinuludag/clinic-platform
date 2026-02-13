@@ -198,3 +198,11 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@norosera.com'
 
 # ---------- OpenWeatherMap ----------
 OPENWEATHERMAP_API_KEY = os.environ.get('OPENWEATHERMAP_API_KEY', '')
+
+# ---------- LLM API ----------
+GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+LLM_PRIMARY_PROVIDER = 'groq'
+LLM_FALLBACK_PROVIDER = 'gemini'
+LLM_MAX_RETRIES = 2
+LLM_TIMEOUT_SECONDS = 30

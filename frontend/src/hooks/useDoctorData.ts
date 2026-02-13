@@ -239,3 +239,112 @@ export function useDementiaReport(patientId: string, days = 30) {
     enabled: !!patientId,
   });
 }
+// useDoctorData.ts'e eklenecek yeni hook'lar
+// Dosyanin SONUNA ekle
+
+// ==================== CONTENT GENERATION ====================
+
+export interface GenerateContentInput {
+  topic: string;
+  module?: string;
+  audience?: string;
+  content_type?: string;
+  tone?: string;
+}
+
+export interface GenerateContentResult {
+  success: boolean;
+  article_id?: string;
+  title?: string;
+  seo_title?: string;
+  legal_approved?: boolean;
+  legal_score?: number;
+  legal_issues?: string[];
+  keywords?: string[];
+  steps_completed?: string[];
+  duration_ms?: number;
+  error?: string;
+}
+
+export interface GeneratedDraft {
+  id: string;
+  title: string;
+  excerpt: string;
+  seo_title: string;
+  created_at: string;
+  status: string;
+}
+
+export function useGenerateContent() {
+  return useMutation({
+    mutationFn: async (input: GenerateContentInput) => {
+      const { data } = await api.post('/doctor/generate-content/', input);
+      return data as GenerateContentResult;
+    },
+  });
+}
+
+export function useGeneratedDrafts() {
+  return useQuery<GeneratedDraft[]>({
+    queryKey: ['generated-drafts'],
+    queryFn: async () => {
+      const { data } = await api.get('/doctor/generated-content/');
+      return data;
+    },
+  });
+}
+// useDoctorData.ts'e eklenecek yeni hook'lar
+// Dosyanin SONUNA ekle
+
+// ==================== CONTENT GENERATION ====================
+
+export interface GenerateContentInput {
+  topic: string;
+  module?: string;
+  audience?: string;
+  content_type?: string;
+  tone?: string;
+}
+
+export interface GenerateContentResult {
+  success: boolean;
+  article_id?: string;
+  title?: string;
+  seo_title?: string;
+  legal_approved?: boolean;
+  legal_score?: number;
+  legal_issues?: string[];
+  keywords?: string[];
+  steps_completed?: string[];
+  duration_ms?: number;
+  error?: string;
+}
+
+export interface GeneratedDraft {
+  id: string;
+  title: string;
+  excerpt: string;
+  seo_title: string;
+  created_at: string;
+  status: string;
+}
+
+export function useGenerateContent() {
+  return useMutation({
+    mutationFn: async (input: GenerateContentInput) => {
+      const { data } = await api.post('/doctor/generate-content/', input);
+      return data as GenerateContentResult;
+    },
+  });
+}
+
+export function useGeneratedDrafts() {
+  return useQuery<GeneratedDraft[]>({
+    queryKey: ['generated-drafts'],
+    queryFn: async () => {
+      const { data } = await api.get('/doctor/generated-content/');
+      return data;
+    },
+  });
+}
+

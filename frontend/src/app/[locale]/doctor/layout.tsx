@@ -3,13 +3,14 @@
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { LayoutDashboard, Users, AlertTriangle } from 'lucide-react';
+import { LayoutDashboard, Users, AlertTriangle, Sparkles } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 const sidebarItems = [
-  { href: '/doctor/dashboard', icon: LayoutDashboard, labelKey: 'dashboard' },
-  { href: '/doctor/patients', icon: Users, labelKey: 'patients' },
-  { href: '/doctor/alerts', icon: AlertTriangle, labelKey: 'alerts' },
+  { href: '/doctor/dashboard', icon: LayoutDashboard, labelKey: 'dashboard', fallback: 'Dashboard' },
+  { href: '/doctor/patients', icon: Users, labelKey: 'patients', fallback: 'Hastalar' },
+  { href: '/doctor/alerts', icon: AlertTriangle, labelKey: 'alerts', fallback: 'Uyarılar' },
+  { href: '/doctor/content', icon: Sparkles, labelKey: 'content', fallback: 'İçerik Üret' },
 ];
 
 export default function DoctorLayout({ children }: { children: ReactNode }) {
@@ -20,6 +21,15 @@ export default function DoctorLayout({ children }: { children: ReactNode }) {
     const segments = pathname.split('/');
     const pathWithoutLocale = '/' + segments.slice(2).join('/');
     return pathWithoutLocale.startsWith(href);
+  };
+
+  const getLabel = (labelKey: string, fallback: string) => {
+    try {
+      const translated = t(labelKey);
+      return translated === labelKey ? fallback : translated;
+    } catch {
+      return fallback;
+    }
   };
 
   return (
@@ -39,12 +49,22 @@ export default function DoctorLayout({ children }: { children: ReactNode }) {
                 href={item.href}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                   active
-                    ? 'bg-blue-50 text-blue-700'
+                    ? item.href === '/doctor/content'
+                      ? 'bg-purple-50 text-purple-700'
+                      : 'bg-blue-50 text-blue-700'
                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 }`}
               >
-                <Icon className={`h-5 w-5 ${active ? 'text-blue-700' : 'text-gray-400'}`} />
-                {t(item.labelKey)}
+                <Icon
+                  className={`h-5 w-5 ${
+                    active
+                      ? item.href === '/doctor/content'
+                        ? 'text-purple-700'
+                        : 'text-blue-700'
+                      : 'text-gray-400'
+                  }`}
+                />
+                {getLabel(item.labelKey, item.fallback)}
               </Link>
             );
           })}
@@ -70,7 +90,7 @@ export default function DoctorLayout({ children }: { children: ReactNode }) {
               }`}
             >
               <Icon className={`h-5 w-5 ${active ? 'text-blue-700' : 'text-gray-400'}`} />
-              {t(item.labelKey)}
+              {getLabel(item.labelKey, item.fallback)}
             </Link>
           );
         })}
