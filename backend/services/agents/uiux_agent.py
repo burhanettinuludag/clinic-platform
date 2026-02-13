@@ -60,6 +60,7 @@ class UIUXAgent(BaseAgent):
     """Kapsamli UI/UX tasarim ajani - design system, analiz, component uretimi."""
 
     name = 'uiux_agent'
+    task_type = 'edit_content'
     system_prompt = DESIGN_SYSTEM_PROMPT  # Default, mode'a gore degisir
     feature_flag_key = 'agent_uiux'
     temperature = 0.5

@@ -29,6 +29,7 @@ class LegalAgent(BaseAgent):
     name = 'legal_agent'
     system_prompt = LEGAL_SYSTEM_PROMPT
     feature_flag_key = 'agent_legal'
+    task_type = 'legal_check'
     temperature = 0.1  # Hukuki kontrol icin minimum yaraticilik
     max_tokens = 2000
 
@@ -155,9 +156,24 @@ SADECE JSON dondur."""
         }
 
     def validate_output(self, output: dict) -> Optional[str]:
-        """Cikti dogrulama."""
+        """Teknik cikti dogrulama (parse hatasi vb.)."""
         if output.get('legal_parse_error'):
             return "Hukuki kontrol ciktisi parse edilemedi"
-        # legal_approved False ise bu bir HATA degil, basarili bir RED
-        # Pipeline'da stop_on_failure=True olsa bile bu gecerli bir sonuc
+        return None
+
+    def check_gatekeeper_decision(self, output: dict) -> Optional[str]:
+        """
+        Gatekeeper is mantigi: legal_approved=False ise pipeline durur.
+
+        Bu metod sadece pipeline tanimi bu ajani gatekeeper olarak
+        isaretlediyse cagirilir (ornegin publish_article pipeline'i).
+        legal_audit pipeline'inda cagirilmaz (bilgi amacli).
+        """
+        if not output.get('legal_approved', True):
+            issues = output.get('legal_issues', [])
+            score = output.get('legal_score', 0)
+            return (
+                f"Hukuki onay reddedildi (skor: {score}). "
+                f"Sorunlar: {'; '.join(str(i) for i in issues[:3])}"
+            )
         return None

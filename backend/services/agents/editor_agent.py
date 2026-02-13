@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 class EditorAgent(BaseAgent):
     name = "editor_agent"
     description = "Otonom icerik son kontrol ve yayin karari ajani"
+    task_type = "edit_content"
 
     def __init__(self):
         super().__init__()

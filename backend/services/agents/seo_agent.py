@@ -26,6 +26,7 @@ class SEOAgent(BaseAgent):
     """Saglik icerigi icin SEO optimizasyonu yapan ajan."""
 
     name = 'seo_agent'
+    task_type = 'optimize_seo'
     system_prompt = SEO_SYSTEM_PROMPT
     feature_flag_key = 'agent_seo'
     temperature = 0.3  # SEO icin dusuk yaraticilik, tutarli cikti

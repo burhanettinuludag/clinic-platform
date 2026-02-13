@@ -20,6 +20,7 @@ class ContentAgent(BaseAgent):
     """Blog, bilgilendirme ve egitim icerigi ureten ajan."""
 
     name = 'content_agent'
+    task_type = 'generate_content'
     system_prompt = CONTENT_SYSTEM_PROMPT
     feature_flag_key = 'agent_content'
     temperature = 0.7

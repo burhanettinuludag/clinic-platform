@@ -29,6 +29,7 @@ decision kurallari:
 class QualityAgent(BaseAgent):
     name = "quality_agent"
     description = "Icerik kalite kontrol ajani"
+    task_type = "check_quality"
 
     def __init__(self):
         super().__init__()
@@ -70,4 +71,20 @@ Puanla ve JSON formatinda don."""
         return {"overall_score": 0, "decision": "reject", "error": "Parse hatasi"}
 
     def validate_output(self, output: dict):
+        return None
+
+    def check_gatekeeper_decision(self, output: dict):
+        """
+        Gatekeeper is mantigi: reject/revise kararinda pipeline durur.
+
+        Bu metod sadece pipeline tanimi bu ajani gatekeeper olarak
+        isaretlediyse cagirilir (ornegin full_content_v5 pipeline'i).
+        quality_check pipeline'inda cagirilmaz (bilgi amacli).
+        """
+        decision = output.get('decision', 'reject')
+        score = output.get('overall_score', 0)
+        if decision == 'reject':
+            return f"Kalite kontrol reddetti (skor: {score})"
+        if decision == 'revise':
+            return f"Icerik revizyon gerektiriyor (skor: {score})"
         return None

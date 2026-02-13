@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 class InternalLinkAgent(BaseAgent):
     name = "internal_link_agent"
     description = "Icerikler arasi internal link onerisi ajani"
+    task_type = "add_links"
 
     def __init__(self):
         super().__init__()

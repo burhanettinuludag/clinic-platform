@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 class NewsAgent(BaseAgent):
     name = "news_agent"
     description = "Noroloji haber icerigi ureten ajan"
+    task_type = "generate_news"
 
     def __init__(self):
         super().__init__()

@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 class QAAgent(BaseAgent):
     name = 'qa_agent'
+    task_type = 'check_quality'
     system_prompt = QA_SYSTEM_PROMPT
     feature_flag_key = 'agent_qa'
     temperature = 0.3

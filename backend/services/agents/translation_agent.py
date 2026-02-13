@@ -20,6 +20,7 @@ class TranslationAgent(BaseAgent):
     """Turkce saglik icerigini Ingilizce'ye ceviren ajan."""
 
     name = 'translation_agent'
+    task_type = 'translate'
     system_prompt = TRANSLATION_SYSTEM_PROMPT
     feature_flag_key = 'agent_translation'
     temperature = 0.2

@@ -158,6 +158,8 @@ class AgentTask(TimeStampedModel):
         ('scan_trends', 'Trend Tara'),
         ('analyze_competitor', 'Rakip Analiz'),
         ('full_pipeline', 'Tam Pipeline'),
+        ('legal_check', 'Hukuki Kontrol'),
+        ('translate', 'Ceviri'),
     ]
     agent_name = models.CharField(max_length=50)
     task_type = models.CharField(max_length=30, choices=TASK_TYPES)

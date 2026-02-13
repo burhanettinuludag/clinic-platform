@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 class PublishingAgent(BaseAgent):
     name = "publishing_agent"
     description = "Doktor yazilarini degerlendiren yayin editoru ajani"
+    task_type = "review_article"
 
     def __init__(self):
         super().__init__()
