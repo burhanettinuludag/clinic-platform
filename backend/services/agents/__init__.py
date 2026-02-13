@@ -1,15 +1,5 @@
-"""
-Ajan otomatik kayit.
-
-Bu dosya import edildiginde tum ajanlar registry'ye kaydedilir.
-Yeni ajan eklemek icin:
-1. agents/ klasorune yeni dosya ekle
-2. Asagiya import + register satiri ekle
-"""
-
 from services.registry import agent_registry
 
-# ── Ajanlari import et ve kaydet ──
 from services.agents.content_agent import ContentAgent
 agent_registry.register(ContentAgent())
 
@@ -22,6 +12,5 @@ agent_registry.register(LegalAgent())
 from services.agents.translation_agent import TranslationAgent
 agent_registry.register(TranslationAgent())
 
-# Yeni ajanlar buraya eklenecek:
-# from services.agents.qa_agent import QAAgent
-# agent_registry.register(QAAgent())
+from services.agents.uiux_agent import UIUXAgent
+agent_registry.register(UIUXAgent())
