@@ -19,9 +19,9 @@ agent_registry.register(SEOAgent())
 from services.agents.legal_agent import LegalAgent
 agent_registry.register(LegalAgent())
 
+from services.agents.translation_agent import TranslationAgent
+agent_registry.register(TranslationAgent())
+
 # Yeni ajanlar buraya eklenecek:
-# from services.agents.translation_agent import TranslationAgent
-# agent_registry.register(TranslationAgent())
-#
 # from services.agents.qa_agent import QAAgent
 # agent_registry.register(QAAgent())

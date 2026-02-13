@@ -7,6 +7,7 @@ Hekim onaylamadan yayinlanmaz (Article.status='draft').
 
 import json
 import logging
+import re
 from typing import Optional
 
 from services.base_agent import BaseAgent
@@ -29,14 +30,14 @@ class ContentAgent(BaseAgent):
         Icerik uret.
 
         Input:
-            topic: str - Konu (ornek: "Migren tetikleyicileri")
-            module: str - Hastalik modulu (migraine/epilepsy/dementia/wellness/general)
-            audience: str - Hedef kitle (patient/doctor/public) [default: patient]
-            tone: str - Ton (formal/friendly) [default: friendly]
-            content_type: str - Icerik tipi (blog/education/social) [default: blog]
+            topic: str - Konu
+            module: str - Hastalik modulu
+            audience: str - Hedef kitle [default: patient]
+            tone: str - Ton [default: friendly]
+            content_type: str - Icerik tipi [default: blog]
 
         Output:
-            title_tr, title_en, body_tr, excerpt_tr,
+            title_tr, body_tr, excerpt_tr,
             seo_title_tr, seo_description_tr,
             suggested_category, content_type
         """
@@ -52,7 +53,6 @@ class ContentAgent(BaseAgent):
         prompt = self._build_prompt(topic, module, audience, tone, content_type)
         response = self.llm_call(prompt)
 
-        # JSON parse
         parsed = self._parse_response(response.content)
         parsed['llm_provider'] = response.provider
         parsed['tokens_used'] = response.tokens_used
@@ -103,15 +103,57 @@ CIKTI FORMATI (JSON):
 SADECE JSON dondur, baska bir sey yazma."""
 
     def _parse_response(self, content: str) -> dict:
-        """LLM yanitini parse et."""
-        import re as regex
+        """LLM yanitini parse et. Backtick, nested newline vb. durumlari handle eder."""
         cleaned = content.strip()
-        match = regex.search(r'\{.*\}', cleaned, regex.DOTALL)
+
+        # 1. Dogrudan JSON parse dene
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError:
+            pass
+
+        # 2. Backtick'leri temizle ve tekrar dene
+        cleaned = re.sub(r'^```(?:json)?\s*', '', cleaned)
+        cleaned = re.sub(r'\s*```$', '', cleaned)
+        cleaned = cleaned.strip()
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError:
+            pass
+
+        # 3. En dis { } blogu bul
+        match = re.search(r'\{.*\}', cleaned, re.DOTALL)
         if match:
+            raw = match.group(0)
             try:
-                return json.loads(match.group(0))
+                return json.loads(raw)
             except json.JSONDecodeError:
                 pass
+
+            # 4. Key-value extraction (body_tr icinde newline/quote varsa JSON bozulur)
+            result = {}
+            for key in ['title_tr', 'excerpt_tr', 'seo_title_tr', 'seo_description_tr', 'suggested_category']:
+                km = re.search(
+                    r'"' + key + r'"\s*:\s*"((?:[^"\\]|\\.)*)"',
+                    raw
+                )
+                if km:
+                    result[key] = km.group(1).replace('\\n', '\n').replace('\\"', '"')
+
+            # body_tr ozel: son key'e veya kapanan } a kadar al
+            bm = re.search(
+                r'"body_tr"\s*:\s*"(.*?)"(?:\s*,\s*"(?:excerpt|seo_|suggested)|\s*\})',
+                raw,
+                re.DOTALL
+            )
+            if bm:
+                body = bm.group(1).replace('\\n', '\n').replace('\\"', '"')
+                result['body_tr'] = body
+
+            if result.get('title_tr') or result.get('body_tr'):
+                return result
+
+        # 5. Son care: raw content'i body_tr olarak dondur
         logger.warning('ContentAgent: JSON parse hatasi, raw donuyor')
         return {
             'title_tr': '',
