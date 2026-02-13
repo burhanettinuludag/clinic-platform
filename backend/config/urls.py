@@ -3,7 +3,10 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from services.admin_views import pipeline_run_view
+
 urlpatterns = [
+    path("admin/pipeline/", pipeline_run_view, name="pipeline_run"),
     path('admin/', admin.site.urls),
     path('api/v1/auth/', include('apps.accounts.urls')),
     path('api/v1/users/', include('apps.accounts.urls_profile')),

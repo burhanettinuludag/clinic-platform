@@ -134,3 +134,79 @@ class FeatureFlag(TimeStampedModel):
         if user and hasattr(user, 'role'):
             return user.role in self.enabled_for_roles
         return False
+
+
+
+class AgentTask(TimeStampedModel):
+    STATUS_CHOICES = [
+        ('pending', 'Beklemede'),
+        ('running', 'Calisiyor'),
+        ('completed', 'Tamamlandi'),
+        ('failed', 'Basarisiz'),
+        ('skipped', 'Atlandi'),
+        ('cancelled', 'Iptal Edildi'),
+    ]
+    TASK_TYPES = [
+        ('generate_content', 'Icerik Uret'),
+        ('generate_news', 'Haber Uret'),
+        ('optimize_seo', 'SEO Optimize'),
+        ('check_quality', 'Kalite Kontrol'),
+        ('review_article', 'Yazi Degerlendir'),
+        ('find_media', 'Gorsel Bul'),
+        ('add_links', 'Link Ekle'),
+        ('edit_content', 'Icerik Duzenle'),
+        ('scan_trends', 'Trend Tara'),
+        ('analyze_competitor', 'Rakip Analiz'),
+        ('full_pipeline', 'Tam Pipeline'),
+    ]
+    agent_name = models.CharField(max_length=50)
+    task_type = models.CharField(max_length=30, choices=TASK_TYPES)
+    input_data = models.JSONField(default=dict)
+    output_data = models.JSONField(default=dict, blank=True)
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='pending')
+    error_message = models.TextField(blank=True, default='')
+    retry_count = models.PositiveIntegerField(default=0)
+    tokens_used = models.PositiveIntegerField(default=0)
+    cost_usd = models.DecimalField(max_digits=8, decimal_places=4, default=0)
+    duration_ms = models.PositiveIntegerField(default=0)
+    llm_provider = models.CharField(max_length=20, blank=True, default='')
+    llm_model = models.CharField(max_length=50, blank=True, default='')
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='agent_tasks')
+    parent_task = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='subtasks')
+    article_id = models.UUIDField(null=True, blank=True)
+    news_article_id = models.UUIDField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Ajan Gorevi'
+        verbose_name_plural = 'Ajan Gorevleri'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['agent_name', 'status']),
+            models.Index(fields=['task_type', 'created_at']),
+        ]
+
+    def __str__(self):
+        return f"{self.agent_name} - {self.get_task_type_display()} ({self.get_status_display()})"
+
+    def mark_running(self):
+        self.status = 'running'
+        self.save(update_fields=['status'])
+
+    def mark_completed(self, output_data, tokens=0, duration=0, provider='', model_name=''):
+        from django.utils import timezone
+        self.status = 'completed'
+        self.output_data = output_data
+        self.tokens_used = tokens
+        self.duration_ms = duration
+        self.llm_provider = provider
+        self.llm_model = model_name
+        self.completed_at = timezone.now()
+        self.save()
+
+    def mark_failed(self, error_message):
+        from django.utils import timezone
+        self.status = 'failed'
+        self.error_message = error_message
+        self.completed_at = timezone.now()
+        self.save(update_fields=['status', 'error_message', 'completed_at'])

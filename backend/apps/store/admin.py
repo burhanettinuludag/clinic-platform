@@ -40,3 +40,14 @@ class LicenseAdmin(admin.ModelAdmin):
     list_filter = ('license_type', 'is_active')
     search_fields = ('license_key', 'user__email', 'product__name_tr')
     readonly_fields = ('license_key',)
+
+
+from apps.store.models import SoftwareProduct, PhysicalProduct
+
+@admin.register(SoftwareProduct)
+class SoftwareProductAdmin(admin.ModelAdmin):
+    list_display = ['product', 'current_version']
+
+@admin.register(PhysicalProduct)
+class PhysicalProductAdmin(admin.ModelAdmin):
+    list_display = ['product', 'stock_quantity', 'sku', 'ships_internationally']

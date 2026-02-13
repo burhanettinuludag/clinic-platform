@@ -76,6 +76,27 @@ PIPELINES = {
         'steps': ['content_agent', 'translation_agent'],
         'stop_on_failure': True,
     },
+
+    'full_content_v5': {
+        'description': 'v5 tam icerik pipeline: uret -> SEO -> link -> QA -> editor',
+        'steps': ['content_agent', 'seo_agent', 'internal_link_agent', 'quality_agent', 'editor_agent'],
+        'stop_on_failure': True,
+    },
+    'news_pipeline': {
+        'description': 'Haber icerigi pipeline',
+        'steps': ['news_agent', 'seo_agent', 'internal_link_agent', 'quality_agent', 'editor_agent'],
+        'stop_on_failure': True,
+    },
+    'doctor_article_review': {
+        'description': 'Doktor yazisi degerlendirme pipeline',
+        'steps': ['publishing_agent', 'seo_agent', 'internal_link_agent'],
+        'stop_on_failure': False,
+    },
+    'quality_check': {
+        'description': 'Kalite kontrol: QA + Editor',
+        'steps': ['quality_agent', 'editor_agent'],
+        'stop_on_failure': False,
+    },
 }
 
 

@@ -17,3 +17,18 @@ agent_registry.register(UIUXAgent())
 
 from services.agents.qa_agent import QAAgent
 agent_registry.register(QAAgent())
+
+from services.agents.news_agent import NewsAgent
+agent_registry.register(NewsAgent())
+
+from services.agents.editor_agent import EditorAgent
+agent_registry.register(EditorAgent())
+
+from services.agents.publishing_agent import PublishingAgent
+agent_registry.register(PublishingAgent())
+
+from services.agents.internal_link_agent import InternalLinkAgent
+agent_registry.register(InternalLinkAgent())
+
+from services.agents.quality_agent import QualityAgent
+agent_registry.register(QualityAgent())

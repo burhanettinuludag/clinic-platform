@@ -1,0 +1,33 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Pipeline Calistir{% endblock %}
+{% block content %}
+<h1>Pipeline Calistir</h1>
+<form method="post" style="max-width:600px;">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+        {% for field in form %}
+        <div class="form-row" style="padding:8px 0;">
+            <label style="display:block;font-weight:bold;">{{ field.label }}:</label>
+            {{ field }}
+            {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+        </div>
+        {% endfor %}
+    </fieldset>
+    <div class="submit-row" style="margin-top:15px;">
+        <input type="submit" value="Pipeline Calistir" class="default" style="padding:10px 30px;">
+    </div>
+</form>
+{% if result %}
+<div style="margin-top:30px;padding:20px;background:#f8f9fa;border-radius:8px;">
+    <h2>Sonuc</h2>
+    <p><strong>Basari:</strong> {% if result.success %}<span style="color:green;">BASARILI</span>{% else %}<span style="color:red;">BASARISIZ</span>{% endif %}</p>
+    <p><strong>Tamamlanan:</strong> {{ result.steps_completed|join:", " }}</p>
+    <p><strong>Basarisiz:</strong> {{ result.steps_failed|join:", " }}</p>
+    <p><strong>Sure:</strong> {{ result.total_duration_ms }}ms</p>
+    {% if result.final_data.title_tr %}<p><strong>Baslik:</strong> {{ result.final_data.title_tr }}</p>{% endif %}
+    {% if result.final_data.excerpt_tr %}<p><strong>Ozet:</strong> {{ result.final_data.excerpt_tr }}</p>{% endif %}
+    {% if result.final_data.decision %}<p><strong>Editor Karari:</strong> {{ result.final_data.decision }}</p>{% endif %}
+    {% if result.final_data.overall_score %}<p><strong>Kalite Skoru:</strong> {{ result.final_data.overall_score }}/100</p>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

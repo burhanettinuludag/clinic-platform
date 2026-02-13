@@ -18,3 +18,12 @@ class ConsentRecordAdmin(admin.ModelAdmin):
     list_filter = ('consent_type', 'granted', 'version')
     search_fields = ('user__email',)
     readonly_fields = ('created_at',)
+
+
+from apps.common.models import AgentTask
+
+@admin.register(AgentTask)
+class AgentTaskAdmin(admin.ModelAdmin):
+    list_display = ['agent_name', 'task_type', 'status', 'tokens_used', 'duration_ms', 'created_at']
+    list_filter = ['agent_name', 'task_type', 'status']
+    readonly_fields = ['input_data', 'output_data']

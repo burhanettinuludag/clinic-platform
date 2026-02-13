@@ -172,3 +172,61 @@ class License(TimeStampedModel):
 
     def __str__(self):
         return f"{self.license_key} - {self.product.name_en}"
+
+
+
+class SoftwareProduct(TimeStampedModel):
+    """Yazilim urunleri icin ek bilgiler."""
+
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='software_details')
+    current_version = models.CharField(max_length=20, default='1.0.0')
+    changelog = models.JSONField(default=list, blank=True)
+    supported_platforms = models.JSONField(default=list, blank=True)
+    system_requirements_json = models.JSONField(default=dict, blank=True)
+    demo_url = models.URLField(blank=True, default='')
+    demo_video_url = models.URLField(blank=True, default='')
+    documentation_url = models.URLField(blank=True, default='')
+    pricing_plans = models.JSONField(default=list, blank=True)
+    apple_store_url = models.URLField(blank=True, default='')
+    apple_store_id = models.CharField(max_length=50, blank=True, default='')
+    academic_references = models.JSONField(default=list, blank=True)
+
+    class Meta:
+        verbose_name = 'Yazilim Urunu'
+        verbose_name_plural = 'Yazilim Urunleri'
+
+    def __str__(self):
+        return f"{self.product.name_en} v{self.current_version}"
+
+
+class PhysicalProduct(TimeStampedModel):
+    """Fiziksel urunler (elektrod vb.) icin ek bilgiler."""
+
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='physical_details')
+    weight_grams = models.PositiveIntegerField(default=0)
+    dimensions = models.JSONField(default=dict, blank=True)
+    stock_quantity = models.PositiveIntegerField(default=0)
+    low_stock_threshold = models.PositiveIntegerField(default=10)
+    sku = models.CharField(max_length=50, unique=True)
+    technical_specs = models.JSONField(default=dict, blank=True)
+    certifications = models.JSONField(default=list, blank=True)
+    shipping_info = models.JSONField(default=dict, blank=True)
+    ships_internationally = models.BooleanField(default=True)
+    manufacturer = models.CharField(max_length=200, default='UlgarTech')
+    manufacturing_country = models.CharField(max_length=50, default='Turkiye')
+    warranty_months = models.PositiveIntegerField(default=12)
+
+    class Meta:
+        verbose_name = 'Fiziksel Urun'
+        verbose_name_plural = 'Fiziksel Urunler'
+
+    def __str__(self):
+        return f"{self.product.name_en} (Stok: {self.stock_quantity})"
+
+    @property
+    def is_low_stock(self):
+        return self.stock_quantity <= self.low_stock_threshold
+
+    @property
+    def is_in_stock(self):
+        return self.stock_quantity > 0

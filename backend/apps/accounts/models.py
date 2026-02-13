@@ -101,3 +101,85 @@ class DoctorProfile(TimeStampedModel):
 
     def __str__(self):
         return f"Dr. {self.user.get_full_name()}"
+
+
+class DoctorAuthor(TimeStampedModel):
+    """Doktor yazar profili. Platform uzerinde yazi yazan hekimlerin detayli profili."""
+
+    SPECIALTY_CHOICES = [
+        ('neurology', 'Noroloji'),
+        ('ftr', 'Fiziksel Tip ve Rehabilitasyon'),
+        ('neurosurgery', 'Beyin ve Sinir Cerrahisi'),
+        ('physiology', 'Fizyoloji'),
+        ('geriatrics', 'Geriatri'),
+        ('psychiatry', 'Psikiyatri'),
+        ('sleep_medicine', 'Uyku Bozukluklari'),
+        ('clinical_psychology', 'Klinik Psikoloji'),
+        ('social_work', 'Sosyal Hizmet'),
+    ]
+
+    AUTHOR_LEVELS = [
+        (0, 'Yeni Yazar'),
+        (1, 'Onayli Yazar'),
+        (2, 'Aktif Yazar'),
+        (3, 'Kidemli Yazar'),
+        (4, 'Editor'),
+    ]
+
+    doctor = models.OneToOneField(DoctorProfile, on_delete=models.CASCADE, related_name='author_profile')
+    primary_specialty = models.CharField(max_length=30, choices=SPECIALTY_CHOICES)
+    secondary_specialties = models.JSONField(default=list, blank=True)
+    sub_specialties = models.JSONField(default=list, blank=True)
+    bio_tr = models.TextField(blank=True, default='')
+    bio_en = models.TextField(blank=True, default='')
+    headline_tr = models.CharField(max_length=200, blank=True, default='')
+    headline_en = models.CharField(max_length=200, blank=True, default='')
+    education = models.JSONField(default=list, blank=True)
+    publications = models.JSONField(default=list, blank=True)
+    memberships = models.JSONField(default=list, blank=True)
+    orcid_id = models.CharField(max_length=50, blank=True, default='')
+    google_scholar_url = models.URLField(blank=True, default='')
+    pubmed_author_id = models.CharField(max_length=50, blank=True, default='')
+    institution = models.CharField(max_length=200, blank=True, default='')
+    department = models.CharField(max_length=200, blank=True, default='')
+    city = models.CharField(max_length=100, blank=True, default='')
+    author_level = models.IntegerField(choices=AUTHOR_LEVELS, default=0)
+    total_articles = models.PositiveIntegerField(default=0)
+    total_views = models.PositiveIntegerField(default=0)
+    average_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0)
+    is_verified = models.BooleanField(default=False)
+    verified_at = models.DateTimeField(null=True, blank=True)
+    verification_document = models.FileField(upload_to='doctor_verification/', blank=True)
+    profile_photo = models.ImageField(upload_to='doctor_photos/', blank=True)
+    linkedin_url = models.URLField(blank=True, default='')
+    website_url = models.URLField(blank=True, default='')
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Doktor Yazar'
+        verbose_name_plural = 'Doktor Yazarlar'
+        ordering = ['-author_level', '-total_articles']
+
+    def __str__(self):
+        return f"{self.doctor.user.get_full_name()} - {self.get_primary_specialty_display()}"
+
+    def update_level(self):
+        if self.total_articles >= 50:
+            self.author_level = 4
+        elif self.total_articles >= 25:
+            self.author_level = 3
+        elif self.total_articles >= 10:
+            self.author_level = 2
+        elif self.total_articles >= 5:
+            self.author_level = 1
+        else:
+            self.author_level = 0
+        self.save(update_fields=['author_level'])
+
+    @property
+    def can_auto_publish(self):
+        return self.author_level >= 2
+
+    @property
+    def min_publish_score(self):
+        return {0: 999, 1: 80, 2: 70, 3: 60, 4: 0}.get(self.author_level, 999)

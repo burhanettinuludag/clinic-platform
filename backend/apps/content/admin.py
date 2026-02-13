@@ -33,3 +33,18 @@ class EducationProgressAdmin(admin.ModelAdmin):
     list_display = ('patient', 'education_item', 'progress_percent', 'completed_at')
     list_filter = ('completed_at',)
     search_fields = ('patient__email',)
+
+
+from apps.content.models import NewsArticle, ArticleReview
+
+@admin.register(NewsArticle)
+class NewsArticleAdmin(admin.ModelAdmin):
+    list_display = ['title_tr', 'category', 'priority', 'status', 'is_auto_generated', 'published_at']
+    list_filter = ['category', 'priority', 'status', 'is_auto_generated']
+    search_fields = ['title_tr', 'title_en']
+    prepopulated_fields = {'slug': ('title_tr',)}
+
+@admin.register(ArticleReview)
+class ArticleReviewAdmin(admin.ModelAdmin):
+    list_display = ['review_type', 'overall_score', 'decision', 'created_at']
+    list_filter = ['review_type', 'decision']

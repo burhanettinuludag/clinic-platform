@@ -36,3 +36,12 @@ class DoctorProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'specialty', 'license_number', 'is_accepting_patients')
     list_filter = ('is_accepting_patients',)
     search_fields = ('user__email', 'user__first_name', 'user__last_name')
+
+
+from apps.accounts.models import DoctorAuthor
+
+@admin.register(DoctorAuthor)
+class DoctorAuthorAdmin(admin.ModelAdmin):
+    list_display = ['doctor', 'primary_specialty', 'author_level', 'total_articles', 'is_verified', 'is_active']
+    list_filter = ['primary_specialty', 'author_level', 'is_verified', 'is_active']
+    search_fields = ['doctor__user__first_name', 'doctor__user__last_name', 'institution']
