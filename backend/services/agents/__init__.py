@@ -14,3 +14,6 @@ agent_registry.register(TranslationAgent())
 
 from services.agents.uiux_agent import UIUXAgent
 agent_registry.register(UIUXAgent())
+
+from services.agents.qa_agent import QAAgent
+agent_registry.register(QAAgent())
