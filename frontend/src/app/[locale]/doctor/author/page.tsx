@@ -154,7 +154,7 @@ function ArticlesTab() {
           <div key={a.id} className="rounded-lg border bg-white p-4 hover:shadow-sm transition-shadow">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-gray-900 truncate">{a.title_tr || 'Basliksiz'}</h3>
+                <Link href={"/doctor/author/articles/" + a.id} className="font-medium text-gray-900 truncate hover:text-blue-600 transition-colors block">{a.title_tr || 'Basliksiz'}</Link>
                 {a.excerpt_tr && <p className="text-sm text-gray-500 mt-0.5 line-clamp-1">{a.excerpt_tr}</p>}
                 <div className="flex items-center gap-3 mt-2">
                   <StatusBadge status={a.status} />
@@ -215,7 +215,7 @@ function NewsTab() {
           <div key={n.id} className="rounded-lg border bg-white p-4 hover:shadow-sm transition-shadow">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-gray-900 truncate">{n.title_tr || 'Basliksiz'}</h3>
+                <Link href={"/doctor/author/news/" + n.id} className="font-medium text-gray-900 truncate hover:text-blue-600 transition-colors block">{n.title_tr || 'Basliksiz'}</Link>
                 <div className="flex items-center gap-3 mt-2 flex-wrap">
                   <StatusBadge status={n.status} />
                   <span className="text-xs text-gray-500">{n.category_display}</span>
