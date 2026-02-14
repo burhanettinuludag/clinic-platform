@@ -13,6 +13,20 @@ from .views_author import (
     AuthorNewsTransitionView,
     AuthorStatsView,
 )
+from .views_editor import (
+    ReviewQueueView,
+    ReviewQueueStatsView,
+    EditorArticleListView,
+    EditorArticleDetailView,
+    EditorArticleReviewView,
+    EditorArticleTransitionView,
+    EditorNewsListView,
+    EditorNewsDetailView,
+    EditorNewsReviewView,
+    EditorNewsTransitionView,
+    EditorAuthorListView,
+    EditorAuthorVerifyView,
+)
 
 router = DefaultRouter()
 router.register(r'patients', views.DoctorPatientViewSet, basename='doctor-patients')
@@ -44,4 +58,25 @@ urlpatterns = [
 
     # Yazar istatistikleri
     path('author/stats/', AuthorStatsView.as_view(), name='author-stats'),
+
+    # ═══ Editor / Admin Onay Islemleri ═══
+    # Inceleme kuyrugu
+    path('editor/review-queue/', ReviewQueueView.as_view(), name='editor-review-queue'),
+    path('editor/review-queue/stats/', ReviewQueueStatsView.as_view(), name='editor-review-queue-stats'),
+
+    # Makale onay
+    path('editor/articles/', EditorArticleListView.as_view(), name='editor-articles'),
+    path('editor/articles/<uuid:pk>/', EditorArticleDetailView.as_view(), name='editor-article-detail'),
+    path('editor/articles/<uuid:pk>/review/', EditorArticleReviewView.as_view(), name='editor-article-review'),
+    path('editor/articles/<uuid:pk>/transition/', EditorArticleTransitionView.as_view(), name='editor-article-transition'),
+
+    # Haber onay
+    path('editor/news/', EditorNewsListView.as_view(), name='editor-news'),
+    path('editor/news/<uuid:pk>/', EditorNewsDetailView.as_view(), name='editor-news-detail'),
+    path('editor/news/<uuid:pk>/review/', EditorNewsReviewView.as_view(), name='editor-news-review'),
+    path('editor/news/<uuid:pk>/transition/', EditorNewsTransitionView.as_view(), name='editor-news-transition'),
+
+    # Yazar yonetimi
+    path('editor/authors/', EditorAuthorListView.as_view(), name='editor-authors'),
+    path('editor/authors/<uuid:pk>/verify/', EditorAuthorVerifyView.as_view(), name='editor-author-verify'),
 ]
