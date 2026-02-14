@@ -91,3 +91,47 @@ export function useArticlePipeline() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['author-articles'] }),
   });
 }
+
+
+export interface AuthorNewsDetail {
+  id: string; slug: string;
+  title_tr: string; title_en: string;
+  excerpt_tr: string; excerpt_en: string;
+  body_tr: string; body_en: string;
+  category: string; category_display: string;
+  priority: string; status: string;
+  source_urls: string[]; original_source: string;
+  meta_title: string; meta_description: string;
+  keywords: string[]; schema_markup: Record<string, unknown>;
+  featured_image: string; featured_image_alt: string;
+  is_auto_generated: boolean; view_count: number;
+  published_at: string | null; created_at: string; updated_at: string;
+  reviews: ArticleReview[];
+}
+
+export function useAuthorNewsDetail(id: string) {
+  return useQuery<AuthorNewsDetail>({
+    queryKey: ['author-news', id],
+    queryFn: async () => { const { data } = await api.get('/doctor/author/news/' + id + '/'); return data; },
+    enabled: !!id,
+  });
+}
+
+export function useUpdateNews() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...input }: { id: string } & Record<string, any>) => {
+      const { data } = await api.patch('/doctor/author/news/' + id + '/', input);
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['author-news'] }),
+  });
+}
+
+export function useDeleteNews() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => { await api.delete('/doctor/author/news/' + id + '/'); },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['author-news'] }),
+  });
+}
