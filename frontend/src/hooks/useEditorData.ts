@@ -92,3 +92,34 @@ export function useVerifyAuthor() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['editor-authors'] }),
   });
 }
+
+
+// ==================== BULK OPERATIONS ====================
+
+export function useBulkArticleTransition() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ ids, action, feedback }: { ids: string[]; action: string; feedback?: string }) => {
+      const { data } = await api.post('/doctor/editor/articles/bulk-transition/', { ids, action, feedback });
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['editor-articles'] });
+      qc.invalidateQueries({ queryKey: ['editor-review-stats'] });
+    },
+  });
+}
+
+export function useBulkNewsTransition() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ ids, action, feedback }: { ids: string[]; action: string; feedback?: string }) => {
+      const { data } = await api.post('/doctor/editor/news/bulk-transition/', { ids, action, feedback });
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['editor-news'] });
+      qc.invalidateQueries({ queryKey: ['editor-review-stats'] });
+    },
+  });
+}

@@ -26,6 +26,8 @@ from .views_editor import (
     EditorNewsTransitionView,
     EditorAuthorListView,
     EditorAuthorVerifyView,
+    EditorBulkArticleTransitionView,
+    EditorBulkNewsTransitionView,
 )
 
 router = DefaultRouter()
@@ -79,4 +81,8 @@ urlpatterns = [
     # Yazar yonetimi
     path('editor/authors/', EditorAuthorListView.as_view(), name='editor-authors'),
     path('editor/authors/<uuid:pk>/verify/', EditorAuthorVerifyView.as_view(), name='editor-author-verify'),
+
+    # Toplu islemler
+    path('editor/articles/bulk-transition/', EditorBulkArticleTransitionView.as_view(), name='editor-bulk-article-transition'),
+    path('editor/news/bulk-transition/', EditorBulkNewsTransitionView.as_view(), name='editor-bulk-news-transition'),
 ]

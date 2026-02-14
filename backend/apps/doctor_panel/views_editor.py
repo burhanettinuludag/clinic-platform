@@ -626,3 +626,72 @@ class EditorAuthorVerifyView(views.APIView):
             'is_verified': author.is_verified,
             'author_level': author.author_level,
         })
+
+
+
+# ===============================================
+# 5. TOPLU ISLEMLER (Bulk Operations)
+# ===============================================
+
+class EditorBulkArticleTransitionView(views.APIView):
+    """Toplu makale durum gecisi. POST {"ids":["uuid1","uuid2"],"action":"publish","feedback":""}"""
+    permission_classes = [IsAuthenticated, IsEditorOrAdmin]
+    STATUS_MAP = {'approve': 'approved', 'reject': 'revision', 'publish': 'published', 'archive': 'archived', 'revert_to_draft': 'draft'}
+
+    def post(self, request):
+        ids = request.data.get('ids', [])
+        action = request.data.get('action', '')
+        feedback = request.data.get('feedback', '')
+        if not ids or not action:
+            return Response({'detail': 'ids ve action zorunlu.'}, status=status.HTTP_400_BAD_REQUEST)
+        if action not in self.STATUS_MAP:
+            return Response({'detail': f'Gecersiz action: {action}'}, status=status.HTTP_400_BAD_REQUEST)
+        new_status = self.STATUS_MAP[action]
+        articles = Article.objects.filter(id__in=ids)
+        results = {'success': [], 'failed': []}
+        for article in articles:
+            old = article.status
+            try:
+                article.status = new_status
+                if new_status == 'published' and not article.published_at:
+                    article.published_at = timezone.now()
+                article.save()
+                from apps.notifications.content_notifications import notify_article_transition
+                notify_article_transition(article, old, new_status, changed_by=request.user, feedback=feedback)
+                results['success'].append({'id': str(article.id), 'title': article.title_tr, 'new_status': new_status})
+            except Exception as e:
+                results['failed'].append({'id': str(article.id), 'error': str(e)})
+        logger.info(f"[EDITOR BULK] Articles: {len(results['success'])} ok, {len(results['failed'])} fail, action={action}")
+        return Response({'detail': f"{len(results['success'])} makale guncellendi.", 'results': results})
+
+
+class EditorBulkNewsTransitionView(views.APIView):
+    """Toplu haber durum gecisi. POST {"ids":["uuid1","uuid2"],"action":"approve","feedback":""}"""
+    permission_classes = [IsAuthenticated, IsEditorOrAdmin]
+    STATUS_MAP = {'approve': 'approved', 'reject': 'revision', 'publish': 'published', 'archive': 'archived', 'revert_to_draft': 'draft'}
+
+    def post(self, request):
+        ids = request.data.get('ids', [])
+        action = request.data.get('action', '')
+        feedback = request.data.get('feedback', '')
+        if not ids or not action:
+            return Response({'detail': 'ids ve action zorunlu.'}, status=status.HTTP_400_BAD_REQUEST)
+        if action not in self.STATUS_MAP:
+            return Response({'detail': f'Gecersiz action: {action}'}, status=status.HTTP_400_BAD_REQUEST)
+        new_status = self.STATUS_MAP[action]
+        news_list = NewsArticle.objects.filter(id__in=ids)
+        results = {'success': [], 'failed': []}
+        for news in news_list:
+            old = news.status
+            try:
+                news.status = new_status
+                if new_status == 'published' and not news.published_at:
+                    news.published_at = timezone.now()
+                news.save()
+                from apps.notifications.content_notifications import notify_news_transition
+                notify_news_transition(news, old, new_status, changed_by=request.user, feedback=feedback)
+                results['success'].append({'id': str(news.id), 'title': news.title_tr, 'new_status': new_status})
+            except Exception as e:
+                results['failed'].append({'id': str(news.id), 'error': str(e)})
+        logger.info(f"[EDITOR BULK] News: {len(results['success'])} ok, {len(results['failed'])} fail, action={action}")
+        return Response({'detail': f"{len(results['success'])} haber guncellendi.", 'results': results})

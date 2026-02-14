@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ShieldCheck, Inbox, FileText, Newspaper, Users, CheckCircle, XCircle, Send, Archive, RotateCcw, AlertTriangle, Loader2, Search, Shield } from 'lucide-react';
-import { useReviewQueueStats, useEditorArticles, useEditorNews, useEditorArticleTransition, useEditorNewsTransition, useEditorAuthors, useVerifyAuthor } from '@/hooks/useEditorData';
+import { useReviewQueueStats, useEditorArticles, useEditorNews, useEditorArticleTransition, useEditorNewsTransition, useEditorAuthors, useVerifyAuthor, useBulkArticleTransition, useBulkNewsTransition } from '@/hooks/useEditorData';
 import type { EditorArticle, EditorNews, EditorAuthor } from '@/hooks/useEditorData';
 
 const STATUS_CFG: Record<string, { label: string; color: string }> = {
@@ -121,6 +121,8 @@ function QueueTab() {
 function ArticlesTab() {
   const [sf, setSf] = useState('');
   const [sq, setSq] = useState('');
+  const [sel, setSel] = useState<string[]>([]);
+  const bulk = useBulkArticleTransition();
   const { data: articles, isLoading } = useEditorArticles({ status: sf || undefined, search: sq || undefined });
   const tr = useEditorArticleTransition();
   return (
@@ -135,9 +137,18 @@ function ArticlesTab() {
           <option value="draft">Taslak</option><option value="published">Yayinda</option><option value="archived">Arsiv</option>
         </select>
       </div>
+      {sel.length > 0 && (
+        <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2">
+          <span className="text-sm font-medium text-emerald-700">{sel.length} secili</span>
+          <button onClick={() => { bulk.mutate({ ids: sel, action: 'publish' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-green-700 bg-green-100 hover:bg-green-200">Toplu Yayinla</button>
+          <button onClick={() => { bulk.mutate({ ids: sel, action: 'archive' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200">Toplu Arsivle</button>
+          <button onClick={() => setSel([])} className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:text-red-800">Temizle</button>
+        </div>
+      )}
       {isLoading ? <Ld /> : !articles?.length ? <Mt msg="Makale bulunamadi." />
        : <div className="space-y-2">{articles.map((a) => (
           <div key={a.id} className="rounded-lg border bg-white p-4 flex items-start justify-between gap-4">
+            <input type="checkbox" checked={sel.includes(a.id)} onChange={(e) => setSel(e.target.checked ? [...sel, a.id] : sel.filter(x => x !== a.id))} className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600" />
             <div className="min-w-0 flex-1">
               <p className="font-medium text-gray-900 truncate">{a.title_tr || 'Basliksiz'}</p>
               <div className="flex items-center gap-3 mt-1"><SBadge status={a.status} /><span className="text-xs text-gray-500">{a.author_name}</span><span className="text-xs text-gray-400">{fmtD(a.updated_at)}</span></div>
@@ -156,6 +167,8 @@ function ArticlesTab() {
 function NewsTab() {
   const [sf, setSf] = useState('');
   const [sq, setSq] = useState('');
+  const [sel, setSel] = useState<string[]>([]);
+  const bulk = useBulkNewsTransition();
   const { data: news, isLoading } = useEditorNews({ status: sf || undefined, search: sq || undefined });
   const tr = useEditorNewsTransition();
   return (
@@ -171,9 +184,19 @@ function NewsTab() {
           <option value="approved">Onaylandi</option><option value="published">Yayinda</option><option value="archived">Arsiv</option>
         </select>
       </div>
+      {sel.length > 0 && (
+        <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2">
+          <span className="text-sm font-medium text-emerald-700">{sel.length} secili</span>
+          <button onClick={() => { bulk.mutate({ ids: sel, action: 'approve' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200">Toplu Onayla</button>
+          <button onClick={() => { bulk.mutate({ ids: sel, action: 'publish' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-green-700 bg-green-100 hover:bg-green-200">Toplu Yayinla</button>
+          <button onClick={() => { bulk.mutate({ ids: sel, action: 'archive' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200">Toplu Arsivle</button>
+          <button onClick={() => setSel([])} className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:text-red-800">Temizle</button>
+        </div>
+      )}
       {isLoading ? <Ld /> : !news?.length ? <Mt msg="Haber bulunamadi." />
        : <div className="space-y-2">{news.map((n) => (
           <div key={n.id} className="rounded-lg border bg-white p-4 flex items-start justify-between gap-4">
+            <input type="checkbox" checked={sel.includes(n.id)} onChange={(e) => setSel(e.target.checked ? [...sel, n.id] : sel.filter(x => x !== n.id))} className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600" />
             <div className="min-w-0 flex-1">
               <p className="font-medium text-gray-900 truncate">{n.title_tr}</p>
               <div className="flex items-center gap-3 mt-1 flex-wrap">
@@ -247,7 +270,7 @@ print(f'Wrote {os.path.getsize(path)} bytes to {path}')
 
 import { useState } from 'react';
 import { ShieldCheck, Inbox, FileText, Newspaper, Users, CheckCircle, XCircle, Send, Archive, RotateCcw, AlertTriangle, Loader2, Search, Shield } from 'lucide-react';
-import { useReviewQueueStats, useEditorArticles, useEditorNews, useEditorArticleTransition, useEditorNewsTransition, useEditorAuthors, useVerifyAuthor } from '@/hooks/useEditorData';
+import { useReviewQueueStats, useEditorArticles, useEditorNews, useEditorArticleTransition, useEditorNewsTransition, useEditorAuthors, useVerifyAuthor, useBulkArticleTransition, useBulkNewsTransition } from '@/hooks/useEditorData';
 import type { EditorArticle, EditorNews, EditorAuthor } from '@/hooks/useEditorData';
 
 const STATUS_CFG: Record<string, { label: string; color: string }> = {
@@ -366,6 +389,8 @@ function QueueTab() {
 function ArticlesTab() {
   const [sf, setSf] = useState('');
   const [sq, setSq] = useState('');
+  const [sel, setSel] = useState<string[]>([]);
+  const bulk = useBulkArticleTransition();
   const { data: articles, isLoading } = useEditorArticles({ status: sf || undefined, search: sq || undefined });
   const tr = useEditorArticleTransition();
   return (
@@ -380,9 +405,18 @@ function ArticlesTab() {
           <option value="draft">Taslak</option><option value="published">Yayinda</option><option value="archived">Arsiv</option>
         </select>
       </div>
+      {sel.length > 0 && (
+        <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2">
+          <span className="text-sm font-medium text-emerald-700">{sel.length} secili</span>
+          <button onClick={() => { bulk.mutate({ ids: sel, action: 'publish' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-green-700 bg-green-100 hover:bg-green-200">Toplu Yayinla</button>
+          <button onClick={() => { bulk.mutate({ ids: sel, action: 'archive' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200">Toplu Arsivle</button>
+          <button onClick={() => setSel([])} className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:text-red-800">Temizle</button>
+        </div>
+      )}
       {isLoading ? <Ld /> : !articles?.length ? <Mt msg="Makale bulunamadi." />
        : <div className="space-y-2">{articles.map((a) => (
           <div key={a.id} className="rounded-lg border bg-white p-4 flex items-start justify-between gap-4">
+            <input type="checkbox" checked={sel.includes(a.id)} onChange={(e) => setSel(e.target.checked ? [...sel, a.id] : sel.filter(x => x !== a.id))} className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600" />
             <div className="min-w-0 flex-1">
               <p className="font-medium text-gray-900 truncate">{a.title_tr || 'Basliksiz'}</p>
               <div className="flex items-center gap-3 mt-1"><SBadge status={a.status} /><span className="text-xs text-gray-500">{a.author_name}</span><span className="text-xs text-gray-400">{fmtD(a.updated_at)}</span></div>
@@ -401,6 +435,8 @@ function ArticlesTab() {
 function NewsTab() {
   const [sf, setSf] = useState('');
   const [sq, setSq] = useState('');
+  const [sel, setSel] = useState<string[]>([]);
+  const bulk = useBulkNewsTransition();
   const { data: news, isLoading } = useEditorNews({ status: sf || undefined, search: sq || undefined });
   const tr = useEditorNewsTransition();
   return (
@@ -416,9 +452,19 @@ function NewsTab() {
           <option value="approved">Onaylandi</option><option value="published">Yayinda</option><option value="archived">Arsiv</option>
         </select>
       </div>
+      {sel.length > 0 && (
+        <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2">
+          <span className="text-sm font-medium text-emerald-700">{sel.length} secili</span>
+          <button onClick={() => { bulk.mutate({ ids: sel, action: 'approve' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200">Toplu Onayla</button>
+          <button onClick={() => { bulk.mutate({ ids: sel, action: 'publish' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-green-700 bg-green-100 hover:bg-green-200">Toplu Yayinla</button>
+          <button onClick={() => { bulk.mutate({ ids: sel, action: 'archive' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200">Toplu Arsivle</button>
+          <button onClick={() => setSel([])} className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:text-red-800">Temizle</button>
+        </div>
+      )}
       {isLoading ? <Ld /> : !news?.length ? <Mt msg="Haber bulunamadi." />
        : <div className="space-y-2">{news.map((n) => (
           <div key={n.id} className="rounded-lg border bg-white p-4 flex items-start justify-between gap-4">
+            <input type="checkbox" checked={sel.includes(n.id)} onChange={(e) => setSel(e.target.checked ? [...sel, n.id] : sel.filter(x => x !== n.id))} className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600" />
             <div className="min-w-0 flex-1">
               <p className="font-medium text-gray-900 truncate">{n.title_tr}</p>
               <div className="flex items-center gap-3 mt-1 flex-wrap">
