@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { FileText, Newspaper, BarChart3, Plus, Send, Archive, RotateCcw, Trash2, Eye, CheckCircle, Clock, AlertTriangle, Star, Shield, Loader2, Search, Filter, ChevronDown, Zap, BookOpen } from 'lucide-react';
+import { Link } from '@/i18n/navigation';
 import { useAuthorStats, useAuthorArticles, useAuthorNews, useArticleTransition, useNewsTransition, useDeleteArticle, useArticlePipeline } from '@/hooks/useAuthorData';
 import type { AuthorArticle, AuthorNews } from '@/hooks/useAuthorData';
 
