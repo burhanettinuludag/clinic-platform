@@ -336,10 +336,11 @@ class EditorArticleTransitionView(views.APIView):
     def _update_author_stats(self, user):
         try:
             author = user.doctor_profile.author_profile
-            author.total_articles = (
-                Article.objects.filter(author=user, status='published').count()
-                + NewsArticle.objects.filter(author=author, status='published').count()
-            )
+            article_count = Article.objects.filter(
+                Q(author=user) | Q(doctor_author=author), status='published'
+            ).distinct().count()
+            news_count = NewsArticle.objects.filter(author=author, status='published').count()
+            author.total_articles = article_count + news_count
             author.save(update_fields=['total_articles'])
             author.update_level()
         except Exception:

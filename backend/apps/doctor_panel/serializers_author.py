@@ -232,6 +232,11 @@ class AuthorArticleCreateSerializer(serializers.ModelSerializer):
         validated_data['slug'] = slug
         validated_data['author'] = self.context['request'].user
         validated_data['status'] = 'draft'
+        try:
+            doctor_author = self.context['request'].user.doctor_profile.author_profile
+            validated_data['doctor_author'] = doctor_author
+        except Exception:
+            pass
         return super().create(validated_data)
 
 

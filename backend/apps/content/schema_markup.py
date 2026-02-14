@@ -94,8 +94,13 @@ def generate_article_schema(article, request=None):
         schema['datePublished'] = article.published_at.isoformat()
     if article.updated_at:
         schema['dateModified'] = article.updated_at.isoformat()
-    if article.author:
-        schema['author'] = _build_person_schema(article.author)
+    author_user = None
+    if hasattr(article, 'doctor_author') and article.doctor_author:
+        author_user = article.doctor_author.doctor.user
+    elif article.author:
+        author_user = article.author
+    if author_user:
+        schema['author'] = _build_person_schema(author_user)
     if article.featured_image:
         schema['image'] = {'@type': 'ImageObject', 'url': SITE_URL + article.featured_image.url}
     if article.category:

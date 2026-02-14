@@ -51,6 +51,14 @@ class Article(TimeStampedModel):
         null=True,
         related_name='authored_articles',
     )
+    doctor_author = models.ForeignKey(
+        'accounts.DoctorAuthor',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='articles',
+        help_text='DoctorAuthor profili (E-E-A-T ve istatistik icin)',
+    )
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
     published_at = models.DateTimeField(null=True, blank=True)
     is_featured = models.BooleanField(default=False)
