@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { LayoutDashboard, Users, AlertTriangle, Sparkles, BookOpen, ShieldCheck } from 'lucide-react';
+import NotificationBell from '@/components/NotificationBell';
 import type { ReactNode } from 'react';
 
 const sidebarItems = [
@@ -43,8 +44,9 @@ export default function DoctorLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen">
       <aside className="hidden md:flex md:w-64 md:flex-col md:border-r md:bg-white">
-        <div className="flex h-16 items-center border-b px-6">
+        <div className="flex h-16 items-center justify-between border-b px-6">
           <h2 className="text-lg font-semibold text-gray-800">Doctor Panel</h2>
+          <NotificationBell />
         </div>
         <nav className="flex-1 space-y-1 p-4">
           {sidebarItems.map((item) => {
