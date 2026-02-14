@@ -54,6 +54,11 @@ from .serializers_author import (
     ArticleStatusTransitionSerializer,
     NewsStatusTransitionSerializer,
 )
+from apps.notifications.content_notifications import (
+    notify_article_transition,
+    notify_news_transition,
+    notify_pipeline_result,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -252,6 +257,9 @@ class AuthorArticleTransitionView(views.APIView):
             f"Article {article.id}: {current} -> {new_status} "
             f"(action={action}, user={request.user.email})"
         )
+
+        # Bildirim gonder
+        notify_article_transition(article, current, new_status, changed_by=request.user, feedback=feedback)
 
         return Response({
             'detail': f'Makale durumu guncellendi: {new_status}',
@@ -565,6 +573,10 @@ class AuthorNewsTransitionView(views.APIView):
             f"NewsArticle {news.id}: {current} -> {new_status} "
             f"(action={action}, user={request.user.email})"
         )
+
+        # Bildirim gonder
+        auto_pub = author.can_auto_publish and new_status == 'published'
+        notify_news_transition(news, current, new_status, changed_by=request.user, feedback=feedback, auto_published=auto_pub)
 
         return Response({
             'detail': f'Haber durumu guncellendi: {new_status}',
