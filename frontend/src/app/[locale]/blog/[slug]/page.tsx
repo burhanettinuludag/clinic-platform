@@ -57,10 +57,34 @@ export default function ArticleDetailPage() {
 
       <h1 className="text-3xl font-bold text-gray-900 mb-6">{article.title}</h1>
 
+      {/* E-E-A-T: Yazar Profili */}
+      {article.author_profile && (
+        <div className="flex items-center gap-4 rounded-lg border bg-blue-50 p-4 mb-6">
+          {article.author_profile.profile_photo && (
+            <img src={article.author_profile.profile_photo} alt={article.author_name} className="w-14 h-14 rounded-full object-cover border-2 border-white shadow" />
+          )}
+          <div>
+            <p className="font-semibold text-gray-900">{article.author_name}</p>
+            <p className="text-sm text-gray-600">{article.author_profile.specialty}{article.author_profile.institution ? ' - ' + article.author_profile.institution : ''}</p>
+            {article.author_profile.is_verified && (
+              <span className="inline-flex items-center gap-1 mt-1 text-xs text-green-700 bg-green-100 rounded-full px-2 py-0.5">Dogrulanmis Hekim</span>
+            )}
+          </div>
+        </div>
+      )}
+
       {article.body && (
         <div
           className="prose prose-gray max-w-none"
           dangerouslySetInnerHTML={{ __html: article.body }}
+        />
+      )}
+
+      {/* E-E-A-T: JSON-LD Schema */}
+      {article.schema_markup && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(article.schema_markup) }}
         />
       )}
     </div>

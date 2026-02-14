@@ -67,14 +67,16 @@ class ArticleDetailSerializer(ArticleListSerializer):
     body = serializers.SerializerMethodField()
     seo_title = serializers.SerializerMethodField()
     seo_description = serializers.SerializerMethodField()
+    schema_markup = serializers.SerializerMethodField()
+    author_profile = serializers.SerializerMethodField()
 
     class Meta:
         model = Article
         fields = [
             'id', 'slug', 'title', 'excerpt', 'body', 'featured_image',
-            'category', 'category_name', 'author_name',
+            'category', 'category_name', 'author_name', 'author_profile',
             'is_featured', 'published_at',
-            'seo_title', 'seo_description',
+            'seo_title', 'seo_description', 'schema_markup',
         ]
 
     def get_body(self, obj):
@@ -85,6 +87,32 @@ class ArticleDetailSerializer(ArticleListSerializer):
 
     def get_seo_description(self, obj):
         return getattr(obj, f'seo_description_{self._get_lang()}', obj.seo_description_tr)
+
+    def get_schema_markup(self, obj):
+        from apps.content.schema_markup import generate_article_schema
+        request = self.context.get('request')
+        try:
+            return generate_article_schema(obj, request)
+        except Exception:
+            return {}
+
+    def get_author_profile(self, obj):
+        if not obj.author:
+            return None
+        try:
+            da = obj.author.doctor_profile.author_profile
+            return {
+                'specialty': da.get_primary_specialty_display(),
+                'institution': da.institution,
+                'department': da.department,
+                'bio': da.bio_tr[:200] if da.bio_tr else '',
+                'is_verified': da.is_verified,
+                'author_level': da.author_level,
+                'orcid_id': da.orcid_id,
+                'profile_photo': da.profile_photo.url if da.profile_photo else None,
+            }
+        except Exception:
+            return None
 
 
 class EducationItemSerializer(serializers.ModelSerializer):
