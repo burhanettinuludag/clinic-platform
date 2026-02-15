@@ -10,6 +10,7 @@ import QueryProvider from '@/components/providers/QueryProvider';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import DisclaimerBanner from '@/components/common/DisclaimerBanner';
+import AntiCopyProtection from '@/components/common/AntiCopyProtection';
 import '../globals.css';
 
 export const metadata: Metadata = {
@@ -63,6 +64,7 @@ export default async function LocaleLayout({
           <QueryProvider>
             <AuthProvider>
               <CartProvider>
+                <AntiCopyProtection />
                 <DisclaimerBanner />
                 <Header />
                 <main className="flex-1"><ToastProvider>{children}</ToastProvider></main>
