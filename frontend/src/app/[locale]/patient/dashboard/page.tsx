@@ -20,7 +20,13 @@ import {
   ArrowRight,
   CheckCircle2,
   Circle,
+  Heart,
+  Zap,
+  Sparkles,
+  Trophy,
+  Clock,
 } from 'lucide-react';
+import WeatherWidget from '@/components/patient/WeatherWidget';
 
 export default function PatientDashboard() {
   const t = useTranslations();
@@ -35,6 +41,11 @@ export default function PatientDashboard() {
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
         {t('patient.dashboard.title')}, {user?.first_name}!
       </h1>
+
+      {/* Weather */}
+      <div className="mb-6">
+        <WeatherWidget city="Izmir" />
+      </div>
 
       {/* Stats Grid */}
       <div className="mb-6"><WeatherWidget city="Izmir" /></div>
@@ -173,6 +184,29 @@ export default function PatientDashboard() {
               {t('patient.migraine.noAttacks')}
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Quick Links */}
+      <div className="mt-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-3">Hizli Erisim</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {[
+            { href: '/patient/migraine', icon: Brain, label: 'Migren', color: 'text-purple-600 bg-purple-50' },
+            { href: '/patient/epilepsy', icon: Zap, label: 'Epilepsi', color: 'text-yellow-600 bg-yellow-50' },
+            { href: '/patient/dementia', icon: Sparkles, label: 'Demans', color: 'text-pink-600 bg-pink-50' },
+            { href: '/patient/wellness', icon: Heart, label: 'Wellness', color: 'text-red-500 bg-red-50' },
+            { href: '/patient/rewards', icon: Trophy, label: 'Oduller', color: 'text-amber-600 bg-amber-50' },
+            { href: '/patient/reminders', icon: Clock, label: 'Hatirlatici', color: 'text-blue-600 bg-blue-50' },
+          ].map(item => (
+            <Link key={item.href} href={item.href}
+              className="flex flex-col items-center gap-2 rounded-xl border bg-white p-4 hover:shadow-md transition-shadow">
+              <div className={'rounded-full p-2.5 ' + item.color}>
+                <item.icon className="h-5 w-5" />
+              </div>
+              <span className="text-xs font-medium text-gray-700">{item.label}</span>
+            </Link>
+          ))}
         </div>
       </div>
     </div>
