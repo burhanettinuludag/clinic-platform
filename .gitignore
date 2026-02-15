@@ -24,6 +24,8 @@ staticfiles/
 .env
 .env.local
 .env.production
+.env.*
+!.env.example
 
 # IDE
 .vscode/
@@ -46,6 +48,14 @@ out/
 htmlcov/
 .coverage
 .coverage.*
+
+# Claude Code - hassas veri icerebilir
+.claude/settings.local.json
+
+# Backup dosyalari
+*.bak
+*.backup
+*.orig
 
 # Docker
 docker-compose.override.yml
