@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import AuditLog, ConsentRecord
+from .models import (
+    AuditLog, ConsentRecord, AgentTask,
+    SiteConfig, FeatureFlag, Announcement, HomepageHero, SocialLink,
+)
 
 
 @admin.register(AuditLog)
@@ -20,10 +23,41 @@ class ConsentRecordAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at',)
 
 
-from apps.common.models import AgentTask
-
 @admin.register(AgentTask)
 class AgentTaskAdmin(admin.ModelAdmin):
     list_display = ['agent_name', 'task_type', 'status', 'tokens_used', 'duration_ms', 'created_at']
     list_filter = ['agent_name', 'task_type', 'status']
     readonly_fields = ['input_data', 'output_data']
+
+
+@admin.register(SiteConfig)
+class SiteConfigAdmin(admin.ModelAdmin):
+    list_display = ['key', 'label', 'value', 'category', 'is_public']
+    list_filter = ['category', 'is_public', 'value_type']
+    list_editable = ['value']
+    search_fields = ['key', 'label']
+
+
+@admin.register(FeatureFlag)
+class FeatureFlagAdmin(admin.ModelAdmin):
+    list_display = ['key', 'label', 'is_enabled']
+    list_editable = ['is_enabled']
+
+
+@admin.register(Announcement)
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = ['title_tr', 'is_active', 'priority', 'starts_at', 'expires_at']
+    list_filter = ['is_active']
+    list_editable = ['is_active', 'priority']
+
+
+@admin.register(HomepageHero)
+class HomepageHeroAdmin(admin.ModelAdmin):
+    list_display = ['title_tr', 'is_active', 'updated_at']
+    list_filter = ['is_active']
+
+
+@admin.register(SocialLink)
+class SocialLinkAdmin(admin.ModelAdmin):
+    list_display = ['platform', 'url', 'is_active', 'order']
+    list_editable = ['is_active', 'order']

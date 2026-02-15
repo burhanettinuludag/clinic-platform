@@ -136,6 +136,78 @@ class FeatureFlag(TimeStampedModel):
         return False
 
 
+class Announcement(TimeStampedModel):
+    """Site geneli duyuru bandi. Anasayfa ustunde gorunur."""
+    title_tr = models.CharField(max_length=200)
+    title_en = models.CharField(max_length=200, blank=True, default='')
+    message_tr = models.TextField(max_length=500)
+    message_en = models.TextField(max_length=500, blank=True, default='')
+    link_url = models.URLField(blank=True, default='')
+    link_text_tr = models.CharField(max_length=50, blank=True, default='')
+    link_text_en = models.CharField(max_length=50, blank=True, default='')
+    bg_color = models.CharField(max_length=7, default='#1B4F72', help_text='HEX renk kodu')
+    text_color = models.CharField(max_length=7, default='#FFFFFF')
+    is_active = models.BooleanField(default=False)
+    priority = models.PositiveIntegerField(default=0, help_text='Yuksek = once gosterilir')
+    starts_at = models.DateTimeField(null=True, blank=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-priority', '-created_at']
+        verbose_name = 'Duyuru'
+        verbose_name_plural = 'Duyurular'
+
+    def __str__(self):
+        icon = '\U0001f7e2' if self.is_active else '\U0001f534'
+        return f"{icon} {self.title_tr}"
+
+
+class HomepageHero(TimeStampedModel):
+    """Anasayfa hero section ayarlari."""
+    title_tr = models.CharField(max_length=200)
+    title_en = models.CharField(max_length=200, blank=True, default='')
+    subtitle_tr = models.TextField(max_length=500)
+    subtitle_en = models.TextField(max_length=500, blank=True, default='')
+    cta_text_tr = models.CharField(max_length=50, default='Hemen Basla')
+    cta_text_en = models.CharField(max_length=50, default='Get Started')
+    cta_url = models.CharField(max_length=200, default='/auth/register')
+    secondary_cta_text_tr = models.CharField(max_length=50, blank=True, default='')
+    secondary_cta_text_en = models.CharField(max_length=50, blank=True, default='')
+    secondary_cta_url = models.CharField(max_length=200, blank=True, default='')
+    background_image = models.ImageField(upload_to='hero/', blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Anasayfa Hero'
+        verbose_name_plural = 'Anasayfa Hero'
+        ordering = ['-is_active', '-updated_at']
+
+    def __str__(self):
+        return self.title_tr
+
+
+class SocialLink(TimeStampedModel):
+    PLATFORM_CHOICES = [
+        ('twitter', 'Twitter / X'),
+        ('linkedin', 'LinkedIn'),
+        ('instagram', 'Instagram'),
+        ('youtube', 'YouTube'),
+        ('facebook', 'Facebook'),
+        ('tiktok', 'TikTok'),
+        ('github', 'GitHub'),
+    ]
+    platform = models.CharField(max_length=20, choices=PLATFORM_CHOICES, unique=True)
+    url = models.URLField()
+    is_active = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+        verbose_name = 'Sosyal Medya'
+
+    def __str__(self):
+        return f"{self.get_platform_display()}: {self.url}"
+
 
 class AgentTask(TimeStampedModel):
     STATUS_CHOICES = [

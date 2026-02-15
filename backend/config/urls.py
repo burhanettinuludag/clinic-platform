@@ -46,6 +46,7 @@ urlpatterns = [
     path('api/v1/notifications/', include('apps.notifications.urls')),
     path('api/v1/doctor/', include('apps.doctor_panel.urls')),
     path('api/v1/kvkk/', include('apps.common.urls')),
+    path('api/v1/site/', include('apps.common.urls_site')),
     path('api/v1/wellness/', include('apps.wellness.urls')),
     path('api/v1/gamification/', include('apps.gamification.urls')),
 ]
