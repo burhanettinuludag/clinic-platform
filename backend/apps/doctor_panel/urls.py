@@ -14,6 +14,7 @@ from .views_author import (
     AuthorStatsView,
 )
 from .views_devops import DevOpsGenerateView, DevOpsReviewView
+from .views_analytics import AnalyticsOverviewView, ContentStatsView
 from .views_editor import (
     ReviewQueueView,
     ReviewQueueStatsView,
@@ -82,6 +83,10 @@ urlpatterns = [
     # Yazar yonetimi
     path('editor/authors/', EditorAuthorListView.as_view(), name='editor-authors'),
     path('editor/authors/<uuid:pk>/verify/', EditorAuthorVerifyView.as_view(), name='editor-author-verify'),
+
+    # Analytics
+    path('analytics/overview/', AnalyticsOverviewView.as_view(), name='analytics-overview'),
+    path('analytics/content-stats/', ContentStatsView.as_view(), name='analytics-content-stats'),
 
     # DevOps Agent
     path('devops/generate/', DevOpsGenerateView.as_view(), name='devops-generate'),
