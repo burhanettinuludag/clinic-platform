@@ -13,18 +13,28 @@ import {
   Sparkles,
   BookOpen,
   Settings,
+  Heart,
+  Trophy,
+  Bell,
+  User,
+  Clock,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 const sidebarItems = [
-  { href: '/patient/dashboard', icon: LayoutDashboard, labelKey: 'dashboard' },
-  { href: '/patient/modules', icon: BookOpen, labelKey: 'modules' },
-  { href: '/patient/tasks', icon: ListTodo, labelKey: 'tasks' },
-  { href: '/patient/symptoms', icon: Activity, labelKey: 'symptoms' },
-  { href: '/patient/medications', icon: Pill, labelKey: 'medications' },
-  { href: '/patient/migraine', icon: Brain, labelKey: 'migraine' },
-  { href: '/patient/epilepsy', icon: Zap, labelKey: 'epilepsy' },
-  { href: '/patient/dementia', icon: Sparkles, labelKey: 'dementia' },
+  { href: '/patient/dashboard', icon: LayoutDashboard, labelKey: 'dashboard', fallback: 'Dashboard' },
+  { href: '/patient/modules', icon: BookOpen, labelKey: 'modules', fallback: 'Moduller' },
+  { href: '/patient/tasks', icon: ListTodo, labelKey: 'tasks', fallback: 'Gorevler' },
+  { href: '/patient/symptoms', icon: Activity, labelKey: 'symptoms', fallback: 'Semptomlar' },
+  { href: '/patient/medications', icon: Pill, labelKey: 'medications', fallback: 'Ilaclar' },
+  { href: '/patient/migraine', icon: Brain, labelKey: 'migraine', fallback: 'Migren' },
+  { href: '/patient/epilepsy', icon: Zap, labelKey: 'epilepsy', fallback: 'Epilepsi' },
+  { href: '/patient/dementia', icon: Sparkles, labelKey: 'dementia', fallback: 'Demans' },
+  { href: '/patient/wellness', icon: Heart, labelKey: 'wellness', fallback: 'Wellness' },
+  { href: '/patient/rewards', icon: Trophy, labelKey: 'rewards', fallback: 'Oduller' },
+  { href: '/patient/reminders', icon: Clock, labelKey: 'reminders', fallback: 'Hatirlaticilar' },
+  { href: '/patient/profile', icon: User, labelKey: 'profile', fallback: 'Profil' },
+  { href: '/patient/settings', icon: Settings, labelKey: 'settings', fallback: 'Ayarlar' },
 ];
 
 export default function PatientLayout({ children }: { children: ReactNode }) {
@@ -50,7 +60,7 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
                 }`}
               >
                 <Icon className="w-5 h-5" />
-                {t(item.labelKey)}
+                {(() => { try { return t(item.labelKey); } catch { return (item as any).fallback || item.labelKey; } })()}
               </Link>
             );
           })}
@@ -60,7 +70,7 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
         <div className="flex justify-around py-2">
-          {sidebarItems.slice(0, 5).map((item) => {
+          {sidebarItems.slice(0, 6).map((item) => {
             const isActive = pathname.includes(item.href);
             const Icon = item.icon;
             return (
@@ -72,7 +82,7 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
                 }`}
               >
                 <Icon className="w-5 h-5" />
-                <span>{t(item.labelKey)}</span>
+                <span>{(() => { try { return t(item.labelKey); } catch { return (item as any).fallback || item.labelKey; } })()}</span>
               </Link>
             );
           })}
