@@ -1,3 +1,6 @@
+from apps.common.throttles import AuthRateThrottle
+from apps.common.recaptcha import verify_recaptcha
+from rest_framework import status
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -35,12 +38,26 @@ class RegisterView(generics.CreateAPIView):
             status=status.HTTP_201_CREATED,
         )
 
+    def create(self, request, *args, **kwargs):
+        if not verify_recaptcha(request.data.get('recaptcha_token'), 'register'):
+            return Response(
+                {'error': 'Bot korumasi dogrulanamadi. Sayfayi yenileyip tekrar deneyin.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return super().create(request, *args, **kwargs)
+
+
 
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
+        if not verify_recaptcha(request.data.get('recaptcha_token'), 'login'):
+            return Response(
+                {'error': 'Bot korumasi dogrulanamadi.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
