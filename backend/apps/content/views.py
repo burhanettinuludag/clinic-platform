@@ -132,3 +132,17 @@ class PublicDoctorAuthorViewSet(viewsets.ReadOnlyModelViewSet):
             uuid_part = str(pk).split('-')[-1]
             return self.get_queryset().filter(id__startswith=uuid_part).first() or super().get_object()
         return super().get_object()
+
+
+class PublicEducationViewSet(viewsets.ReadOnlyModelViewSet):
+    """Public egitim icerikleri - SSR friendly."""
+    serializer_class = EducationItemSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'slug'
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['content_type', 'category']
+
+    def get_queryset(self):
+        return EducationItem.objects.filter(
+            is_published=True
+        ).select_related('disease_module', 'category')

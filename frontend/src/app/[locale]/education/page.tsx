@@ -1,92 +1,63 @@
-'use client';
+import { Metadata } from 'next';
+import Link from 'next/link';
 
-import { useTranslations } from 'next-intl';
-import { useEducationItems } from '@/hooks/useStoreData';
-import { Link } from '@/i18n/navigation';
-import { BookOpen, Video, FileText, Image, Clock, CheckCircle2 } from 'lucide-react';
-
-const contentTypeIcons = {
-  video: Video,
-  text: FileText,
-  infographic: Image,
-  interactive: BookOpen,
+export const metadata: Metadata = {
+  title: 'Egitim Icerikleri | Norosera',
+  description: 'Norolojik hastaliklar hakkinda uzman doktorlar tarafindan hazirlanan egitim icerikleri.',
 };
 
-export default function EducationPage() {
-  const t = useTranslations();
-  const { data: items, isLoading } = useEducationItems();
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
+async function getEducation() {
+  try {
+    const res = await fetch(`${API}/content/public-education/`, { next: { revalidate: 600, tags: ['education'] } });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.results || data;
+  } catch { return []; }
+}
+
+const TYPE_BADGE: Record<string, string> = {
+  video: 'bg-red-100 text-red-700',
+  text: 'bg-blue-100 text-blue-700',
+  infographic: 'bg-green-100 text-green-700',
+  interactive: 'bg-purple-100 text-purple-700',
+};
+const TYPE_LABEL: Record<string, string> = { video: 'Video', text: 'Makale', infographic: 'Infografik', interactive: 'Interaktif' };
+
+export default async function EducationPage() {
+  const items = await getEducation();
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('nav.education')}</h1>
-      <p className="text-gray-500 mb-8">Hastalik bazli egitim icerikleri ve materyaller.</p>
+    <div className="max-w-5xl mx-auto px-4 py-12">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Egitim Icerikleri</h1>
+      <p className="text-gray-500 dark:text-gray-400 mb-8">Norolojik hastaliklar hakkinda uzman bilgileri</p>
 
-      {isLoading ? (
-        <div className="text-center py-12 text-gray-500">{t('common.loading')}</div>
-      ) : items && items.length > 0 ? (
+      {items.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((item) => {
-            const Icon = contentTypeIcons[item.content_type] || BookOpen;
-            const isCompleted = item.progress?.progress_percent === 100;
-
-            return (
-              <div
-                key={item.id}
-                className={`bg-white rounded-xl border overflow-hidden hover:shadow-lg transition ${
-                  isCompleted ? 'border-green-200' : 'border-gray-200'
-                }`}
-              >
-                {item.image ? (
-                  <div className="aspect-video bg-gray-100 overflow-hidden">
-                    <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                  </div>
-                ) : (
-                  <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
-                    <Icon className="w-12 h-12 text-blue-300" />
-                  </div>
-                )}
-                <div className="p-5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon className="w-4 h-4 text-blue-600" />
-                    <span className="text-xs text-blue-600 font-medium capitalize">{item.content_type}</span>
-                    <span className="flex items-center gap-1 text-xs text-gray-400 ml-auto">
-                      <Clock className="w-3 h-3" /> {item.estimated_duration_minutes} dk
-                    </span>
-                  </div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-2">{item.title}</h2>
-
-                  {/* Progress Bar */}
-                  {item.progress ? (
-                    <div className="mt-3">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-gray-400">
-                          %{item.progress.progress_percent}
-                        </span>
-                        {isCompleted && (
-                          <CheckCircle2 className="w-4 h-4 text-green-500" />
-                        )}
-                      </div>
-                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all ${
-                            isCompleted ? 'bg-green-500' : 'bg-blue-500'
-                          }`}
-                          style={{ width: `${item.progress.progress_percent}%` }}
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="mt-3">
-                      <span className="text-xs text-gray-400">Henuz baslanmadi</span>
-                    </div>
-                  )}
+          {items.map((item: any) => (
+            <Link key={item.slug} href={`/education/${item.slug}`}
+              className="rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-shadow group">
+              {item.image && (
+                <div className="h-40 overflow-hidden">
+                  <img src={item.image} alt={item.title_tr} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                 </div>
+              )}
+              <div className="p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={'rounded-full px-2 py-0.5 text-xs font-medium ' + (TYPE_BADGE[item.content_type] || TYPE_BADGE.text)}>
+                    {TYPE_LABEL[item.content_type] || item.content_type}
+                  </span>
+                  <span className="text-xs text-gray-400">{item.estimated_duration_minutes} dk</span>
+                </div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-cyan-600 transition-colors line-clamp-2">{item.title_tr}</h2>
+                {item.body_tr && <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 line-clamp-3">{item.body_tr.replace(/<[^>]*>/g, '').slice(0, 150)}...</p>}
               </div>
-            );
-          })}
+            </Link>
+          ))}
         </div>
       ) : (
-        <div className="text-center py-12 text-gray-500">{t('common.noResults')}</div>
+        <div className="text-center py-16 text-gray-400">Henuz egitim icerigi yok</div>
       )}
     </div>
   );
