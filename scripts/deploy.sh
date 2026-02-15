@@ -80,6 +80,10 @@ else:
 echo -e "${YELLOW}7. Container durumları:${NC}"
 docker-compose -f docker-compose.prod.yml ps
 
+# Günlük backup cron job
+echo -e "${YELLOW}8. Backup cron job ayarlanıyor...${NC}"
+(crontab -l 2>/dev/null | grep -v "backup-db.sh"; echo "0 4 * * * /opt/norosera/scripts/backup-db.sh >> /var/log/clinic/backup.log 2>&1") | crontab -
+
 echo ""
 echo -e "${GREEN}=== Deployment Tamamlandı ===${NC}"
 echo ""
