@@ -1,114 +1,31 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = { title: 'Kullanim Kosullari | Norosera', description: 'Norosera platformu kullanim kosullari.' };
+
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Kullanim Kosullari
-        </h1>
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Kullanim Kosullari</h1>
+      <div className="prose dark:prose-invert max-w-none space-y-6 text-gray-600 dark:text-gray-300">
+        <p className="text-sm text-gray-400">Son guncelleme: Subat 2026</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Hizmet Tanimi
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Norosera, dijital saglik takibi ve izleme hizmeti sunan bir
-            platformdur. Platform, kullanicilarin saglik verilerini
-            kaydetmelerine, takip etmelerine ve hekimleriyle paylasmalarina
-            olanak tanir.
-          </p>
-          <p className="text-gray-600 leading-relaxed mt-2 font-medium text-amber-700">
-            Onemli: Bu platform bir tibbi teshis araci degildir. Saglik
-            konusundaki kararlariniz icin mutlaka bir saglik profesyoneline
-            danismaniz gerekmektedir.
-          </p>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">1. Hizmet Tanimi</h2>
+        <p>Norosera, norolojik hastaliklarin takibi ve yonetimi icin gelistirilmis dijital saglik platformudur. Platform tibbi tani, tedavi veya recete yerine gecmez.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Kullanim Sartlari
-          </h2>
-          <p className="text-gray-600 leading-relaxed mb-2">
-            Platformu kullanabilmek icin asagidaki sartlari kabul etmeniz
-            gerekmektedir:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2">
-            <li>18 yasindan buyuk olmaniz gerekmektedir</li>
-            <li>
-              Kayit sirasinda dogru ve guncel bilgiler vermeniz gerekmektedir
-            </li>
-            <li>
-              Hesap guvenliginizden siz sorumlusunuz; sifrenizi baskalaryla
-              paylasmayiniz
-            </li>
-          </ul>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">2. Kullanici Sorumlulukari</h2>
+        <p>Kullanicilar dogru bilgi saglama, hesap guvenligini koruma ve platformu yasal amaclarla kullanma yukumlulugundedir. 18 yasindan kucuklerin platformu kullanmasi ebeveyn onayina tabidir.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Saglik Uyarisi
-          </h2>
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-800 leading-relaxed font-medium">
-              Bu platform tibbi tavsiye, teshis veya tedavi yerine gecmez.
-              Saglik sorunlariniz icin mutlaka bir saglik profesyoneline
-              basvurunuz.
-            </p>
-            <p className="text-red-800 leading-relaxed mt-2 font-bold">
-              Acil durumlarda 112&#39;yi arayin.
-            </p>
-          </div>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">3. Tibbi Sorumluluk Reddi</h2>
+        <p>Platform tarafindan sunulan bilgiler genel bilgilendirme amaclidir. Herhangi bir saglik karari almadan once mutlaka bir saglik profesyoneline danisiniz. Norosera, platform uzerinden alinan kararlarin sonuclari icin sorumluluk kabul etmez.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Dijital Urun Satis
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Platform uzerinden satin alinan dijital urunler lisans ile
-            sunulmaktadir. Satin alma isleminden itibaren 7 gun icinde iade
-            talebinde bulunabilirsiniz. Iade kosullari:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-1 mt-2 ml-2">
-            <li>Dijital urun henuz kullanilmamis olmalidir</li>
-            <li>Iade talebi satin alma tarihinden itibaren 7 gun icinde yapilmalidir</li>
-            <li>Iade islemleri ayni odeme yontemi uzerinden gerceklestirilir</li>
-          </ul>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">4. Fikri Mulkiyet</h2>
+        <p>Platform uzerindeki tum icerik, tasarim, yazilim ve markalar UlgarTech'e aittir. Izinsiz kopyalama, dagilma veya degistirme yasaktir.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Fikri Mulkiyet
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Platform uzerindeki tum icerikler, tasarimlar, logolar, metinler,
-            gorseller ve yazilimlar Norosera&#39;a aittir. Bu iceriklerin
-            izinsiz kopyalanmasi, dagitilmasi veya kullanilmasi yasaktir.
-          </p>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">5. Hesap Sonlandirma</h2>
+        <p>Norosera, kullanim kosullarini ihlal eden hesaplari onceden bildirimde bulunarak veya bulunmaksizin askiya alabilir veya sonlandirabilir.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Sorumluluk Sinirlamasi
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Norosera, platformun kullanimindan kaynaklanan saglik
-            sonuclari konusunda herhangi bir sorumluluk kabul etmez. Platform
-            yalnizca bilgi amacli bir aractir ve tibbi karar verme surecinde
-            tek basina kullanilmamalidir.
-          </p>
-        </section>
-
-        <section className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Degisiklikler
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Bu kullanim kosullari zaman zaman guncellenebilir. Degisiklikler
-            yapildiginda, guncellenmis kosullar bu sayfada yayinlanacaktir.
-            Platformu kullanmaya devam etmeniz, guncellenmis kosullari kabul
-            ettiginiz anlamina gelir.
-          </p>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">6. Degisiklikler</h2>
+        <p>Bu kosullar onceden bildirimde bulunularak degistirilebilir. Guncel kosullari duzenli olarak kontrol etmeniz onerilir.</p>
       </div>
     </div>
   );

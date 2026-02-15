@@ -1,104 +1,37 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = { title: 'KVKK Aydinlatma Metni | Norosera', description: 'Norosera KVKK kapsaminda kisisel verilerin korunmasi aydinlatma metni.' };
+
 export default function KVKKPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          KVKK Aydinlatma Metni
-        </h1>
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">KVKK Aydinlatma Metni</h1>
+      <div className="prose dark:prose-invert max-w-none space-y-6 text-gray-600 dark:text-gray-300">
+        <p className="text-sm text-gray-400">6698 Sayili Kisisel Verilerin Korunmasi Kanunu Kapsaminda</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Veri Sorumlusu
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Norosera olarak kisisel verilerinizin korunmasina buyuk onem
-            veriyoruz. 6698 sayili Kisisel Verilerin Korunmasi Kanunu (KVKK)
-            kapsaminda, veri sorumlusu sifatiyla sizleri bilgilendirmek
-            istiyoruz.
-          </p>
-          <p className="text-gray-600 leading-relaxed mt-2">
-            Veri Sorumlusu: Norosera
-          </p>
-          <p className="text-gray-600 leading-relaxed">
-            Iletisim: kvkk@norosera.com
-          </p>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">1. Veri Sorumlusu</h2>
+        <p>UlgarTech ("Norosera"), 6698 sayili KVKK kapsaminda veri sorumlusu sifatiyla, kisisel verilerinizi asagida aciklanan amaclar cercevesinde islemektedir.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Islenen Kisisel Veriler
-          </h2>
-          <p className="text-gray-600 leading-relaxed mb-2">
-            Platformumuz uzerinden asagidaki kisisel verileriniz
-            islenmektedir:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2">
-            <li>Ad-Soyad</li>
-            <li>E-posta adresi</li>
-            <li>Telefon numarasi</li>
-            <li>Saglik verileri</li>
-            <li>IP adresi</li>
-          </ul>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">2. Islenen Kisisel Veriler</h2>
+        <p><strong>Kimlik Bilgileri:</strong> Ad, soyad, dogum tarihi, cinsiyet.</p>
+        <p><strong>Iletisim Bilgileri:</strong> E-posta, telefon numarasi.</p>
+        <p><strong>Saglik Verileri:</strong> Migren atagi kayitlari, epilepsi nobetleri, ilac kullanim bilgileri, semptom kayitlari, uyku ve wellness verileri.</p>
+        <p><strong>Islem Guveniligi:</strong> IP adresi, oturum bilgileri, log kayitlari.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Veri Isleme Amaci
-          </h2>
-          <p className="text-gray-600 leading-relaxed mb-2">
-            Kisisel verileriniz asagidaki amaclarla islenmektedir:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2">
-            <li>Saglik takibi ve izleme hizmetlerinin sunulmasi</li>
-            <li>Hekim ile veri paylasimi</li>
-            <li>Istatistiksel analizler ve hizmet iyilestirme</li>
-            <li>Yasal yukumluluklerin yerine getirilmesi</li>
-          </ul>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">3. Isleme Amaclari</h2>
+        <p>Saglik takibi hizmeti sunulmasi, hekimle veri paylasimi (onayli), platform iyilestirme ve istatistik, yasal yukumluluklerin yerine getirilmesi, bilgi guvenligi surecleri.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Veri Aktarimi
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Kisisel verileriniz asagidaki taraflara aktarilabilir:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-1 mt-2 ml-2">
-            <li>Hekiminize (saglik takibi kapsaminda)</li>
-            <li>
-              Yasal zorunluluk halinde yetkili kurum ve kuruluslara
-            </li>
-          </ul>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">4. Veri Aktarimi</h2>
+        <p>Kisisel verileriniz, acik rizaniz olmadan yurt icinde veya yurt disinda ucuncu kisi ve kurumlara aktarilmaz. Saglik verileriniz yalnizca onayli hekimlerle paylasilabilir.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Haklariniz
-          </h2>
-          <p className="text-gray-600 leading-relaxed mb-2">
-            KVKK kapsaminda asagidaki haklara sahipsiniz:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2">
-            <li>Kisisel verilerinizin islenip islenmedigini ogrenme (bilgi edinme)</li>
-            <li>Kisisel verilerinizin eksik veya yanlis islenmis olmasi halinde duzeltilmesini isteme</li>
-            <li>Kisisel verilerinizin silinmesini veya yok edilmesini isteme</li>
-            <li>Kisisel verilerinizin islenmesine itiraz etme</li>
-            <li>Kisisel verilerinizin tasinmasini talep etme (veri tasima)</li>
-          </ul>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">5. Veri Saklama Suresi</h2>
+        <p>Kisisel verileriniz, isleme amacinin gerektirdigi sure boyunca saklanir. Hesap silme talebiniz uzerine verileriniz yasal sureler disinda imha edilir.</p>
 
-        <section className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Iletisim
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            KVKK kapsamindaki talepleriniz icin asagidaki adres uzerinden
-            bizimle iletisime gecebilirsiniz:
-          </p>
-          <p className="text-gray-600 leading-relaxed mt-2 font-medium">
-            kvkk@norosera.com
-          </p>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">6. Haklariniz (KVKK Madde 11)</h2>
+        <p>Kisisel verilerinize iliskin; islenip islenmedigini ogrenme, islenmisse bilgi talep etme, isleme amacini ogrenme, aktarilip aktarilmadigini ogrenme, duzeltilmesini isteme, silinmesini veya yok edilmesini isteme, islemlerin ucuncu kisilere bildirilmesini isteme, analiz sonucuna itiraz etme, zarara ugramaniz halinde tazminat talep etme haklarina sahipsiniz.</p>
+
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">7. Basvuru</h2>
+        <p>KVKK kapsamindaki haklarinizi kullanmak icin info@norosera.com adresine yazili basvuruda bulunabilirsiniz.</p>
       </div>
     </div>
   );

@@ -1,126 +1,34 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = { title: 'Gizlilik Politikasi | Norosera', description: 'Norosera platformu gizlilik politikasi.' };
+
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Gizlilik Politikasi
-        </h1>
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Gizlilik Politikasi</h1>
+      <div className="prose dark:prose-invert max-w-none space-y-6 text-gray-600 dark:text-gray-300">
+        <p className="text-sm text-gray-400">Son guncelleme: Subat 2026</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Toplanan Bilgiler
-          </h2>
-          <p className="text-gray-600 leading-relaxed mb-2">
-            Platformumuz asagidaki bilgileri toplamaktadir:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2">
-            <li>
-              <span className="font-medium">Kisisel veriler:</span> Ad-soyad,
-              e-posta, telefon numarasi
-            </li>
-            <li>
-              <span className="font-medium">Saglik verileri:</span> Saglik
-              kayitlari, olcum sonuclari, hekim notlari
-            </li>
-            <li>
-              <span className="font-medium">Kullanim verileri:</span> Tarayici
-              bilgisi, IP adresi, erisim zamanlari, sayfa goruntulemeleri
-            </li>
-          </ul>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">1. Veri Sorumlusu</h2>
+        <p>UlgarTech ("Norosera"), Ankara Caddesi No 243/2, Bornova, Izmir adresinde mukim olup, kisisel verilerinizin islenmesine iliskin veri sorumlusudur.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Bilgilerin Kullanimi
-          </h2>
-          <p className="text-gray-600 leading-relaxed mb-2">
-            Toplanan bilgiler asagidaki amaclarla kullanilmaktadir:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2">
-            <li>Hizmet kalitesinin iyilestirilmesi</li>
-            <li>Saglik takibi ve izleme</li>
-            <li>Hekim ile iletisim ve veri paylasimi</li>
-          </ul>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">2. Toplanan Veriler</h2>
+        <p>Platformumuz asagidaki verileri toplayabilir: ad-soyad, e-posta adresi, telefon numarasi, dogum tarihi, saglik verileri (migren atagi kayitlari, ilac kullanimi, semptom takibi), cihaz ve tarayici bilgileri, IP adresi.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Veri Guvenligi
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Verilerinizin guvenligini saglamak icin asagidaki onlemleri
-            almaktayiz:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-1 mt-2 ml-2">
-            <li>SSL/TLS ile sifrelenmis iletisim</li>
-            <li>Sifrelenmis veri depolama (encrypted storage)</li>
-            <li>Erisim kontrolu ve yetkilendirme mekanizmalari</li>
-          </ul>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">3. Verilerin Kullanim Amaci</h2>
+        <p>Toplanan veriler; saglik takibi hizmeti sunma, kisisellestirilmis icerik olusturma, platform iyilestirme, yasal yukumluluklerin yerine getirilmesi ve guvenlik amacli kullanilir.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Cerezler
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Platformumuzda asagidaki cerez turleri kullanilmaktadir:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-1 mt-2 ml-2">
-            <li>
-              <span className="font-medium">Zorunlu cerezler:</span> Platformun
-              duzgun calismasi icin gerekli temel cerezler
-            </li>
-            <li>
-              <span className="font-medium">Analitik cerezler:</span> Kullanim
-              istatistikleri ve hizmet iyilestirme amacli cerezler
-            </li>
-          </ul>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">4. Veri Paylasimi</h2>
+        <p>Kisisel verileriniz, acik rizaniz olmadan ucuncu taraflarla paylasilmaz. Saglik verileriniz yalnizca sizin onayla hekiminizle paylasilabilir.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Ucuncu Taraf Hizmetleri
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Platformumuz asagidaki ucuncu taraf hizmet saglayicilarini
-            kullanmaktadir:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-1 mt-2 ml-2">
-            <li>
-              <span className="font-medium">iyzico:</span> Odeme isleme
-              hizmetleri
-            </li>
-            <li>
-              <span className="font-medium">Hosting saglayicilari:</span> Veri
-              barindirma ve sunucu hizmetleri
-            </li>
-          </ul>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">5. Veri Guveniligi</h2>
+        <p>Verileriniz SSL/TLS sifreleme, JWT token tabanli kimlik dogrulama ve duzenli guvenlik denetimleri ile korunmaktadir.</p>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Degisiklikler
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Bu gizlilik politikasi zaman zaman guncellenebilir. Degisiklikler
-            yapildiginda, guncellenmis politika bu sayfada yayinlanacaktir.
-            Onemli degisiklikler icin kullanicilarimiza e-posta yoluyla
-            bildirimde bulunulacaktir.
-          </p>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">6. Cerezler</h2>
+        <p>Platformumuz oturum yonetimi ve analitik amacli cerezler kullanir. Cerez tercihlerinizi ayarlar sayfasindan yonetebilirsiniz.</p>
 
-        <section className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Iletisim
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Gizlilik politikamiz hakkinda sorulariniz icin asagidaki adres
-            uzerinden bizimle iletisime gecebilirsiniz:
-          </p>
-          <p className="text-gray-600 leading-relaxed mt-2 font-medium">
-            privacy@norosera.com
-          </p>
-        </section>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">7. Iletisim</h2>
+        <p>Gizlilik politikamiz ile ilgili sorulariniz icin info@norosera.com adresinden bize ulasabilirsiniz.</p>
       </div>
     </div>
   );
