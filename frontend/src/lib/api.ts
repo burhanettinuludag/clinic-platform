@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { emitToast } from './toast-events';
 import Cookies from 'js-cookie';
 
 const api = axios.create({
@@ -50,6 +51,17 @@ api.interceptors.response.use(
           window.location.href = `/${locale}/auth/login`;
         }
       }
+    }
+    // Toast error messages
+    if (error.response) {
+      const status = error.response.status;
+      const detail = error.response.data?.detail || error.response.data?.message;
+      if (status === 403) emitToast('error', detail || 'Bu isleme yetkiniz yok.');
+      else if (status === 404) emitToast('warning', detail || 'Kayit bulunamadi.');
+      else if (status === 429) emitToast('warning', 'Cok fazla istek. Lutfen bekleyin.');
+      else if (status >= 500) emitToast('error', 'Sunucu hatasi. Lutfen tekrar deneyin.');
+    } else if (error.code === 'ERR_NETWORK') {
+      emitToast('error', 'Baglanti hatasi. Internet baglantinizi kontrol edin.');
     }
     return Promise.reject(error);
   }

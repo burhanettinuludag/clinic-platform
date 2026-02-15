@@ -1,5 +1,6 @@
 'use client';
 
+import { registerToastHandler, unregisterToastHandler } from '@/lib/toast-events';
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { CheckCircle, AlertTriangle, Info, X, AlertCircle } from 'lucide-react';
 
@@ -43,6 +44,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts(prev => [...prev, { id, type, message, duration }]);
     setTimeout(() => removeToast(id), duration);
   }, [removeToast]);
+
+  // Register global handler for API interceptor
+  const cbRef = useCallback((type: ToastType, message: string) => addToast(type, message), [addToast]);
+  useState(() => { registerToastHandler(cbRef); });
 
   const ctx: ToastContextType = {
     toast: addToast,
