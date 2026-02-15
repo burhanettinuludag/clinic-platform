@@ -5,7 +5,10 @@ from django.conf.urls.static import static
 
 from services.admin_views import pipeline_run_view
 
+from apps.common.views_health import HealthCheckView
+
 urlpatterns = [
+    path('api/v1/health/', HealthCheckView.as_view(), name='health-check'),
     path("admin/pipeline/", pipeline_run_view, name="pipeline_run"),
     path('admin/', admin.site.urls),
     path('api/v1/auth/', include('apps.accounts.urls')),
