@@ -32,6 +32,7 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     'rest_framework',
+    'drf_spectacular',
     'rest_framework_simplejwt',
     'corsheaders',
     'django_filters',
@@ -169,6 +170,7 @@ REST_FRAMEWORK = {
         'auth': '5/minute',
         'ai_agent': '10/hour',
     },
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
 }
@@ -225,3 +227,27 @@ LLM_PRIMARY_PROVIDER = 'groq'
 LLM_FALLBACK_PROVIDER = 'gemini'
 LLM_MAX_RETRIES = 2
 LLM_TIMEOUT_SECONDS = 30
+
+# ---------- drf-spectacular ----------
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Norosera API',
+    'DESCRIPTION': 'Noroloji klinikleri icin dijital saglik platformu API dokumantasyonu.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'TAGS': [
+        {'name': 'Auth', 'description': 'Kimlik dogrulama'},
+        {'name': 'Users', 'description': 'Kullanici profilleri'},
+        {'name': 'Doctor', 'description': 'Doktor paneli'},
+        {'name': 'Content', 'description': 'Makale ve haber yonetimi'},
+        {'name': 'Migraine', 'description': 'Migren takibi'},
+        {'name': 'Epilepsy', 'description': 'Epilepsi takibi'},
+        {'name': 'Dementia', 'description': 'Demans modulu'},
+        {'name': 'Wellness', 'description': 'Wellness ve saglik takibi'},
+        {'name': 'Tracking', 'description': 'Semptom ve ilac takibi'},
+        {'name': 'Gamification', 'description': 'Oyunlastirma'},
+        {'name': 'Store', 'description': 'Magaza'},
+        {'name': 'Payments', 'description': 'Odeme'},
+        {'name': 'Notifications', 'description': 'Bildirimler'},
+    ],
+}

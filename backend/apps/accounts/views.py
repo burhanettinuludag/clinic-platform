@@ -1,5 +1,6 @@
 from apps.common.throttles import AuthRateThrottle
 from apps.common.recaptcha import verify_recaptcha
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import status
 from rest_framework import generics, status
 from rest_framework.response import Response
