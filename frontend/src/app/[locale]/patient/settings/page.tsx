@@ -139,6 +139,9 @@ export default function PatientSettingsPage() {
           <Link href="/patient/notification-settings" className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
             Bildirim Tercihleri →
           </Link>
+          <Link href="/patient/profile" className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
+            Profil Duzenle →
+          </Link>
         </div>
 </div>
     </div>
