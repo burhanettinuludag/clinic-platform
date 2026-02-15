@@ -1,5 +1,7 @@
 'use client';
 
+import RichTextEditor from '@/components/RichTextEditor';
+
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Send, Archive, RotateCcw, Loader2, Eye, Calendar, Tag, CheckCircle, Sparkles } from 'lucide-react';
@@ -128,13 +130,13 @@ export default function ArticleDetailPage() {
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Icerik (TR)</label>
-            <textarea value={form.body_tr} onChange={e => setForm({...form, body_tr: e.target.value})} disabled={!canEdit}
-              rows={14} className="w-full rounded-lg border px-3 py-2 text-sm font-mono disabled:bg-gray-50" />
+              <RichTextEditor content={form.body_tr} onChange={(html) => setForm({...form, body_tr: html})} placeholder="Icerik (Turkce)" disabled={false} />
+
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Icerik (EN)</label>
-            <textarea value={form.body_en} onChange={e => setForm({...form, body_en: e.target.value})} disabled={!canEdit}
-              rows={8} className="w-full rounded-lg border px-3 py-2 text-sm font-mono disabled:bg-gray-50" />
+              <RichTextEditor content={form.body_en} onChange={(html) => setForm({...form, body_en: html})} placeholder="Content (English)" disabled={false} />
+
           </div>
           {/* SEO */}
           <div className="border-t pt-4 mt-4">
