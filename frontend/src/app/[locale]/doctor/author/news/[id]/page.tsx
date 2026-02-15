@@ -1,6 +1,7 @@
 'use client';
 
 import RichTextEditor from '@/components/RichTextEditor';
+import ImageUpload from '@/components/ImageUpload';
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -167,7 +168,11 @@ export default function NewsDetailPage() {
 
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Icerik (EN)</label>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">Kapak Gorseli</label>
+              <ImageUpload value={form.featured_image || ''} onChange={(url) => setForm({...form, featured_image: url})} type="news_images" disabled={!canEdit} />
+            </div>
+            <div>
+<label className="block text-xs font-medium text-gray-600 mb-1">Icerik (EN)</label>
               <RichTextEditor content={form.body_en} onChange={(html) => setForm({...form, body_en: html})} placeholder="Content (English)" disabled={!canEdit} />
 
           </div>
@@ -282,6 +287,7 @@ print(f'Wrote {os.path.getsize(p)} bytes')
 'use client';
 
 import RichTextEditor from '@/components/RichTextEditor';
+import ImageUpload from '@/components/ImageUpload';
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';

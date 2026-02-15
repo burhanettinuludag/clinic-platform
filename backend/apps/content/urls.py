@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from .views_upload import ImageUploadView
 from .views import (
     ContentCategoryViewSet,
     ArticleViewSet,
@@ -16,5 +17,6 @@ router.register('education', EducationItemViewSet, basename='education-item')
 router.register('education-progress', EducationProgressViewSet, basename='education-progress')
 
 urlpatterns = [
+    path('upload-image/', ImageUploadView.as_view(), name='upload-image'),
     path('', include(router.urls)),
 ]
