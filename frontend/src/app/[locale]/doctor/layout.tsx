@@ -18,6 +18,7 @@ const sidebarItems = [
   { href: '/doctor/editor', icon: ShieldCheck, labelKey: 'editor', fallback: 'Editor Paneli' },
   { href: '/doctor/devops', icon: Terminal, labelKey: 'devops', fallback: 'DevOps Agent' },
   { href: '/doctor/analytics', icon: BarChart3, labelKey: 'analytics', fallback: 'Analytics' },
+  { href: '/doctor/profile', icon: User, labelKey: 'profile', fallback: 'Profil' },
 ];
 
 export default function DoctorLayout({ children }: { children: ReactNode }) {
