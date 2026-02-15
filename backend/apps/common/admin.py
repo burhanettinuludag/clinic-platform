@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import (
     AuditLog, ConsentRecord, AgentTask,
     SiteConfig, FeatureFlag, Announcement, HomepageHero, SocialLink,
+    MarketingCampaign,
 )
 
 
@@ -61,3 +62,13 @@ class HomepageHeroAdmin(admin.ModelAdmin):
 class SocialLinkAdmin(admin.ModelAdmin):
     list_display = ['platform', 'url', 'is_active', 'order']
     list_editable = ['is_active', 'order']
+
+
+@admin.register(MarketingCampaign)
+class MarketingCampaignAdmin(admin.ModelAdmin):
+    list_display = ['title', 'theme', 'status', 'week_start', 'total_tokens', 'created_by', 'created_at']
+    list_filter = ['status', 'language', 'week_start']
+    search_fields = ['title', 'theme']
+    readonly_fields = ['content_output', 'visual_briefs', 'schedule', 'total_tokens', 'total_cost_usd', 'pipeline_task']
+    date_hierarchy = 'created_at'
+    ordering = ('-created_at',)

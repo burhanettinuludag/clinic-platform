@@ -15,6 +15,12 @@ from .views_author import (
 )
 from .views_devops import DevOpsGenerateView, DevOpsReviewView
 from .views_analytics import AnalyticsOverviewView, ContentStatsView
+from .views_marketing import (
+    MarketingCampaignListCreateView,
+    MarketingCampaignDetailView,
+    MarketingCampaignApproveView,
+    MarketingCampaignRegenerateView,
+)
 from .views_editor import (
     ReviewQueueView,
     ReviewQueueStatsView,
@@ -95,4 +101,10 @@ urlpatterns = [
     # Toplu islemler
     path('editor/articles/bulk-transition/', EditorBulkArticleTransitionView.as_view(), name='editor-bulk-article-transition'),
     path('editor/news/bulk-transition/', EditorBulkNewsTransitionView.as_view(), name='editor-bulk-news-transition'),
+
+    # ═══ Marketing Campaign ═══
+    path('marketing/', MarketingCampaignListCreateView.as_view(), name='marketing-campaigns'),
+    path('marketing/<uuid:pk>/', MarketingCampaignDetailView.as_view(), name='marketing-campaign-detail'),
+    path('marketing/<uuid:pk>/approve/', MarketingCampaignApproveView.as_view(), name='marketing-campaign-approve'),
+    path('marketing/<uuid:pk>/regenerate/', MarketingCampaignRegenerateView.as_view(), name='marketing-campaign-regenerate'),
 ]

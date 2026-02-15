@@ -287,3 +287,55 @@ class AgentTask(TimeStampedModel):
         self.error_message = error_message
         self.completed_at = timezone.now()
         self.save(update_fields=['status', 'error_message', 'completed_at'])
+
+
+class MarketingCampaign(TimeStampedModel):
+    """Haftalik marketing icerik paketi."""
+
+    STATUS_CHOICES = [
+        ('generating', 'Uretiyor'),
+        ('review', 'Inceleme Bekliyor'),
+        ('approved', 'Onaylandi'),
+        ('scheduled', 'Planlandi'),
+        ('published', 'Yayinlandi'),
+        ('archived', 'Arsivlendi'),
+    ]
+
+    title = models.CharField(max_length=200, help_text='Kampanya basligi')
+    theme = models.CharField(max_length=300, help_text='Ana tema')
+    week_start = models.DateField(help_text='Hafta baslangici')
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='generating')
+    platforms = models.JSONField(default=list, help_text='["instagram", "linkedin", "twitter"]')
+    language = models.CharField(max_length=5, default='tr')
+    tone = models.CharField(max_length=20, default='educational')
+    target_audience = models.CharField(max_length=20, default='patients')
+
+    # Agent ciktilari
+    content_output = models.JSONField(default=dict, blank=True, help_text='Marketing Content Agent ciktisi')
+    visual_briefs = models.JSONField(default=dict, blank=True, help_text='Visual Brief Agent ciktisi')
+    schedule = models.JSONField(default=dict, blank=True, help_text='Scheduling Agent ciktisi')
+
+    # Duzenleme
+    edited_content = models.JSONField(default=dict, blank=True, help_text='Admin tarafindan duzenlenmis icerik')
+    editor_notes = models.TextField(blank=True, default='')
+
+    # Meta
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True,
+        related_name='marketing_campaigns',
+    )
+    approved_at = models.DateTimeField(null=True, blank=True)
+    total_tokens = models.PositiveIntegerField(default=0)
+    total_cost_usd = models.DecimalField(max_digits=8, decimal_places=4, default=0)
+    pipeline_task = models.ForeignKey(
+        AgentTask, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='marketing_campaigns',
+    )
+
+    class Meta:
+        ordering = ['-week_start', '-created_at']
+        verbose_name = 'Marketing Kampanyasi'
+        verbose_name_plural = 'Marketing Kampanyalari'
+
+    def __str__(self):
+        return f"[{self.get_status_display()}] {self.title} ({self.week_start})"
