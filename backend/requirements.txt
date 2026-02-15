@@ -46,3 +46,6 @@ faker==33.1.0
 
 # API Documentation
 drf-spectacular==0.28.0
+
+# Error Tracking
+sentry-sdk[django]==2.19.2

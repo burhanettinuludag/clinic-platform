@@ -80,9 +80,11 @@ else:
 echo -e "${YELLOW}7. Container durumları:${NC}"
 docker-compose -f docker-compose.prod.yml ps
 
-# Günlük backup cron job
-echo -e "${YELLOW}8. Backup cron job ayarlanıyor...${NC}"
-(crontab -l 2>/dev/null | grep -v "backup-db.sh"; echo "0 4 * * * /opt/norosera/scripts/backup-db.sh >> /var/log/clinic/backup.log 2>&1") | crontab -
+# Günlük backup cron job + uptime monitoring
+echo -e "${YELLOW}8. Cron job'lar ayarlanıyor...${NC}"
+(crontab -l 2>/dev/null | grep -v "backup-db.sh" | grep -v "healthcheck.sh"; \
+echo "0 4 * * * /opt/norosera/scripts/backup-db.sh >> /var/log/clinic/backup.log 2>&1"; \
+echo "*/5 * * * * /opt/norosera/scripts/healthcheck.sh") | crontab -
 
 # Fail2ban kurulumu
 echo -e "${YELLOW}9. Fail2ban ayarlanıyor...${NC}"
