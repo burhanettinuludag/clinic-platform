@@ -51,13 +51,29 @@ docker-compose -f docker-compose.prod.yml exec -T backend python manage.py migra
 # Superuser oluştur (ilk kurulumda)
 echo -e "${YELLOW}6. Admin kullanıcı kontrolü...${NC}"
 docker-compose -f docker-compose.prod.yml exec -T backend python manage.py shell -c "
+import secrets
 from apps.accounts.models import CustomUser
 if not CustomUser.objects.filter(is_superuser=True).exists():
-    CustomUser.objects.create_superuser('admin@norosera.com', 'admin123', first_name='Admin', last_name='User')
-    print('Admin kullanıcı oluşturuldu: admin@norosera.com / admin123')
-    print('UYARI: Şifreyi hemen değiştirin!')
+    password = secrets.token_urlsafe(20)
+    CustomUser.objects.create_superuser(
+        'admin@norosera.com',
+        password,
+        first_name='Admin',
+        last_name='User',
+    )
+    print()
+    print('=' * 50)
+    print('ADMIN KULLANICI OLUSTURULDU')
+    print('=' * 50)
+    print(f'Email   : admin@norosera.com')
+    print(f'Sifre   : {password}')
+    print('=' * 50)
+    print('UYARI: Bu sifreyi HEMEN degistirin!')
+    print('Admin panel: /admin/ -> Sifre Degistir')
+    print('=' * 50)
+    print()
 else:
-    print('Admin kullanıcı zaten mevcut.')
+    print('Admin kullanici zaten mevcut, yeni olusturulmadi.')
 "
 
 # Container durumları
@@ -67,6 +83,7 @@ docker-compose -f docker-compose.prod.yml ps
 echo ""
 echo -e "${GREEN}=== Deployment Tamamlandı ===${NC}"
 echo ""
+ADMIN_PATH=$(grep -oP 'ADMIN_URL=\K.*' .env 2>/dev/null || echo "admin/")
 echo "Site: https://norosera.com"
-echo "Admin: https://norosera.com/admin/"
+echo "Admin: https://norosera.com/${ADMIN_PATH}"
 echo ""

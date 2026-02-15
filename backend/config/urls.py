@@ -9,11 +9,16 @@ from services.admin_views import pipeline_run_view
 from apps.common.views_health import HealthCheckView
 from apps.common.views_contact import ContactFormView
 
+# Admin branding
+admin.site.site_header = 'Norosera Yonetim Paneli'
+admin.site.site_title = 'Norosera Admin'
+admin.site.index_title = 'Yonetim'
+
 urlpatterns = [
     path('api/v1/health/', HealthCheckView.as_view(), name='health-check'),
     path('api/v1/contact/', ContactFormView.as_view(), name='contact-form'),
-    path("admin/pipeline/", pipeline_run_view, name="pipeline_run"),
-    path('admin/', admin.site.urls),
+    path(f"{settings.ADMIN_URL}pipeline/", pipeline_run_view, name="pipeline_run"),
+    path(settings.ADMIN_URL, admin.site.urls),
     # API Documentation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),

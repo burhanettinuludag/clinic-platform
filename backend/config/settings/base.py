@@ -7,13 +7,24 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
+from django.core.exceptions import ImproperlyConfigured
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-SECRET_KEY = os.environ.get(
-    'DJANGO_SECRET_KEY',
-    'django-insecure-change-me-in-production'
-)
+def _get_secret_key():
+    key = os.environ.get('DJANGO_SECRET_KEY')
+    if key:
+        return key
+    settings_module = os.environ.get('DJANGO_SETTINGS_MODULE', '')
+    if 'production' in settings_module:
+        raise ImproperlyConfigured(
+            'DJANGO_SECRET_KEY env degiskeni production icin zorunludur.'
+        )
+    return 'django-insecure-dev-only-key-do-not-use-in-production'
+
+
+SECRET_KEY = _get_secret_key()
 
 DEBUG = False
 
@@ -36,6 +47,7 @@ THIRD_PARTY_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'django_filters',
+    'django_celery_beat',
 ]
 
 LOCAL_APPS = [
@@ -143,6 +155,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # ---------- Default primary key ----------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# ---------- Admin ----------
+ADMIN_URL = os.environ.get('ADMIN_URL', 'admin/')
+
 # ---------- Django REST Framework ----------
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -199,6 +214,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Istanbul'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 # ---------- iyzico ----------
 IYZICO_API_KEY = os.environ.get('IYZICO_API_KEY', '')
