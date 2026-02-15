@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from django.conf import settings
@@ -14,15 +15,25 @@ admin.site.site_header = 'Norosera Yonetim Paneli'
 admin.site.site_title = 'Norosera Admin'
 admin.site.index_title = 'Yonetim'
 
+_schema_view = SpectacularAPIView.as_view()
+_swagger_view = SpectacularSwaggerView.as_view(url_name='schema')
+_redoc_view = SpectacularRedocView.as_view(url_name='schema')
+
+# Production'da API docs sadece staff erişimli
+if not settings.DEBUG:
+    _schema_view = staff_member_required(_schema_view)
+    _swagger_view = staff_member_required(_swagger_view)
+    _redoc_view = staff_member_required(_redoc_view)
+
 urlpatterns = [
     path('api/v1/health/', HealthCheckView.as_view(), name='health-check'),
     path('api/v1/contact/', ContactFormView.as_view(), name='contact-form'),
     path(f"{settings.ADMIN_URL}pipeline/", pipeline_run_view, name="pipeline_run"),
     path(settings.ADMIN_URL, admin.site.urls),
-    # API Documentation
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    # API Documentation (production'da staff-only)
+    path('api/schema/', _schema_view, name='schema'),
+    path('api/docs/', _swagger_view, name='swagger-ui'),
+    path('api/redoc/', _redoc_view, name='redoc'),
     path('api/v1/auth/', include('apps.accounts.urls')),
     path('api/v1/users/', include('apps.accounts.urls_profile')),
     path('api/v1/modules/', include('apps.patients.urls')),

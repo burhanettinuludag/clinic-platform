@@ -174,6 +174,20 @@ if SENTRY_DSN:
     )
 
 
+# ---------- API Hardening ----------
+REST_FRAMEWORK['EXCEPTION_HANDLER'] = 'apps.common.exceptions.custom_exception_handler'  # noqa: F405
+
+# ---------- drf-spectacular (production) ----------
+SPECTACULAR_SETTINGS = {  # noqa: F405
+    **SPECTACULAR_SETTINGS,  # noqa: F405
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_SETTINGS': {'displayRequestDuration': False},
+}
+
+# Production'da API dokümantasyonunu sadece admin görebilsin
+if not DEBUG:
+    SPECTACULAR_SETTINGS['SERVE_PERMISSIONS'] = ['rest_framework.permissions.IsAdminUser']
+
 # ---------- Admin ----------
 ADMIN_URL = os.environ.get('ADMIN_URL', 'admin/')  # noqa: F405
 
