@@ -13,6 +13,7 @@ from .views_author import (
     AuthorNewsTransitionView,
     AuthorStatsView,
 )
+from .views_devops import DevOpsGenerateView, DevOpsReviewView
 from .views_editor import (
     ReviewQueueView,
     ReviewQueueStatsView,
@@ -81,6 +82,10 @@ urlpatterns = [
     # Yazar yonetimi
     path('editor/authors/', EditorAuthorListView.as_view(), name='editor-authors'),
     path('editor/authors/<uuid:pk>/verify/', EditorAuthorVerifyView.as_view(), name='editor-author-verify'),
+
+    # DevOps Agent
+    path('devops/generate/', DevOpsGenerateView.as_view(), name='devops-generate'),
+    path('devops/review/', DevOpsReviewView.as_view(), name='devops-review'),
 
     # Toplu islemler
     path('editor/articles/bulk-transition/', EditorBulkArticleTransitionView.as_view(), name='editor-bulk-article-transition'),

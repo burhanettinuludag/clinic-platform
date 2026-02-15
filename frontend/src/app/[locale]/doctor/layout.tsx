@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { LayoutDashboard, Users, AlertTriangle, Sparkles, BookOpen, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Users, AlertTriangle, Sparkles, BookOpen, ShieldCheck, Terminal } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
 import type { ReactNode } from 'react';
 
@@ -14,6 +14,7 @@ const sidebarItems = [
   { href: '/doctor/content', icon: Sparkles, labelKey: 'content', fallback: 'Icerik Uret' },
   { href: '/doctor/author', icon: BookOpen, labelKey: 'author', fallback: 'Yazar Paneli' },
   { href: '/doctor/editor', icon: ShieldCheck, labelKey: 'editor', fallback: 'Editor Paneli' },
+  { href: '/doctor/devops', icon: Terminal, labelKey: 'devops', fallback: 'DevOps Agent' },
 ];
 
 export default function DoctorLayout({ children }: { children: ReactNode }) {
