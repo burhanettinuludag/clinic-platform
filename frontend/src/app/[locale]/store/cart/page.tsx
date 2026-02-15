@@ -3,7 +3,9 @@
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useCart } from '@/context/CartContext';
-import { Trash2, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { Trash2, ShoppingBag, ArrowLeft, Clock } from 'lucide-react';
+
+const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
 
 function formatPrice(amount: number, currency = 'TRY'): string {
   return new Intl.NumberFormat('tr-TR', { style: 'currency', currency }).format(amount);
@@ -12,6 +14,24 @@ function formatPrice(amount: number, currency = 'TRY'): string {
 export default function CartPage() {
   const t = useTranslations();
   const { items, removeItem, clearCart, total } = useCart();
+
+  if (!PAYMENTS_ENABLED) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-24 text-center">
+        <Clock className="w-16 h-16 text-blue-400 mx-auto mb-6" />
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">{t('nav.comingSoon')}</h1>
+        <p className="text-gray-500 text-lg mb-8">
+          Dijital magaza ve odeme sistemi cok yakinda hizmetinizde olacak.
+        </p>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          {t('nav.dashboard')}
+        </Link>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

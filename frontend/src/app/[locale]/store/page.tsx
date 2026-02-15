@@ -5,8 +5,10 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useProducts, useProductCategories } from '@/hooks/useStoreData';
 import { useCart } from '@/context/CartContext';
-import { ShoppingCart, Package, Star } from 'lucide-react';
+import { ShoppingCart, Package, Star, Clock } from 'lucide-react';
 import type { Product, LicenseType } from '@/lib/types/store';
+
+const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
 
 function formatPrice(amount: string | null, currency: string): string {
   if (!amount) return '-';
@@ -28,6 +30,25 @@ function getLowestPrice(product: Product): { price: string | null; type: License
 
 export default function StorePage() {
   const t = useTranslations();
+
+  if (!PAYMENTS_ENABLED) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-24 text-center">
+        <Clock className="w-16 h-16 text-blue-400 mx-auto mb-6" />
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">{t('nav.comingSoon')}</h1>
+        <p className="text-gray-500 text-lg mb-8">
+          Dijital magaza ve odeme sistemi cok yakinda hizmetinizde olacak.
+        </p>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          {t('nav.dashboard')}
+        </Link>
+      </div>
+    );
+  }
+
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
   const { data: products, isLoading } = useProducts(
     selectedCategory ? { category: selectedCategory } : undefined

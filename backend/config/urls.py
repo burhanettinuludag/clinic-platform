@@ -27,8 +27,6 @@ urlpatterns = [
     path('api/v1/epilepsy/', include('apps.epilepsy.urls')),
     path('api/v1/dementia/', include('apps.dementia.urls')),
     path('api/v1/content/', include('apps.content.urls')),
-    path('api/v1/store/', include('apps.store.urls')),
-    path('api/v1/payments/', include('apps.payments.urls')),
     path('api/v1/notifications/', include('apps.notifications.urls')),
     path('api/v1/doctor/', include('apps.doctor_panel.urls')),
     path('api/v1/kvkk/', include('apps.common.urls')),
@@ -36,5 +34,10 @@ urlpatterns = [
     path('api/v1/gamification/', include('apps.gamification.urls')),
 ]
 
+# Store & Payments: sadece DEBUG modda aktif (production'da gecici olarak kapali)
 if settings.DEBUG:
+    urlpatterns += [
+        path('api/v1/store/', include('apps.store.urls')),
+        path('api/v1/payments/', include('apps.payments.urls')),
+    ]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
