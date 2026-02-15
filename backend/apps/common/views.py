@@ -52,3 +52,39 @@ class GrantConsentView(generics.GenericAPIView):
             ConsentRecordSerializer(record).data,
             status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
         )
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status, serializers
+from rest_framework.permissions import AllowAny
+from django.core.mail import send_mail
+from django.conf import settings
+
+
+class ContactSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    email = serializers.EmailField()
+    subject = serializers.CharField(max_length=200)
+    message = serializers.CharField(max_length=2000)
+    recaptcha_token = serializers.CharField(required=False, allow_blank=True)
+
+
+class ContactView(APIView):
+    permission_classes = [AllowAny]
+    throttle_scope = 'anon'
+
+    def post(self, request):
+        s = ContactSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        d = s.validated_data
+        try:
+            send_mail(
+                subject=f"[Norosera Iletisim] {d['subject']}",
+                message=f"Gonderen: {d['name']} ({d['email']})\n\n{d['message']}",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[getattr(settings, 'CONTACT_EMAIL', 'info@norosera.com')],
+                fail_silently=True,
+            )
+        except Exception:
+            pass
+        return Response({'detail': 'Mesajiniz alindi. En kisa surede donus yapacagiz.'}, status=status.HTTP_200_OK)
