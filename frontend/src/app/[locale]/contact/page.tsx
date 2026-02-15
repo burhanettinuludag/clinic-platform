@@ -46,12 +46,12 @@ export default function ContactPage() {
           <div className="rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700 p-5">
             <Phone className="h-6 w-6 text-cyan-500 mb-3" />
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Telefon</h3>
-            <p className="text-sm text-gray-500">+90 232 XXX XX XX</p>
+            <p className="text-sm text-gray-500">+90 533 723 15 13</p>
           </div>
           <div className="rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700 p-5">
             <MapPin className="h-6 w-6 text-cyan-500 mb-3" />
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Adres</h3>
-            <p className="text-sm text-gray-500">Ege Universitesi Tip Fakultesi, Bornova, Izmir</p>
+            <p className="text-sm text-gray-500">Ankara Caddesi No 243/2, Bornova, Izmir</p>
           </div>
         </div>
 

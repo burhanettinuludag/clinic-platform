@@ -68,7 +68,7 @@ export default function Footer() {
                 <Mail className="w-4 h-4" />
                 info@norosera.com
               </a>
-              <a href="tel:+902121234567" className="flex items-center gap-3 text-slate-400 hover:text-cyan-400 transition-colors text-sm">
+              <a href="tel:+905337231513" className="flex items-center gap-3 text-slate-400 hover:text-cyan-400 transition-colors text-sm">
                 <Phone className="w-4 h-4" />
                 +90 212 123 45 67
               </a>
