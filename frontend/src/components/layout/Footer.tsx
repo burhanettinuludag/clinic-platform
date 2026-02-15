@@ -13,6 +13,7 @@ export default function Footer() {
     { label: t('nav.store'), href: '/store' },
     { label: 'Blog', href: '/blog' },
     { label: 'Haberler', href: '/news' },
+    { label: 'Iletisim', href: '/contact' },
   ];
 
   const legalLinks = [

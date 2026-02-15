@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import { useAuth } from '@/context/AuthContext';
-import { Menu, X, User, Brain, Activity, BookOpen, ShoppingBag, ChevronDown, FileText, Newspaper } from 'lucide-react';
+import { Menu, X, User, Brain, Activity, BookOpen, ShoppingBag, ChevronDown, FileText, Newspaper, Mail } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function Header() {
@@ -66,6 +66,9 @@ export default function Header() {
             </NavLink>
             <NavLink href="/store" icon={<ShoppingBag className="w-4 h-4" />}>
               {t('nav.store')}
+            </NavLink>
+            <NavLink href="/contact" icon={<Mail className="w-4 h-4" />}>
+              Iletisim
             </NavLink>
           </nav>
 
@@ -141,6 +144,10 @@ export default function Header() {
               <MobileNavLink href="/store" onClick={() => setMenuOpen(false)}>
                 <ShoppingBag className="w-5 h-5" />
                 {t('nav.store')}
+              </MobileNavLink>
+              <MobileNavLink href="/contact" onClick={() => setMenuOpen(false)}>
+                <Mail className="w-5 h-5" />
+                Iletisim
               </MobileNavLink>
 
               <div className="my-2 border-t border-white/10" />

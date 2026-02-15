@@ -6,9 +6,11 @@ from django.conf.urls.static import static
 from services.admin_views import pipeline_run_view
 
 from apps.common.views_health import HealthCheckView
+from apps.common.views_contact import ContactFormView
 
 urlpatterns = [
     path('api/v1/health/', HealthCheckView.as_view(), name='health-check'),
+    path('api/v1/contact/', ContactFormView.as_view(), name='contact-form'),
     path("admin/pipeline/", pipeline_run_view, name="pipeline_run"),
     path('admin/', admin.site.urls),
     path('api/v1/auth/', include('apps.accounts.urls')),
