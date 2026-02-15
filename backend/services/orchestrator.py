@@ -124,6 +124,20 @@ PIPELINES = {
         'stop_on_failure': False,
         'gatekeeper_steps': [],  # Bilgi amacli - red pipeline durdurmuyor
     },
+
+    # ─── Marketing Pipelines ───
+    'marketing_weekly': {
+        'description': 'Haftalik sosyal medya icerik uretimi: post uret -> gorsel brief -> yayin plani',
+        'steps': ['marketing_content_agent', 'visual_brief_agent', 'scheduling_agent'],
+        'stop_on_failure': True,
+        'gatekeeper_steps': [],
+    },
+    'marketing_content_only': {
+        'description': 'Sadece sosyal medya post metinleri uret',
+        'steps': ['marketing_content_agent'],
+        'stop_on_failure': False,
+        'gatekeeper_steps': [],
+    },
 }
 
 

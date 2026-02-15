@@ -35,3 +35,12 @@ agent_registry.register(QualityAgent())
 
 from services.agents.devops_agent import DevOpsAgent
 agent_registry.register(DevOpsAgent())
+
+from services.agents.marketing_content_agent import MarketingContentAgent
+agent_registry.register(MarketingContentAgent())
+
+from services.agents.visual_brief_agent import VisualBriefAgent
+agent_registry.register(VisualBriefAgent())
+
+from services.agents.scheduling_agent import SchedulingAgent
+agent_registry.register(SchedulingAgent())

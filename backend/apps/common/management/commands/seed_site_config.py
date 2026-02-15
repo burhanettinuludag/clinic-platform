@@ -116,6 +116,9 @@ class Command(BaseCommand):
             {'key': 'payment_module', 'label': 'Odeme Modulu', 'is_enabled': False, 'description': 'Odeme sistemi'},
             {'key': 'ai_content_pipeline', 'label': 'AI Icerik Pipeline', 'is_enabled': True, 'description': 'Yapay zeka icerik uretimi'},
             {'key': 'gamification', 'label': 'Gamification', 'is_enabled': True, 'description': 'Oyunlastirma sistemi'},
+            {'key': 'agent_marketing_content', 'label': 'Marketing Icerik Agent', 'is_enabled': True, 'description': 'Sosyal medya post uretimi'},
+            {'key': 'agent_visual_brief', 'label': 'Gorsel Brief Agent', 'is_enabled': True, 'description': 'Tasarim brief uretimi'},
+            {'key': 'agent_scheduling', 'label': 'Zamanlama Agent', 'is_enabled': True, 'description': 'Haftalik yayin plani'},
         ]
 
         created_flags = 0
