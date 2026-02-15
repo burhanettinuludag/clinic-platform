@@ -19,9 +19,13 @@ import {
 } from 'lucide-react';
 import NeuralAnimation from '@/components/common/NeuralAnimation';
 import BrainIcon from '@/components/common/BrainIcon';
+import { useActiveHero } from '@/hooks/useSiteData';
+import { useLocale } from 'next-intl';
 
 export default function HomePage() {
   const t = useTranslations();
+  const locale = useLocale();
+  const { data: hero } = useActiveHero();
 
   const features = [
     {
@@ -122,33 +126,47 @@ export default function HomePage() {
             <span className="text-sm text-cyan-300">Noroloji Platformu</span>
           </div>
 
-          {/* Title */}
+          {/* Title — dynamic from hero or fallback */}
           <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            <span className="text-white">Beyninizi</span>
-            <br />
-            <span className="text-gradient">Anlayın, Yönetin</span>
+            {hero ? (
+              <span className="text-gradient">
+                {locale === 'en' ? hero.title_en : hero.title_tr}
+              </span>
+            ) : (
+              <>
+                <span className="text-white">Beyninizi</span>
+                <br />
+                <span className="text-gradient">Anlayın, Yönetin</span>
+              </>
+            )}
           </h1>
 
-          {/* Subtitle */}
+          {/* Subtitle — dynamic */}
           <p className="text-xl md:text-2xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed">
-            {t('home.hero.subtitle') || 'Norolojik sagliginizi yapay zeka destekli araclarla takip edin, uzman doktorlarla baglanti kurun.'}
+            {hero
+              ? (locale === 'en' ? hero.subtitle_en : hero.subtitle_tr)
+              : (t('home.hero.subtitle') || 'Norolojik sagliginizi yapay zeka destekli araclarla takip edin, uzman doktorlarla baglanti kurun.')}
           </p>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons — dynamic */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/auth/register"
+              href={hero?.cta_url || '/auth/register'}
               className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-2xl text-lg font-semibold hover:from-cyan-400 hover:to-cyan-500 transition-all shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:-translate-y-1"
             >
-              {t('home.hero.cta') || 'Hemen Baslayin'}
+              {hero
+                ? (locale === 'en' ? hero.cta_text_en : hero.cta_text_tr) || t('home.hero.cta') || 'Hemen Baslayin'
+                : t('home.hero.cta') || 'Hemen Baslayin'}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href="/education"
+              href={hero?.secondary_cta_url || '/education'}
               className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/5 text-white rounded-2xl text-lg font-semibold border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all"
             >
               <BookOpen className="w-5 h-5" />
-              Daha Fazla Bilgi
+              {hero
+                ? (locale === 'en' ? hero.secondary_cta_text_en : hero.secondary_cta_text_tr) || 'Daha Fazla Bilgi'
+                : 'Daha Fazla Bilgi'}
             </Link>
           </div>
 

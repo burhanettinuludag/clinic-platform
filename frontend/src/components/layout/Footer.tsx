@@ -1,11 +1,33 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { Brain, Mail, Phone, MapPin, Twitter, Linkedin, Instagram, Youtube, ArrowUpRight } from 'lucide-react';
+import { Brain, Mail, Phone, MapPin, Twitter, Linkedin, Instagram, Youtube, Github, ArrowUpRight } from 'lucide-react';
+import { usePublicSocialLinks, usePublicSiteConfigs } from '@/hooks/useSiteData';
+import type { LucideIcon } from 'lucide-react';
+
+const PLATFORM_ICON_MAP: Record<string, LucideIcon> = {
+  twitter: Twitter,
+  linkedin: Linkedin,
+  instagram: Instagram,
+  youtube: Youtube,
+  github: Github,
+};
 
 export default function Footer() {
   const t = useTranslations();
+  const locale = useLocale();
+  const { data: socialLinks } = usePublicSocialLinks();
+  const { data: configs } = usePublicSiteConfigs();
+
+  const getConfig = (key: string) => configs?.find(c => c.key === key)?.value;
+
+  const contactEmail = getConfig('contact_email') || 'info@norosera.com';
+  const contactPhone = getConfig('contact_phone');
+  const contactAddress = getConfig('contact_address');
+  const footerText = locale === 'en'
+    ? getConfig('footer_text_en')
+    : getConfig('footer_text_tr');
 
   const quickLinks = [
     { label: t('nav.home'), href: '/' },
@@ -29,12 +51,8 @@ export default function Footer() {
     { label: 'Demans Takibi', href: '#', active: false },
   ];
 
-  const socialLinks = [
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Linkedin, href: '#', label: 'LinkedIn' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Youtube, href: '#', label: 'YouTube' },
-  ];
+  // Use dynamic social links if available, fallback to static
+  const activeSocials = socialLinks?.filter(s => s.url) || [];
 
   return (
     <footer className="bg-slate-950 border-t border-white/5">
@@ -50,7 +68,7 @@ export default function Footer() {
               </div>
               <div className="flex flex-col">
                 <span className="text-2xl font-bold text-white tracking-tight">
-                  Norosera
+                  {getConfig('site_name') || 'Norosera'}
                 </span>
                 <span className="text-[10px] text-cyan-400/80 tracking-widest uppercase">
                   Neurology Platform
@@ -62,20 +80,24 @@ export default function Footer() {
               {t('disclaimer.text') || 'Norolojik sagliginizi takip etmenize ve yasam kalitenizi artirmaniza yardimci olan yapay zeka destekli platform.'}
             </p>
 
-            {/* Contact Info */}
+            {/* Contact Info — dynamic */}
             <div className="space-y-3">
-              <a href="mailto:info@norosera.com" className="flex items-center gap-3 text-slate-400 hover:text-cyan-400 transition-colors text-sm">
+              <a href={`mailto:${contactEmail}`} className="flex items-center gap-3 text-slate-400 hover:text-cyan-400 transition-colors text-sm">
                 <Mail className="w-4 h-4" />
-                info@norosera.com
+                {contactEmail}
               </a>
-              <a href="tel:+905337231513" className="flex items-center gap-3 text-slate-400 hover:text-cyan-400 transition-colors text-sm">
-                <Phone className="w-4 h-4" />
-                +90 212 123 45 67
-              </a>
-              <div className="flex items-start gap-3 text-slate-400 text-sm">
-                <MapPin className="w-4 h-4 mt-0.5" />
-                <span>Istanbul, Turkiye</span>
-              </div>
+              {contactPhone && (
+                <a href={`tel:${contactPhone}`} className="flex items-center gap-3 text-slate-400 hover:text-cyan-400 transition-colors text-sm">
+                  <Phone className="w-4 h-4" />
+                  {contactPhone}
+                </a>
+              )}
+              {contactAddress && (
+                <div className="flex items-start gap-3 text-slate-400 text-sm">
+                  <MapPin className="w-4 h-4 mt-0.5" />
+                  <span>{contactAddress}</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -142,23 +164,41 @@ export default function Footer() {
       <div className="border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            {/* Copyright */}
+            {/* Copyright — dynamic */}
             <p className="text-slate-500 text-sm">
-              &copy; {new Date().getFullYear()} Norosera. Tum haklari saklidir.
+              {footerText || `\u00a9 ${new Date().getFullYear()} Norosera. Tum haklari saklidir.`}
             </p>
 
-            {/* Social Links */}
+            {/* Social Links — dynamic */}
             <div className="flex items-center gap-4">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-slate-400 hover:bg-cyan-500/10 hover:text-cyan-400 transition-all"
-                >
-                  <social.icon className="w-4 h-4" />
-                </a>
-              ))}
+              {activeSocials.length > 0 ? (
+                activeSocials.map((social) => {
+                  const Icon = PLATFORM_ICON_MAP[social.platform];
+                  if (!Icon) return null;
+                  return (
+                    <a
+                      key={social.platform}
+                      href={social.url}
+                      aria-label={social.platform_display}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-slate-400 hover:bg-cyan-500/10 hover:text-cyan-400 transition-all"
+                    >
+                      <Icon className="w-4 h-4" />
+                    </a>
+                  );
+                })
+              ) : (
+                // Fallback static icons
+                [Twitter, Linkedin, Instagram, Youtube].map((Icon, i) => (
+                  <span
+                    key={i}
+                    className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-slate-600"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </span>
+                ))
+              )}
             </div>
 
             {/* Medical Disclaimer Badge */}

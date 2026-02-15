@@ -11,6 +11,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import DisclaimerBanner from '@/components/common/DisclaimerBanner';
 import AntiCopyProtection from '@/components/common/AntiCopyProtection';
+import AnnouncementBanner from '@/components/common/AnnouncementBanner';
 import '../globals.css';
 
 export const metadata: Metadata = {
@@ -65,6 +66,7 @@ export default async function LocaleLayout({
             <AuthProvider>
               <CartProvider>
                 <AntiCopyProtection />
+                <AnnouncementBanner />
                 <DisclaimerBanner />
                 <Header />
                 <main className="flex-1"><ToastProvider>{children}</ToastProvider></main>
