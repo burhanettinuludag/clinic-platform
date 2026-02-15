@@ -136,6 +136,9 @@ export default function PatientSettingsPage() {
           <Link href="/patient/change-password" className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
             Sifre Degistir →
           </Link>
+          <Link href="/patient/notification-settings" className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
+            Bildirim Tercihleri →
+          </Link>
         </div>
 </div>
     </div>
