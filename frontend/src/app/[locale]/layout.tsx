@@ -1,3 +1,4 @@
+import { ToastProvider } from '@/components/common/Toast';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages } from 'next-intl/server';
@@ -64,7 +65,7 @@ export default async function LocaleLayout({
               <CartProvider>
                 <DisclaimerBanner />
                 <Header />
-                <main className="flex-1">{children}</main>
+                <main className="flex-1"><ToastProvider>{children}</ToastProvider></main>
                 <Footer />
               </CartProvider>
             </AuthProvider>
