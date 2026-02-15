@@ -1,3 +1,4 @@
+from django.db import models
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -85,3 +86,33 @@ class EducationProgressViewSet(viewsets.ModelViewSet):
         progress.completed_at = timezone.now()
         progress.save()
         return Response(EducationProgressSerializer(progress).data)
+
+
+class NewsArticleViewSet(viewsets.ReadOnlyModelViewSet):
+    """Public haber listesi ve detayi."""
+    permission_classes = [permissions.AllowAny]
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        qs = NewsArticle.objects.filter(
+            status='published'
+        ).select_related('author__doctor__user').order_by('-published_at')
+        category = self.request.query_params.get('category')
+        if category:
+            qs = qs.filter(category=category)
+        priority = self.request.query_params.get('priority')
+        if priority:
+            qs = qs.filter(priority=priority)
+        return qs
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return NewsArticleDetailSerializer
+        return NewsArticleListSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        # View count artir
+        NewsArticle.objects.filter(pk=instance.pk).update(view_count=models.F('view_count') + 1)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)

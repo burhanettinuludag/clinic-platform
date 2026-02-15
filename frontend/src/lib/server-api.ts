@@ -36,3 +36,11 @@ export async function getArticleBySlug(slug: string, locale = 'tr') {
 export async function getCategories(locale = 'tr') {
   return serverFetch<any[]>('/content/categories/', { locale, revalidate: 3600, tags: ['categories'] });
 }
+
+export async function getNews(locale = 'tr') {
+  return serverFetch<any[]>('/content/news/', { locale, revalidate: 300, tags: ['news'] });
+}
+
+export async function getNewsBySlug(slug: string, locale = 'tr') {
+  return serverFetch<any>(\`/content/news/\${slug}/\`, { locale, revalidate: 600, tags: ['news', slug] });
+}

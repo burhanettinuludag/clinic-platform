@@ -170,3 +170,91 @@ class EducationProgressSerializer(serializers.ModelSerializer):
         model = EducationProgress
         fields = ['id', 'education_item', 'progress_percent', 'started_at', 'completed_at']
         read_only_fields = ['started_at']
+
+
+# ─────────────────────────────────────────────
+# NewsArticle Public Serializers
+# ─────────────────────────────────────────────
+
+class NewsArticleListSerializer(serializers.ModelSerializer):
+    category_display = serializers.SerializerMethodField()
+    priority_display = serializers.SerializerMethodField()
+    author_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = NewsArticle
+        fields = [
+            'id', 'slug', 'title_tr', 'title_en',
+            'excerpt_tr', 'excerpt_en',
+            'category', 'category_display',
+            'priority', 'priority_display',
+            'featured_image', 'featured_image_alt',
+            'author_name', 'published_at', 'view_count',
+        ]
+
+    def get_category_display(self, obj):
+        return obj.get_category_display()
+
+    def get_priority_display(self, obj):
+        return obj.get_priority_display()
+
+    def get_author_name(self, obj):
+        if obj.author:
+            try:
+                return obj.author.doctor.user.get_full_name()
+            except Exception:
+                pass
+        return None
+
+
+class NewsArticleDetailSerializer(serializers.ModelSerializer):
+    category_display = serializers.SerializerMethodField()
+    author_name = serializers.SerializerMethodField()
+    author_profile = serializers.SerializerMethodField()
+    schema_markup = serializers.SerializerMethodField()
+
+    class Meta:
+        model = NewsArticle
+        fields = [
+            'id', 'slug', 'title_tr', 'title_en',
+            'excerpt_tr', 'excerpt_en',
+            'body_tr', 'body_en',
+            'category', 'category_display',
+            'priority', 'source_urls', 'original_source',
+            'meta_title', 'meta_description', 'keywords',
+            'featured_image', 'featured_image_alt',
+            'author_name', 'author_profile', 'schema_markup',
+            'published_at', 'updated_at', 'view_count',
+        ]
+
+    def get_category_display(self, obj):
+        return obj.get_category_display()
+
+    def get_author_name(self, obj):
+        if obj.author:
+            try:
+                return obj.author.doctor.user.get_full_name()
+            except Exception:
+                pass
+        return None
+
+    def get_author_profile(self, obj):
+        if not obj.author:
+            return None
+        da = obj.author
+        return {
+            'specialty': da.get_primary_specialty_display(),
+            'institution': da.institution,
+            'department': da.department,
+            'bio': da.bio_tr[:200] if da.bio_tr else '',
+            'is_verified': da.is_verified,
+            'orcid_id': da.orcid_id,
+            'profile_photo': da.profile_photo.url if da.profile_photo else None,
+        }
+
+    def get_schema_markup(self, obj):
+        try:
+            from apps.content.schema_markup import build_news_article_schema
+            return build_news_article_schema(obj)
+        except Exception:
+            return None
