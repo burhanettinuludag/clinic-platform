@@ -146,3 +146,17 @@ class PublicEducationViewSet(viewsets.ReadOnlyModelViewSet):
         return EducationItem.objects.filter(
             is_published=True
         ).select_related('disease_module', 'category')
+
+
+class PublicNewsViewSet(viewsets.ReadOnlyModelViewSet):
+    """Public haberler - SSR friendly."""
+    permission_classes = [AllowAny]
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        from apps.content.models import NewsArticle
+        return NewsArticle.objects.filter(status='published').order_by('-created_at')
+
+    def get_serializer_class(self):
+        from apps.content.serializers import NewsArticleSerializer
+        return NewsArticleSerializer
