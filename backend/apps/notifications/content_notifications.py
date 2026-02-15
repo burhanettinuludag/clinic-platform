@@ -109,7 +109,7 @@ def _create_notification(recipient, template_key, context, action_url='', metada
     if not template:
         return None
     try:
-        return Notification.objects.create(
+        notification = Notification.objects.create(
             recipient=recipient,
             notification_type=template['type'],
             title_tr=template['title_tr'].format(**context),
@@ -119,6 +119,13 @@ def _create_notification(recipient, template_key, context, action_url='', metada
             action_url=action_url,
             metadata=metadata or {},
         )
+        # Email gonder
+        try:
+            from apps.notifications.email_service import send_notification_email
+            send_notification_email(notification)
+        except Exception:
+            pass
+        return notification
     except Exception as e:
         logger.error(f"Bildirim hatasi: {e}")
         return None
