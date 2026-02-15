@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from apps.accounts.permissions import IsDoctor
+from apps.common.throttles import AIAgentThrottle
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +19,7 @@ logger = logging.getLogger(__name__)
 class DevOpsGenerateView(APIView):
     """DevOps Agent ile kod uretme."""
     permission_classes = [IsAuthenticated, IsDoctor]
+    throttle_classes = [AIAgentThrottle]
 
     def post(self, request):
         task = request.data.get('task', '').strip()
@@ -73,6 +75,7 @@ class DevOpsGenerateView(APIView):
 class DevOpsReviewView(APIView):
     """DevOps Agent ile kod review."""
     permission_classes = [IsAuthenticated, IsDoctor]
+    throttle_classes = [AIAgentThrottle]
 
     def post(self, request):
         task = request.data.get('task', 'Kodu incele ve kalite raporu olustur')

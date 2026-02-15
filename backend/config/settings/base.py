@@ -155,6 +155,20 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'apps.common.throttles.AnonBurstThrottle',
+        'apps.common.throttles.AnonSustainedThrottle',
+        'apps.common.throttles.UserBurstThrottle',
+        'apps.common.throttles.UserSustainedThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon_burst': '10/minute',
+        'anon_sustained': '100/hour',
+        'user_burst': '30/minute',
+        'user_sustained': '500/hour',
+        'auth': '5/minute',
+        'ai_agent': '10/hour',
+    },
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
 }

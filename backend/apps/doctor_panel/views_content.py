@@ -11,11 +11,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from apps.accounts.permissions import IsDoctor
+from apps.common.throttles import AIAgentThrottle
 
 
 class GenerateContentView(APIView):
     """Icerik uretim pipeline'ini tetikler."""
     permission_classes = [IsAuthenticated, IsDoctor]
+    throttle_classes = [AIAgentThrottle]
 
     def post(self, request):
         topic = request.data.get('topic', '').strip()
