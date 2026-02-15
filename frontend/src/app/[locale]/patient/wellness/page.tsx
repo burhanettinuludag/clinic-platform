@@ -5,9 +5,10 @@ import { useTranslations } from 'next-intl';
 import {
   Wind, Sparkles, Droplet, Moon, Calendar,
   Play, Pause, RotateCcw, CheckCircle2, Timer,
-  Plus, Minus, Target, TrendingUp
+  Plus, Minus, Target, TrendingUp, Heart
 } from 'lucide-react';
 import api from '@/lib/api';
+import MenstrualTab from './MenstrualTab';
 import {
   BreathingExercise,
   RelaxationExercise,
@@ -15,7 +16,7 @@ import {
   SleepLog
 } from '@/lib/types/patient';
 
-type TabType = 'breathing' | 'relaxation' | 'water' | 'sleep';
+type TabType = 'breathing' | 'relaxation' | 'water' | 'sleep' | 'menstrual';
 
 export default function WellnessPage() {
   const t = useTranslations();
@@ -26,6 +27,7 @@ export default function WellnessPage() {
     { id: 'relaxation' as TabType, label: 'Gevşeme', icon: Sparkles },
     { id: 'water' as TabType, label: 'Su', icon: Droplet },
     { id: 'sleep' as TabType, label: 'Uyku', icon: Moon },
+    { id: 'menstrual' as TabType, label: 'Dongu', icon: Heart },
   ];
 
   return (
@@ -66,6 +68,7 @@ export default function WellnessPage() {
       {activeTab === 'relaxation' && <RelaxationTab />}
       {activeTab === 'water' && <WaterTab />}
       {activeTab === 'sleep' && <SleepTab />}
+      {activeTab === 'menstrual' && <MenstrualTab />}
     </div>
   );
 }
