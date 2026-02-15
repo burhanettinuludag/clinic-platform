@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
+import ThemeToggle from '@/components/common/ThemeToggle';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import { useAuth } from '@/context/AuthContext';
 import { Menu, X, User, Brain, Activity, BookOpen, ShoppingBag, ChevronDown, FileText, Newspaper, Mail } from 'lucide-react';
@@ -74,7 +75,8 @@ export default function Header() {
 
           {/* Right Section */}
           <div className="hidden md:flex items-center gap-4">
-            <LanguageSwitcher />
+            <ThemeToggle />
+              <LanguageSwitcher />
 
             {user ? (
               <div className="flex items-center gap-3">
@@ -186,7 +188,8 @@ export default function Header() {
               )}
 
               <div className="px-4 pt-4">
-                <LanguageSwitcher />
+                <ThemeToggle />
+              <LanguageSwitcher />
               </div>
             </nav>
           </div>
