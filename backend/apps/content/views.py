@@ -117,3 +117,18 @@ class NewsArticleViewSet(viewsets.ReadOnlyModelViewSet):
         NewsArticle.objects.filter(pk=instance.pk).update(view_count=models.F('view_count') + 1)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+class PublicDoctorAuthorViewSet(viewsets.ReadOnlyModelViewSet):
+    """Public doktor profilleri - SEO friendly."""
+    serializer_class = PublicDoctorAuthorSerializer
+    permission_classes = [AllowAny]
+    queryset = DoctorAuthor.objects.filter(is_active=True, is_verified=True).select_related('doctor__user')
+
+    def get_object(self):
+        pk = self.kwargs['pk']
+        # slug-uuid8 formatinda gelebilir
+        if '-' in str(pk) and len(str(pk)) > 8:
+            uuid_part = str(pk).split('-')[-1]
+            return self.get_queryset().filter(id__startswith=uuid_part).first() or super().get_object()
+        return super().get_object()

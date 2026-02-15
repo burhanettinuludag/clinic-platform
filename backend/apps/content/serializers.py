@@ -258,3 +258,45 @@ class NewsArticleDetailSerializer(serializers.ModelSerializer):
             return build_news_article_schema(obj)
         except Exception:
             return None
+
+# --- Public Doctor Profile ---
+
+class PublicDoctorAuthorSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    specialty_display = serializers.CharField(source='get_primary_specialty_display', read_only=True)
+    slug = serializers.SerializerMethodField()
+    article_count = serializers.IntegerField(source='total_articles', read_only=True)
+    schema_markup = serializers.SerializerMethodField()
+
+    class Meta:
+        model = DoctorAuthor
+        fields = [
+            'id', 'full_name', 'slug', 'primary_specialty', 'specialty_display',
+            'headline_tr', 'headline_en', 'bio_tr', 'bio_en',
+            'institution', 'department', 'city',
+            'profile_photo', 'orcid_id', 'google_scholar_url',
+            'linkedin_url', 'website_url', 'is_verified',
+            'article_count', 'total_views', 'average_rating',
+            'memberships', 'education', 'schema_markup',
+        ]
+
+    def get_full_name(self, obj):
+        return obj.doctor.user.get_full_name()
+
+    def get_slug(self, obj):
+        name = obj.doctor.user.get_full_name().lower().replace(' ', '-')
+        import re
+        name = re.sub(r'[^a-z0-9-]', '', name)
+        return f"{name}-{str(obj.id)[:8]}"
+
+    def get_schema_markup(self, obj):
+        return {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": obj.doctor.user.get_full_name(),
+            "jobTitle": obj.get_primary_specialty_display(),
+            "affiliation": {"@type": "Organization", "name": obj.institution} if obj.institution else None,
+            "description": obj.bio_tr,
+            "image": obj.profile_photo.url if obj.profile_photo else None,
+            "sameAs": [u for u in [obj.orcid_id and f"https://orcid.org/{obj.orcid_id}", obj.google_scholar_url, obj.linkedin_url, obj.website_url] if u],
+        }

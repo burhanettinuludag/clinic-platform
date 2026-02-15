@@ -1,7 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views_upload import ImageUploadView
-from .views import (
+from .views import PublicDoctorAuthorViewSet,\
+     (
     ContentCategoryViewSet,
     ArticleViewSet,
     NewsArticleViewSet,
@@ -14,6 +15,7 @@ router.register('categories', ContentCategoryViewSet, basename='content-category
 router.register('articles', ArticleViewSet, basename='article')
 router.register('news', NewsArticleViewSet, basename='news-article')
 router.register('education', EducationItemViewSet, basename='education-item')
+router.register('doctors', PublicDoctorAuthorViewSet, basename='public-doctor')
 router.register('education-progress', EducationProgressViewSet, basename='education-progress')
 
 urlpatterns = [
