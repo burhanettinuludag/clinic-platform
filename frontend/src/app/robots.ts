@@ -3,11 +3,7 @@ import { MetadataRoute } from 'next';
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://norosera.com';
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: ['/api/', '/doctor/', '/patient/', '/auth/'],
-    },
+    rules: { userAgent: '*', allow: '/', disallow: ['/api/', '/doctor/', '/patient/', '/auth/', '/editor/'] },
     sitemap: `${siteUrl}/sitemap.xml`,
   };
 }
