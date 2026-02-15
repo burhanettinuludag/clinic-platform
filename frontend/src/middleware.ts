@@ -8,6 +8,7 @@ const intlMiddleware = createMiddleware(routing);
 const PROTECTED_PREFIXES = ['/patient', '/doctor', '/editor'];
 // Role-based routes
 const ROLE_ROUTES: Record<string, string[]> = {
+  '/doctor/site-settings': ['admin'],
   '/doctor': ['doctor', 'admin'],
   '/editor': ['doctor', 'admin'],
   '/patient': ['patient', 'doctor', 'admin'],

@@ -5,13 +5,23 @@ import Breadcrumb from '@/components/common/Breadcrumb';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { LayoutDashboard, Users, AlertTriangle, Sparkles, BookOpen, ShieldCheck, Terminal, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Users, AlertTriangle, Sparkles, BookOpen, ShieldCheck, Terminal, BarChart3, Settings, User } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
 import { ToastProvider } from '@/components/Toast';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { useAuth } from '@/context/AuthContext';
 import type { ReactNode } from 'react';
+import type { LucideIcon } from 'lucide-react';
 
-const sidebarItems = [
+interface SidebarItem {
+  href: string;
+  icon: LucideIcon;
+  labelKey: string;
+  fallback: string;
+  adminOnly?: boolean;
+}
+
+const sidebarItems: SidebarItem[] = [
   { href: '/doctor/dashboard', icon: LayoutDashboard, labelKey: 'dashboard', fallback: 'Dashboard' },
   { href: '/doctor/patients', icon: Users, labelKey: 'patients', fallback: 'Hastalar' },
   { href: '/doctor/alerts', icon: AlertTriangle, labelKey: 'alerts', fallback: 'Uyarilar' },
@@ -20,12 +30,16 @@ const sidebarItems = [
   { href: '/doctor/editor', icon: ShieldCheck, labelKey: 'editor', fallback: 'Editor Paneli' },
   { href: '/doctor/devops', icon: Terminal, labelKey: 'devops', fallback: 'DevOps Agent' },
   { href: '/doctor/analytics', icon: BarChart3, labelKey: 'analytics', fallback: 'Analytics' },
+  { href: '/doctor/site-settings', icon: Settings, labelKey: 'siteSettings', fallback: 'Site Yonetimi', adminOnly: true },
   { href: '/doctor/profile', icon: User, labelKey: 'profile', fallback: 'Profil' },
 ];
 
 export default function DoctorLayout({ children }: { children: ReactNode }) {
   const t = useTranslations('nav');
   const pathname = usePathname();
+  const { user } = useAuth();
+
+  const visibleItems = sidebarItems.filter(item => !item.adminOnly || user?.role === 'admin');
 
   const isActive = (href: string) => {
     const segments = pathname.split('/');
@@ -45,6 +59,7 @@ export default function DoctorLayout({ children }: { children: ReactNode }) {
   const getActiveColor = (href: string) => {
     if (href === '/doctor/content') return { bg: 'bg-purple-50 text-purple-700', icon: 'text-purple-700' };
     if (href === '/doctor/author') return { bg: 'bg-indigo-50 text-indigo-700', icon: 'text-indigo-700' };
+    if (href === '/doctor/site-settings') return { bg: 'bg-emerald-50 text-emerald-700', icon: 'text-emerald-700' };
     return { bg: 'bg-blue-50 text-blue-700', icon: 'text-blue-700' };
   };
 
@@ -57,7 +72,7 @@ export default function DoctorLayout({ children }: { children: ReactNode }) {
           <NotificationBell />
         </div>
         <nav className="flex-1 space-y-1 p-4">
-          {sidebarItems.map((item) => {
+          {visibleItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
             const colors = getActiveColor(item.href);
@@ -73,7 +88,7 @@ export default function DoctorLayout({ children }: { children: ReactNode }) {
       </aside>
       <main className="flex-1 bg-gray-50 pb-20 md:pb-0"><Breadcrumb />{children}</main>
       <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t bg-white py-2 md:hidden">
-        {sidebarItems.map((item) => {
+        {visibleItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
           return (
