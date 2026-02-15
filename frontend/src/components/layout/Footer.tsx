@@ -11,6 +11,8 @@ export default function Footer() {
     { label: t('nav.home'), href: '/' },
     { label: t('nav.education') || 'Egitim', href: '/education' },
     { label: t('nav.store'), href: '/store' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'Haberler', href: '/news' },
   ];
 
   const legalLinks = [
