@@ -84,6 +84,17 @@ docker-compose -f docker-compose.prod.yml ps
 echo -e "${YELLOW}8. Backup cron job ayarlanıyor...${NC}"
 (crontab -l 2>/dev/null | grep -v "backup-db.sh"; echo "0 4 * * * /opt/norosera/scripts/backup-db.sh >> /var/log/clinic/backup.log 2>&1") | crontab -
 
+# Fail2ban kurulumu
+echo -e "${YELLOW}9. Fail2ban ayarlanıyor...${NC}"
+if command -v fail2ban-client &> /dev/null; then
+    cp scripts/fail2ban/norosera.conf /etc/fail2ban/jail.d/
+    cp scripts/fail2ban/norosera-login.conf /etc/fail2ban/filter.d/
+    systemctl restart fail2ban
+    echo "Fail2ban yapilandirildi."
+else
+    echo -e "${YELLOW}UYARI: fail2ban kurulu degil. Kurmak icin: apt install fail2ban${NC}"
+fi
+
 echo ""
 echo -e "${GREEN}=== Deployment Tamamlandı ===${NC}"
 echo ""

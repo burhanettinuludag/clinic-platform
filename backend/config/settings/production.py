@@ -85,6 +85,12 @@ LOGGING = {
             'filename': os.environ.get('LOG_FILE', '/var/log/clinic/django.log'),  # noqa: F405
             'formatter': 'verbose',
         },
+        'security_file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/clinic/security.log',
+            'formatter': 'verbose',
+        },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
@@ -104,6 +110,11 @@ LOGGING = {
         'apps': {
             'handlers': ['console', 'file'],
             'level': 'INFO',
+            'propagate': False,
+        },
+        'security': {
+            'handlers': ['security_file'],
+            'level': 'WARNING',
             'propagate': False,
         },
     },
