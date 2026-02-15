@@ -1,16 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
-import { useConsents, useGrantConsent } from "@/hooks/useDoctorData";
-import { Bell, Shield, Mail, Cookie } from "lucide-react";
-
-interface ConsentItem {
-  key: string;
-  label: string;
-  description: string;
-  icon: React.ReactNode;
-}
+import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
+import { useConsents, useGrantConsent } from '@/hooks/useDoctorData';
+import { Bell, Shield, Mail, Cookie, Lock, User, Settings, ChevronRight } from 'lucide-react';
 
 export default function PatientSettingsPage() {
   const t = useTranslations();
@@ -18,132 +12,88 @@ export default function PatientSettingsPage() {
   const grantConsent = useGrantConsent();
 
   const [localConsents, setLocalConsents] = useState<Record<string, boolean>>({
-    health_data: false,
-    doctor_sharing: false,
-    marketing: false,
-    cookies: false,
+    health_data: false, doctor_sharing: false, marketing: false, cookies: false,
   });
 
   useEffect(() => {
     if (consents && Array.isArray(consents)) {
-      const consentMap: Record<string, boolean> = {};
-      consents.forEach((consent: { consent_type: string; granted: boolean }) => {
-        consentMap[consent.consent_type] = consent.granted;
-      });
-      setLocalConsents((prev) => ({ ...prev, ...consentMap }));
+      const map: Record<string, boolean> = {};
+      consents.forEach((c: { consent_type: string; granted: boolean }) => { map[c.consent_type] = c.granted; });
+      setLocalConsents(prev => ({ ...prev, ...map }));
     }
   }, [consents]);
 
-  const consentItems: ConsentItem[] = [
-    {
-      key: "health_data",
-      label: "Saglik Verisi Isleme",
-      description: "Saglik verilerinizin takip amacli islenmesine izin verin.",
-      icon: <Shield className="w-5 h-5 text-blue-600" />,
-    },
-    {
-      key: "doctor_sharing",
-      label: "Hekim ile Paylasim",
-      description: "Verilerinizin hekiminizle paylasilmasina izin verin.",
-      icon: <Bell className="w-5 h-5 text-green-600" />,
-    },
-    {
-      key: "marketing",
-      label: "Pazarlama Iletisimi",
-      description: "Promosyon ve bilgilendirme e-postalari alin.",
-      icon: <Mail className="w-5 h-5 text-purple-600" />,
-    },
-    {
-      key: "cookies",
-      label: "Cerez Kullanimi",
-      description: "Analitik cerezlerin kullanimina izin verin.",
-      icon: <Cookie className="w-5 h-5 text-amber-600" />,
-    },
-  ];
-
-  const handleToggle = (consentType: string) => {
-    const newValue = !localConsents[consentType];
-    setLocalConsents((prev) => ({ ...prev, [consentType]: newValue }));
-    grantConsent.mutate({
-      consent_type: consentType,
-      granted: newValue,
-      version: "1.0",
-    });
+  const handleToggle = (key: string) => {
+    const next = !localConsents[key];
+    setLocalConsents(prev => ({ ...prev, [key]: next }));
+    grantConsent.mutate({ consent_type: key, granted: next, version: '1.0' });
   };
 
+  const quickLinks = [
+    { href: '/patient/profile', icon: User, label: 'Profil Duzenle', desc: 'Kisisel ve saglik bilgileri', color: 'text-blue-600 bg-blue-50' },
+    { href: '/patient/change-password', icon: Lock, label: 'Sifre Degistir', desc: 'Hesap guvenlik ayarlari', color: 'text-red-500 bg-red-50' },
+    { href: '/patient/notification-settings', icon: Bell, label: 'Bildirim Tercihleri', desc: 'Email, push ve sessiz saatler', color: 'text-purple-600 bg-purple-50' },
+  ];
+
+  const consentItems = [
+    { key: 'health_data', label: 'Saglik Verisi Isleme', desc: 'Saglik verilerinizin takip amacli islenmesine izin verin.', icon: Shield, color: 'text-blue-600' },
+    { key: 'doctor_sharing', label: 'Hekim ile Paylasim', desc: 'Verilerinizin hekiminizle paylasilmasina izin verin.', icon: User, color: 'text-green-600' },
+    { key: 'marketing', label: 'Pazarlama Iletisimi', desc: 'Promosyon ve bilgilendirme e-postalari alin.', icon: Mail, color: 'text-purple-600' },
+    { key: 'cookies', label: 'Cerez Kullanimi', desc: 'Analitik cerezlerin kullanimina izin verin.', icon: Cookie, color: 'text-amber-600' },
+  ];
+
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Yukleniyor...</p>
-        </div>
-      </div>
-    );
+    return <div className="flex justify-center py-20"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" /></div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Ayarlar</h1>
+    <div className="max-w-lg mx-auto px-4 py-12">
+      <div className="flex items-center gap-3 mb-6">
+        <Settings className="h-6 w-6 text-blue-600" />
+        <h1 className="text-xl font-bold text-gray-900">Ayarlar</h1>
+      </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            Onay ve KVKK Tercihleri
-          </h2>
-          <p className="text-gray-500 text-sm mb-6">
-            Kisisel verilerinizin islenmesine iliskin tercihlerinizi yonetin.
-          </p>
-
-          <div className="space-y-6">
-            {consentItems.map((item) => (
-              <div
-                key={item.key}
-                className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5">{item.icon}</div>
-                  <div>
-                    <p className="font-medium text-gray-800">{item.label}</p>
-                    <p className="text-sm text-gray-500">{item.description}</p>
-                  </div>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={localConsents[item.key]}
-                    onClick={() => handleToggle(item.key)}
-                    className={`w-11 h-6 rounded-full transition-colors duration-200 ease-in-out ${
-                      localConsents[item.key] ? "bg-blue-600" : "bg-gray-300"
-                    }`}
-                  >
-                    <span
-                      className={`block w-5 h-5 bg-white rounded-full shadow transform transition-transform duration-200 ease-in-out ${
-                        localConsents[item.key]
-                          ? "translate-x-5"
-                          : "translate-x-0.5"
-                      }`}
-                    />
-                  </button>
-                </label>
+      {/* Quick Links */}
+      <div className="space-y-2 mb-8">
+        {quickLinks.map(item => (
+          <Link key={item.href} href={item.href}
+            className="flex items-center justify-between rounded-xl border bg-white p-4 hover:shadow-sm transition-shadow">
+            <div className="flex items-center gap-3">
+              <div className={'rounded-full p-2 ' + item.color}>
+                <item.icon className="h-5 w-5" />
               </div>
-            ))}
-          </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900">{item.label}</p>
+                <p className="text-xs text-gray-500">{item.desc}</p>
+              </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-gray-300" />
+          </Link>
+        ))}
+      </div>
+
+      {/* KVKK */}
+      <div className="rounded-xl border bg-white p-4">
+        <h2 className="text-sm font-semibold text-gray-700 mb-1">Onay ve KVKK Tercihleri</h2>
+        <p className="text-xs text-gray-400 mb-4">Kisisel verilerinizin islenmesine iliskin tercihlerinizi yonetin.</p>
+        <div className="divide-y">
+          {consentItems.map(item => (
+            <div key={item.key} className="flex items-center justify-between py-3">
+              <div className="flex items-start gap-3">
+                <item.icon className={'h-5 w-5 mt-0.5 ' + item.color} />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">{item.label}</p>
+                  <p className="text-xs text-gray-500">{item.desc}</p>
+                </div>
+              </div>
+              <button type="button" onClick={() => handleToggle(item.key)}
+                className={'relative w-11 h-6 rounded-full transition-colors ' + (localConsents[item.key] ? 'bg-blue-600' : 'bg-gray-200')}>
+                <span className={'absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ' + (localConsents[item.key] ? 'translate-x-5' : '')} />
+              </button>
+            </div>
+          ))}
         </div>
-      
-        <div className="mt-6 pt-6 border-t">
-          <Link href="/patient/change-password" className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
-            Sifre Degistir →
-          </Link>
-          <Link href="/patient/notification-settings" className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
-            Bildirim Tercihleri →
-          </Link>
-          <Link href="/patient/profile" className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
-            Profil Duzenle →
-          </Link>
-        </div>
-</div>
+      </div>
     </div>
   );
 }
