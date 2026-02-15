@@ -32,3 +32,6 @@ agent_registry.register(InternalLinkAgent())
 
 from services.agents.quality_agent import QualityAgent
 agent_registry.register(QualityAgent())
+
+from services.agents.devops_agent import DevOpsAgent
+agent_registry.register(DevOpsAgent())

@@ -106,6 +106,18 @@ PIPELINES = {
         'stop_on_failure': False,
         'gatekeeper_steps': [],
     },
+    'devops_code': {
+        'description': 'Kod uretme pipeline',
+        'steps': ['devops_agent'],
+        'stop_on_failure': False,
+        'gatekeeper_steps': [],
+    },
+    'devops_review': {
+        'description': 'Kod review pipeline',
+        'steps': ['devops_agent'],
+        'stop_on_failure': False,
+        'gatekeeper_steps': [],
+    },
     'quality_check': {
         'description': 'Kalite kontrol: QA + Editor (bilgi amacli)',
         'steps': ['quality_agent', 'editor_agent'],
