@@ -1,5 +1,7 @@
 'use client';
 
+import WeatherWidget from '@/components/patient/WeatherWidget';
+
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/context/AuthContext';
 import { Link } from '@/i18n/navigation';
@@ -35,6 +37,7 @@ export default function PatientDashboard() {
       </h1>
 
       {/* Stats Grid */}
+      <div className="mb-6"><WeatherWidget city="Izmir" /></div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <div className="flex items-center gap-2 mb-2">
