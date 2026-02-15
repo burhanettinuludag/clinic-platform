@@ -15,7 +15,7 @@ import {
   UserAchievement
 } from '@/lib/types/patient';
 
-type TabType = 'overview' | 'badges' | 'achievements' | 'streaks';
+type TabType = 'overview' | 'badges' | 'achievements' | 'streaks' | 'leaderboard';
 
 export default function RewardsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -33,6 +33,7 @@ export default function RewardsPage() {
     { id: 'badges' as TabType, label: 'Rozetler', icon: Award },
     { id: 'achievements' as TabType, label: 'Hedefler', icon: Target },
     { id: 'streaks' as TabType, label: 'Seriler', icon: Flame },
+    { id: 'leaderboard' as TabType, label: 'Siralamalar', icon: Trophy },
   ];
 
   if (loading) {
@@ -111,6 +112,7 @@ export default function RewardsPage() {
       {activeTab === 'badges' && <BadgesTab />}
       {activeTab === 'achievements' && <AchievementsTab />}
       {activeTab === 'streaks' && summary && <StreaksTab streaks={summary.streaks} />}
+      {activeTab === 'leaderboard' && <LeaderboardTab />}
     </div>
   );
 }
@@ -454,6 +456,34 @@ function StreakCard({ streak, detailed }: { streak: UserStreak; detailed?: boole
           <div className="text-xs text-gray-500">En yüksek: {streak.longest_streak}</div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function LeaderboardTab() {
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get('/gamification/points/leaderboard/')
+      .then(res => setData(res.data.results || res.data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div className="flex justify-center py-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" /></div>;
+
+  return (
+    <div className="space-y-2">
+      {data.length > 0 ? data.map((item: any, i: number) => (
+        <div key={i} className="flex items-center justify-between rounded-lg border bg-white p-3">
+          <div className="flex items-center gap-3">
+            <span className={"w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold " + (i === 0 ? "bg-yellow-100 text-yellow-700" : i === 1 ? "bg-gray-100 text-gray-600" : i === 2 ? "bg-orange-100 text-orange-700" : "bg-gray-50 text-gray-500")}>{i + 1}</span>
+            <span className="text-sm font-medium text-gray-900">{item.user__first_name || item.username || 'Kullanici'}</span>
+          </div>
+          <span className="text-sm font-bold text-blue-600">{item.total_points || 0} puan</span>
+        </div>
+      )) : <div className="text-center py-8 text-gray-400 text-sm">Siralama verisi yok</div>}
     </div>
   );
 }
