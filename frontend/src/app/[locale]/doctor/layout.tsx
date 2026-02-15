@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { LayoutDashboard, Users, AlertTriangle, Sparkles, BookOpen, ShieldCheck, Terminal } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
+import { ToastProvider } from '@/components/Toast';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import type { ReactNode } from 'react';
 
 const sidebarItems = [
@@ -43,6 +45,7 @@ export default function DoctorLayout({ children }: { children: ReactNode }) {
   };
 
   return (
+    <ToastProvider>
     <div className="flex min-h-screen">
       <aside className="hidden md:flex md:w-64 md:flex-col md:border-r md:bg-white">
         <div className="flex h-16 items-center justify-between border-b px-6">
@@ -79,5 +82,6 @@ export default function DoctorLayout({ children }: { children: ReactNode }) {
         })}
       </nav>
     </div>
+    </ToastProvider>
   );
 }
