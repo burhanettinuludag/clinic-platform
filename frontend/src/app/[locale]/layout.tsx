@@ -12,9 +12,32 @@ import DisclaimerBanner from '@/components/common/DisclaimerBanner';
 import '../globals.css';
 
 export const metadata: Metadata = {
-  title: 'Norosera - Norolojik Hastaliklar Icin Dijital Platform',
-  description:
-    'Migren, epilepsi ve diger kronik norolojik hastaliklar icin dijital takip, ev egitimi ve hekim paneli platformu.',
+  title: {
+    default: 'Norosera - Norolojik Hastaliklar Icin Dijital Platform',
+    template: '%s | Norosera',
+  },
+  description: 'Migren, epilepsi ve diger kronik norolojik hastaliklar icin dijital takip, ev egitimi ve hekim paneli platformu.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://norosera.com'),
+  openGraph: {
+    type: 'website',
+    siteName: 'Norosera',
+    title: 'Norosera - Norolojik Hastaliklar Icin Dijital Platform',
+    description: 'Noroloji alaninda uzman doktorlar tarafindan desteklenen dijital saglik platformu.',
+    locale: 'tr_TR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Norosera',
+    description: 'Norolojik hastaliklar icin dijital platform.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || '',
+  },
 };
 
 export default async function LocaleLayout({

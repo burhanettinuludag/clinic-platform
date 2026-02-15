@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import { useAuth } from '@/context/AuthContext';
-import { Menu, X, User, Brain, Activity, BookOpen, ShoppingBag, ChevronDown } from 'lucide-react';
+import { Menu, X, User, Brain, Activity, BookOpen, ShoppingBag, ChevronDown, FileText, Newspaper } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function Header() {
@@ -57,6 +57,12 @@ export default function Header() {
             </NavLink>
             <NavLink href="/education" icon={<BookOpen className="w-4 h-4" />}>
               {t('nav.education') || 'Egitim'}
+            </NavLink>
+            <NavLink href="/blog" icon={<FileText className="w-4 h-4" />}>
+              Blog
+            </NavLink>
+            <NavLink href="/news" icon={<Newspaper className="w-4 h-4" />}>
+              Haberler
             </NavLink>
             <NavLink href="/store" icon={<ShoppingBag className="w-4 h-4" />}>
               {t('nav.store')}
@@ -123,6 +129,14 @@ export default function Header() {
               <MobileNavLink href="/education" onClick={() => setMenuOpen(false)}>
                 <BookOpen className="w-5 h-5" />
                 {t('nav.education') || 'Egitim'}
+              </MobileNavLink>
+              <MobileNavLink href="/blog" onClick={() => setMenuOpen(false)}>
+                <FileText className="w-5 h-5" />
+                Blog
+              </MobileNavLink>
+              <MobileNavLink href="/news" onClick={() => setMenuOpen(false)}>
+                <Newspaper className="w-5 h-5" />
+                Haberler
               </MobileNavLink>
               <MobileNavLink href="/store" onClick={() => setMenuOpen(false)}>
                 <ShoppingBag className="w-5 h-5" />
