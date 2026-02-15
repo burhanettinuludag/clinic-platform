@@ -26,6 +26,7 @@ staticfiles/
 .env.production
 .env.*
 !.env.example
+!.env.production.template
 
 # IDE
 .vscode/
