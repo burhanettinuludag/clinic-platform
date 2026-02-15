@@ -1,5 +1,7 @@
 'use client';
 
+import Breadcrumb from '@/components/common/Breadcrumb';
+
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
@@ -91,7 +93,7 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
 
       {/* Main content */}
       <main className="flex-1 p-4 md:p-6 bg-gray-50 pb-20 md:pb-6">
-        {children}
+        <Breadcrumb />{children}
       </main>
     </div>
   );

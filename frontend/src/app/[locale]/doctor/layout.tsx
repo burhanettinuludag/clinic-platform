@@ -1,5 +1,7 @@
 'use client';
 
+import Breadcrumb from '@/components/common/Breadcrumb';
+
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
@@ -69,7 +71,7 @@ export default function DoctorLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
       </aside>
-      <main className="flex-1 bg-gray-50 pb-20 md:pb-0">{children}</main>
+      <main className="flex-1 bg-gray-50 pb-20 md:pb-0"><Breadcrumb />{children}</main>
       <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t bg-white py-2 md:hidden">
         {sidebarItems.map((item) => {
           const Icon = item.icon;
