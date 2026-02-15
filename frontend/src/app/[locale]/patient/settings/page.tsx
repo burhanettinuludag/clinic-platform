@@ -131,7 +131,13 @@ export default function PatientSettingsPage() {
             ))}
           </div>
         </div>
-      </div>
+      
+        <div className="mt-6 pt-6 border-t">
+          <Link href="/patient/change-password" className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
+            Sifre Degistir →
+          </Link>
+        </div>
+</div>
     </div>
   );
 }
