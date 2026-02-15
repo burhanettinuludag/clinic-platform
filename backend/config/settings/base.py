@@ -65,6 +65,7 @@ LOCAL_APPS = [
     'apps.doctor_panel',
     'apps.wellness',
     'apps.gamification',
+    'apps.social',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -243,6 +244,12 @@ LLM_PRIMARY_PROVIDER = 'groq'
 LLM_FALLBACK_PROVIDER = 'gemini'
 LLM_MAX_RETRIES = 2
 LLM_TIMEOUT_SECONDS = 30
+
+# ---------- Social Media API ----------
+META_APP_ID = os.environ.get('META_APP_ID', '')
+META_APP_SECRET = os.environ.get('META_APP_SECRET', '')
+LINKEDIN_CLIENT_ID = os.environ.get('LINKEDIN_CLIENT_ID', '')
+LINKEDIN_CLIENT_SECRET = os.environ.get('LINKEDIN_CLIENT_SECRET', '')
 
 # ---------- drf-spectacular ----------
 SPECTACULAR_SETTINGS = {
