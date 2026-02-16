@@ -5,7 +5,7 @@ import Breadcrumb from '@/components/common/Breadcrumb';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { LayoutDashboard, Users, AlertTriangle, Sparkles, BookOpen, ShieldCheck, Terminal, BarChart3, Settings, User, Megaphone } from 'lucide-react';
+import { LayoutDashboard, Users, AlertTriangle, Sparkles, BookOpen, ShieldCheck, Terminal, BarChart3, Settings, User, Megaphone, Share2 } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
 import { ToastProvider } from '@/components/Toast';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -30,6 +30,7 @@ const sidebarItems: SidebarItem[] = [
   { href: '/doctor/editor', icon: ShieldCheck, labelKey: 'editor', fallback: 'Editor Paneli' },
   { href: '/doctor/devops', icon: Terminal, labelKey: 'devops', fallback: 'DevOps Agent' },
   { href: '/doctor/marketing', icon: Megaphone, labelKey: 'marketing', fallback: 'Marketing' },
+  { href: '/doctor/social', icon: Share2, labelKey: 'social', fallback: 'Sosyal Medya' },
   { href: '/doctor/analytics', icon: BarChart3, labelKey: 'analytics', fallback: 'Analytics' },
   { href: '/doctor/site-settings', icon: Settings, labelKey: 'siteSettings', fallback: 'Site Yonetimi', adminOnly: true },
   { href: '/doctor/profile', icon: User, labelKey: 'profile', fallback: 'Profil' },
@@ -61,6 +62,7 @@ export default function DoctorLayout({ children }: { children: ReactNode }) {
     if (href === '/doctor/content') return { bg: 'bg-purple-50 text-purple-700', icon: 'text-purple-700' };
     if (href === '/doctor/author') return { bg: 'bg-indigo-50 text-indigo-700', icon: 'text-indigo-700' };
     if (href === '/doctor/marketing') return { bg: 'bg-orange-50 text-orange-700', icon: 'text-orange-700' };
+    if (href === '/doctor/social') return { bg: 'bg-cyan-50 text-cyan-700', icon: 'text-cyan-700' };
     if (href === '/doctor/site-settings') return { bg: 'bg-emerald-50 text-emerald-700', icon: 'text-emerald-700' };
     return { bg: 'bg-blue-50 text-blue-700', icon: 'text-blue-700' };
   };
