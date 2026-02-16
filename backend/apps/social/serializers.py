@@ -150,6 +150,10 @@ class CreateSocialCampaignSerializer(serializers.ModelSerializer):
             'platforms', 'posts_per_platform',
             'language', 'tone', 'target_audience', 'week_start',
         ]
+        extra_kwargs = {
+            'title': {'required': False, 'allow_blank': True},
+            'description': {'required': False},
+        }
 
     def validate_platforms(self, value):
         valid = [c[0] for c in SocialAccount.PLATFORM_CHOICES]

@@ -12,7 +12,7 @@ Endpoint gruplari:
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone as dt_tz
 
 from django.db.models import Q, Sum
 from django.utils import timezone
@@ -616,11 +616,11 @@ class SocialCalendarView(APIView):
             year, month = now.year, now.month
 
         # Ayin baslangic ve bitis tarihleri
-        start_date = datetime(year, month, 1, tzinfo=timezone.utc)
+        start_date = datetime(year, month, 1, tzinfo=dt_tz.utc)
         if month == 12:
-            end_date = datetime(year + 1, 1, 1, tzinfo=timezone.utc)
+            end_date = datetime(year + 1, 1, 1, tzinfo=dt_tz.utc)
         else:
-            end_date = datetime(year, month + 1, 1, tzinfo=timezone.utc)
+            end_date = datetime(year, month + 1, 1, tzinfo=dt_tz.utc)
 
         posts = SocialPost.objects.filter(
             scheduled_at__gte=start_date,
