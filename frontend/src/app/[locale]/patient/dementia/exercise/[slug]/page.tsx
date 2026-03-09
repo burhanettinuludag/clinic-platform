@@ -63,6 +63,61 @@ export default function ExercisePage() {
     );
   };
 
+  // Map slugs (Turkish DB slugs + English fallback) to game components
+  const gameMap: Record<string, React.ComponentType<any>> = {
+    'hafiza-kartlari': MemoryCardsGame,
+    'memory-cards': MemoryCardsGame,
+    'sira-hatirlama': SequenceRecallGame,
+    'sequence-recall': SequenceRecallGame,
+    'renk-kelime-testi': ColorWordGame,
+    'color-word': ColorWordGame,
+    'basit-matematik': SimpleMathGame,
+    'simple-math': SimpleMathGame,
+    'kelime-ciftleri': WordPairsGame,
+    'word-pairs': WordPairsGame,
+    'pattern-recognition': PatternRecognitionGame,
+    'category-sorting': CategorySortingGame,
+    'face-recognition': FaceRecognitionGame,
+    'real-face-recognition': RealFaceRecognitionGame,
+    'virtual-home-navigation': VirtualHomeNavigationGame,
+    'harita-okuma': MapReadingGame,
+    'map-reading': MapReadingGame,
+    'direction-following': DirectionFollowingGame,
+    'fark-bulma': SpotDifferenceGame,
+    'spot-difference': SpotDifferenceGame,
+    'gorsel-arama': VisualSearchGame,
+    'visual-search': VisualSearchGame,
+    'word-completion': WordCompletionGame,
+    'word-association': WordAssociationGame,
+    'puzzle-arrange': PuzzleArrangeGame,
+    'date-time-quiz': DateTimeQuizGame,
+    'location-quiz': LocationQuizGame,
+    'problem-cozme': SimpleMathGame,
+    'ileri-hesaplama': SimpleMathGame,
+  };
+
+  const renderGame = () => {
+    if (!exercise) return null;
+    const GameComponent = gameMap[exercise.slug];
+    if (GameComponent) {
+      return (
+        <GameComponent
+          config={exercise.config}
+          difficulty={exercise.difficulty}
+          onComplete={handleComplete}
+        />
+      );
+    }
+    return (
+      <GenericExercise
+        exercise={exercise}
+        config={exercise.config}
+        difficulty={exercise.difficulty}
+        onComplete={handleComplete}
+      />
+    );
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -121,147 +176,7 @@ export default function ExercisePage() {
 
       {/* Game Component */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
-        {exercise.slug === 'memory-cards' && (
-          <MemoryCardsGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'sequence-recall' && (
-          <SequenceRecallGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'color-word' && (
-          <ColorWordGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'simple-math' && (
-          <SimpleMathGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'word-pairs' && (
-          <WordPairsGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'pattern-recognition' && (
-          <PatternRecognitionGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'category-sorting' && (
-          <CategorySortingGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'face-recognition' && (
-          <FaceRecognitionGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'real-face-recognition' && (
-          <RealFaceRecognitionGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'virtual-home-navigation' && (
-          <VirtualHomeNavigationGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'map-reading' && (
-          <MapReadingGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'direction-following' && (
-          <DirectionFollowingGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'spot-difference' && (
-          <SpotDifferenceGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'visual-search' && (
-          <VisualSearchGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'word-completion' && (
-          <WordCompletionGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'word-association' && (
-          <WordAssociationGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'puzzle-arrange' && (
-          <PuzzleArrangeGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'date-time-quiz' && (
-          <DateTimeQuizGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {exercise.slug === 'location-quiz' && (
-          <LocationQuizGame
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
-        {!['memory-cards', 'sequence-recall', 'color-word', 'simple-math', 'word-pairs', 'pattern-recognition', 'category-sorting', 'face-recognition', 'real-face-recognition', 'virtual-home-navigation', 'map-reading', 'direction-following', 'spot-difference', 'visual-search', 'word-completion', 'word-association', 'puzzle-arrange', 'date-time-quiz', 'location-quiz'].includes(exercise.slug) && (
-          <GenericExercise
-            exercise={exercise}
-            config={exercise.config}
-            difficulty={exercise.difficulty}
-            onComplete={handleComplete}
-          />
-        )}
+        {renderGame()}
       </div>
     </div>
   );
