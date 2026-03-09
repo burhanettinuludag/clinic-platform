@@ -25,6 +25,7 @@ class CustomUser(AbstractUser):
         PATIENT = 'patient', 'Patient'
         DOCTOR = 'doctor', 'Doctor'
         ADMIN = 'admin', 'Admin'
+        CAREGIVER = 'caregiver', 'Caregiver'
 
     username = None
     email = models.EmailField(unique=True)
@@ -101,6 +102,43 @@ class DoctorProfile(TimeStampedModel):
 
     def __str__(self):
         return f"Dr. {self.user.get_full_name()}"
+
+
+class CaregiverProfile(TimeStampedModel):
+    """
+    Profile for caregivers who monitor dementia patients.
+    """
+    class RelationshipType(models.TextChoices):
+        SPOUSE = 'spouse', 'Spouse'
+        CHILD = 'child', 'Child'
+        SIBLING = 'sibling', 'Sibling'
+        PROFESSIONAL = 'professional', 'Professional Caregiver'
+        OTHER = 'other', 'Other'
+
+    user = models.OneToOneField(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='caregiver_profile',
+    )
+    relationship_type = models.CharField(
+        max_length=20,
+        choices=RelationshipType.choices,
+        default=RelationshipType.OTHER,
+    )
+    patients = models.ManyToManyField(
+        CustomUser,
+        related_name='caregivers',
+        blank=True,
+        limit_choices_to={'role': 'patient'},
+    )
+    notes = models.TextField(blank=True, default='')
+
+    class Meta:
+        verbose_name = 'Caregiver Profile'
+        verbose_name_plural = 'Caregiver Profiles'
+
+    def __str__(self):
+        return f"Caregiver: {self.user.get_full_name()} ({self.get_relationship_type_display()})"
 
 
 class DoctorAuthor(TimeStampedModel):

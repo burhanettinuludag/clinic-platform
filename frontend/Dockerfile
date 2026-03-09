@@ -14,6 +14,18 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Build args for production URLs (baked into the build)
+ARG NEXT_PUBLIC_API_URL=https://norosera.com/api/v1
+ARG NEXT_PUBLIC_APP_URL=https://norosera.com
+ARG NEXT_PUBLIC_APP_NAME=Norosera
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME
+
+# Skip Sentry source map upload during build (no auth token needed)
+ENV SENTRY_SUPPRESS_TURBOPACK_WARNING=1
+ENV NEXT_PUBLIC_SENTRY_DSN=""
+
 RUN npm run build
 
 # Production image

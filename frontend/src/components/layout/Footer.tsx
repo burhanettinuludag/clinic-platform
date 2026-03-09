@@ -31,69 +31,65 @@ export default function Footer() {
 
   const quickLinks = [
     { label: t('nav.home'), href: '/' },
-    { label: t('nav.education') || 'Egitim', href: '/education' },
+    { label: t('nav.education'), href: '/education' },
     { label: t('nav.store'), href: '/store' },
-    { label: 'Blog', href: '/blog' },
-    { label: 'Haberler', href: '/news' },
-    { label: 'Iletisim', href: '/contact' },
+    { label: t('nav.blog'), href: '/blog' },
+    { label: t('nav.news'), href: '/news' },
+    { label: t('nav.contact'), href: '/contact' },
   ];
 
   const legalLinks = [
-    { label: 'Gizlilik Politikasi', href: '/privacy-policy' },
-    { label: 'Kullanim Kosullari', href: '/terms' },
-    { label: 'KVKK Aydinlatma Metni', href: '/kvkk' },
+    { label: t('legal.privacy'), href: '/privacy-policy' },
+    { label: t('legal.terms'), href: '/terms' },
+    { label: t('legal.kvkk'), href: '/kvkk' },
   ];
 
   const diseaseModules = [
-    { label: 'Migren Takibi', href: '/patient/dashboard', active: true },
-    { label: 'Epilepsi Takibi', href: '#', active: false },
-    { label: 'Parkinson Takibi', href: '#', active: false },
-    { label: 'Demans Takibi', href: '#', active: false },
+    { label: t('footer.migraineTracking'), href: '/patient/migraine', active: true },
+    { label: t('footer.epilepsyTracking'), href: '/patient/epilepsy', active: true },
+    { label: t('footer.parkinsonTracking'), href: '#', active: false },
+    { label: t('footer.dementiaTracking'), href: '/patient/dementia', active: true },
   ];
 
-  // Use dynamic social links if available, fallback to static
   const activeSocials = socialLinks?.filter(s => s.url) || [];
 
   return (
-    <footer className="bg-slate-950 border-t border-white/5">
+    <footer className="bg-gray-50 border-t border-gray-200">
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand Section */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-3 group mb-6">
-              <div className="relative">
-                <Brain className="w-10 h-10 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
-                <div className="absolute inset-0 bg-cyan-400/20 blur-xl rounded-full group-hover:bg-cyan-300/30 transition-colors" />
-              </div>
+            <Link href="/" className="flex items-center gap-2.5 group mb-5">
+              <Brain className="w-8 h-8 text-teal-600 group-hover:text-teal-500 transition-colors" />
               <div className="flex flex-col">
-                <span className="text-2xl font-bold text-white tracking-tight">
+                <span className="text-xl font-bold text-gray-900 tracking-tight">
                   {getConfig('site_name') || 'Norosera'}
                 </span>
-                <span className="text-[10px] text-cyan-400/80 tracking-widest uppercase">
-                  Neurology Platform
+                <span className="text-[9px] text-teal-600/80 tracking-widest uppercase -mt-0.5">
+                  {t('header.subtitle')}
                 </span>
               </div>
             </Link>
 
-            <p className="text-slate-400 text-sm leading-relaxed mb-6 max-w-sm">
-              {t('disclaimer.text') || 'Norolojik sagliginizi takip etmenize ve yasam kalitenizi artirmaniza yardimci olan yapay zeka destekli platform.'}
+            <p className="text-gray-500 text-sm leading-relaxed mb-5 max-w-sm">
+              {t('disclaimer.text')}
             </p>
 
-            {/* Contact Info — dynamic */}
-            <div className="space-y-3">
-              <a href={`mailto:${contactEmail}`} className="flex items-center gap-3 text-slate-400 hover:text-cyan-400 transition-colors text-sm">
+            {/* Contact Info */}
+            <div className="space-y-2.5">
+              <a href={`mailto:${contactEmail}`} className="flex items-center gap-2.5 text-gray-500 hover:text-teal-600 transition-colors text-sm">
                 <Mail className="w-4 h-4" />
                 {contactEmail}
               </a>
               {contactPhone && (
-                <a href={`tel:${contactPhone}`} className="flex items-center gap-3 text-slate-400 hover:text-cyan-400 transition-colors text-sm">
+                <a href={`tel:${contactPhone}`} className="flex items-center gap-2.5 text-gray-500 hover:text-teal-600 transition-colors text-sm">
                   <Phone className="w-4 h-4" />
                   {contactPhone}
                 </a>
               )}
               {contactAddress && (
-                <div className="flex items-start gap-3 text-slate-400 text-sm">
+                <div className="flex items-start gap-2.5 text-gray-500 text-sm">
                   <MapPin className="w-4 h-4 mt-0.5" />
                   <span>{contactAddress}</span>
                 </div>
@@ -103,13 +99,13 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Hizli Erisim</h4>
-            <nav className="flex flex-col gap-3">
+            <h4 className="text-gray-900 font-semibold mb-4 text-sm">{t('footer.quickLinks')}</h4>
+            <nav className="flex flex-col gap-2.5">
               {quickLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-slate-400 hover:text-cyan-400 transition-colors text-sm flex items-center gap-1 group"
+                  className="text-gray-500 hover:text-teal-600 transition-colors text-sm flex items-center gap-1 group"
                 >
                   {link.label}
                   <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -120,23 +116,23 @@ export default function Footer() {
 
           {/* Modules */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Moduller</h4>
-            <nav className="flex flex-col gap-3">
+            <h4 className="text-gray-900 font-semibold mb-4 text-sm">{t('footer.modules')}</h4>
+            <nav className="flex flex-col gap-2.5">
               {diseaseModules.map((module) => (
                 <Link
                   key={module.label}
                   href={module.href}
                   className={`text-sm flex items-center gap-2 transition-colors ${
                     module.active
-                      ? 'text-slate-400 hover:text-cyan-400'
-                      : 'text-slate-600 cursor-not-allowed'
+                      ? 'text-gray-500 hover:text-teal-600'
+                      : 'text-gray-300 cursor-not-allowed'
                   }`}
                 >
                   <span className={`w-1.5 h-1.5 rounded-full ${
-                    module.active ? 'bg-emerald-500' : 'bg-slate-600'
+                    module.active ? 'bg-teal-500' : 'bg-gray-300'
                   }`} />
                   {module.label}
-                  {!module.active && <span className="text-xs text-slate-600">(Yakinda)</span>}
+                  {!module.active && <span className="text-xs text-gray-300">({t('home.modules.comingSoon')})</span>}
                 </Link>
               ))}
             </nav>
@@ -144,13 +140,13 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Hukuki</h4>
-            <nav className="flex flex-col gap-3">
+            <h4 className="text-gray-900 font-semibold mb-4 text-sm">{t('footer.legal')}</h4>
+            <nav className="flex flex-col gap-2.5">
               {legalLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-slate-400 hover:text-cyan-400 transition-colors text-sm"
+                  className="text-gray-500 hover:text-teal-600 transition-colors text-sm"
                 >
                   {link.label}
                 </Link>
@@ -161,16 +157,16 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            {/* Copyright — dynamic */}
-            <p className="text-slate-500 text-sm">
-              {footerText || `\u00a9 ${new Date().getFullYear()} Norosera. Tum haklari saklidir.`}
+            {/* Copyright */}
+            <p className="text-gray-400 text-sm">
+              {footerText || `\u00a9 ${new Date().getFullYear()} Norosera. ${t('footer.copyright')}`}
             </p>
 
-            {/* Social Links — dynamic */}
-            <div className="flex items-center gap-4">
+            {/* Social Links */}
+            <div className="flex items-center gap-3">
               {activeSocials.length > 0 ? (
                 activeSocials.map((social) => {
                   const Icon = PLATFORM_ICON_MAP[social.platform];
@@ -182,30 +178,29 @@ export default function Footer() {
                       aria-label={social.platform_display}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-slate-400 hover:bg-cyan-500/10 hover:text-cyan-400 transition-all"
+                      className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:border-teal-300 hover:text-teal-600 hover:bg-teal-50 transition-all"
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-3.5 h-3.5" />
                     </a>
                   );
                 })
               ) : (
-                // Fallback static icons
                 [Twitter, Linkedin, Instagram, Youtube].map((Icon, i) => (
                   <span
                     key={i}
-                    className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-slate-600"
+                    className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-300"
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-3.5 h-3.5" />
                   </span>
                 ))
               )}
             </div>
 
             {/* Medical Disclaimer Badge */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20">
-              <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-              <span className="text-xs text-amber-400">
-                Tibbi tavsiye yerine gecmez
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              <span className="text-xs text-amber-700 font-medium">
+                {t('footer.medicalDisclaimer')}
               </span>
             </div>
           </div>

@@ -10,7 +10,7 @@ import {
   useEpilepsyTriggerAnalysis,
   useCreateEpilepsyTrigger,
 } from '@/hooks/usePatientData';
-import { Zap, Plus, BarChart3, List, Target, X, PlusCircle, Check, Loader2, BookOpen } from 'lucide-react';
+import { Zap, Plus, BarChart3, List, Target, X, PlusCircle, Check, Loader2, BookOpen, Bot, ChevronRight } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import SeizureChart from '@/components/patient/SeizureChart';
 
@@ -50,6 +50,21 @@ export default function EpilepsyPage() {
           </button>
         </div>
       </div>
+
+      {/* AI Assistant Quick Link */}
+      <Link
+        href="/patient/ai-assistant"
+        className="flex items-center gap-3 p-3 mb-4 bg-purple-50 border border-purple-200 rounded-xl hover:bg-purple-100 transition"
+      >
+        <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+          <Bot className="w-4 h-4 text-purple-600" />
+        </div>
+        <div className="flex-1">
+          <div className="text-sm font-medium text-purple-900">AI Saglik Asistani</div>
+          <div className="text-xs text-purple-600">Epilepsiyle ilgili sorularinizi yapayzekaya sorun</div>
+        </div>
+        <ChevronRight className="w-4 h-4 text-purple-400" />
+      </Link>
 
       {/* Tabs */}
       <div className="flex gap-1 bg-gray-100 p-1 rounded-lg mb-6">

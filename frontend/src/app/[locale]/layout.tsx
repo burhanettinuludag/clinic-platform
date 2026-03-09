@@ -16,22 +16,22 @@ import '../globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Norosera - Norolojik Hastaliklar Icin Dijital Platform',
+    default: 'Norosera - Nörolojik Hastalıklar İçin Dijital Platform',
     template: '%s | Norosera',
   },
-  description: 'Migren, epilepsi ve diger kronik norolojik hastaliklar icin dijital takip, ev egitimi ve hekim paneli platformu.',
+  description: 'Migren, epilepsi ve diğer kronik nörolojik hastalıklar için dijital takip, ev eğitimi ve hekim paneli platformu.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://norosera.com'),
   openGraph: {
     type: 'website',
     siteName: 'Norosera',
-    title: 'Norosera - Norolojik Hastaliklar Icin Dijital Platform',
-    description: 'Noroloji alaninda uzman doktorlar tarafindan desteklenen dijital saglik platformu.',
+    title: 'Norosera - Nörolojik Hastalıklar İçin Dijital Platform',
+    description: 'Nöroloji alanında uzman doktorlar tarafından desteklenen dijital sağlık platformu.',
     locale: 'tr_TR',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Norosera',
-    description: 'Norolojik hastaliklar icin dijital platform.',
+    description: 'Nörolojik hastalıklar için dijital platform.',
   },
   robots: {
     index: true,

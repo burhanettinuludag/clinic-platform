@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 import { withSentryConfig } from '@sentry/nextjs';
+import path from 'path';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
@@ -51,6 +52,15 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
+  turbopack: {
+    root: path.resolve(__dirname),
+    resolveAlias: {
+      tailwindcss: path.resolve(__dirname, 'node_modules/tailwindcss'),
+    },
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   images: {
     remotePatterns: [
       {

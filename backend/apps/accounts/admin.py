@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, PatientProfile, DoctorProfile
+from .models import CustomUser, PatientProfile, DoctorProfile, CaregiverProfile
 
 
 @admin.register(CustomUser)
@@ -36,6 +36,18 @@ class DoctorProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'specialty', 'license_number', 'is_accepting_patients')
     list_filter = ('is_accepting_patients',)
     search_fields = ('user__email', 'user__first_name', 'user__last_name')
+
+
+@admin.register(CaregiverProfile)
+class CaregiverProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'relationship_type', 'get_patients_count')
+    list_filter = ('relationship_type',)
+    search_fields = ('user__email', 'user__first_name', 'user__last_name')
+    filter_horizontal = ('patients',)
+
+    def get_patients_count(self, obj):
+        return obj.patients.count()
+    get_patients_count.short_description = 'Patients'
 
 
 from apps.accounts.models import DoctorAuthor

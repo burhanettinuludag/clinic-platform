@@ -538,3 +538,118 @@ export function useCreateCognitiveScreening() {
     },
   });
 }
+
+// ==================== REPORT SHARING ====================
+
+export interface ReportRecipient {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  relationship: string;
+  relationship_display: string;
+  notify_via: string;
+  notify_via_display: string;
+  telegram_chat_id: string;
+  is_active: boolean;
+  consent_given_at: string | null;
+  consent_text: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReportShareRecord {
+  id: string;
+  recipient: string;
+  recipient_name: string;
+  recipient_email: string;
+  shared_at: string;
+  share_type: string;
+  report_period_start: string;
+  report_period_end: string;
+  success: boolean;
+  error_message: string;
+}
+
+export function useReportRecipients() {
+  return useQuery<ReportRecipient[]>({
+    queryKey: ['report-recipients'],
+    queryFn: async () => {
+      const { data } = await api.get('/dementia/recipients/');
+      return data.results ?? data;
+    },
+  });
+}
+
+export function useCreateReportRecipient() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (recipient: {
+      name: string;
+      email?: string;
+      phone?: string;
+      relationship: string;
+      notify_via: string;
+      telegram_chat_id?: string;
+      kvkk_consent: boolean;
+    }) => {
+      const { data } = await api.post('/dementia/recipients/', recipient);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['report-recipients'] });
+    },
+  });
+}
+
+export function useUpdateReportRecipient() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...recipient }: Partial<ReportRecipient> & { id: string }) => {
+      const { data } = await api.patch(`/dementia/recipients/${id}/`, recipient);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['report-recipients'] });
+    },
+  });
+}
+
+export function useDeleteReportRecipient() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/dementia/recipients/${id}/`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['report-recipients'] });
+    },
+  });
+}
+
+export function useShareReport() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (params: {
+      recipient_id: string;
+      start_date: string;
+      end_date: string;
+    }) => {
+      const { data } = await api.post('/dementia/recipients/share/', params);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['share-history'] });
+    },
+  });
+}
+
+export function useShareHistory() {
+  return useQuery<ReportShareRecord[]>({
+    queryKey: ['share-history'],
+    queryFn: async () => {
+      const { data } = await api.get('/dementia/recipients/history/');
+      return data.results ?? data;
+    },
+  });
+}

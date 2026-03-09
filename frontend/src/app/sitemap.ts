@@ -3,6 +3,12 @@ import { MetadataRoute } from 'next';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://norosera.com';
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
+function safeDate(value: any): Date {
+  if (!value) return new Date();
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? new Date() : d;
+}
+
 async function fetchAll(endpoint: string) {
   try {
     const res = await fetch(`${API}${endpoint}`, { next: { revalidate: 3600 } });
@@ -33,11 +39,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const blogPages = articles.flatMap((a: any) => ['tr', 'en'].map(l => ({
-    url: `${SITE}/${l}/blog/${a.slug}`, lastModified: new Date(a.updated_at || a.created_at), changeFrequency: 'monthly' as const, priority: 0.7,
+    url: `${SITE}/${l}/blog/${a.slug}`, lastModified: safeDate(a.updated_at || a.created_at), changeFrequency: 'monthly' as const, priority: 0.7,
   })));
 
   const newsPages = news.flatMap((n: any) => ['tr', 'en'].map(l => ({
-    url: `${SITE}/${l}/news/${n.slug}`, lastModified: new Date(n.updated_at || n.created_at), changeFrequency: 'weekly' as const, priority: 0.7,
+    url: `${SITE}/${l}/news/${n.slug}`, lastModified: safeDate(n.updated_at || n.created_at), changeFrequency: 'weekly' as const, priority: 0.7,
   })));
 
   const doctorPages = doctors.map((d: any) => {
@@ -46,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   const eduPages = education.map((e: any) => ({
-    url: `${SITE}/education/${e.slug}`, lastModified: new Date(e.updated_at || e.created_at), changeFrequency: 'monthly' as const, priority: 0.6,
+    url: `${SITE}/education/${e.slug}`, lastModified: safeDate(e.updated_at || e.created_at), changeFrequency: 'monthly' as const, priority: 0.6,
   }));
 
   return [...statics, ...blogPages, ...newsPages, ...doctorPages, ...eduPages];

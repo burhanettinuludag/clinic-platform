@@ -41,7 +41,7 @@ const PLATFORM_COLORS: Record<string, string> = {
 type TabId = 'content' | 'visuals' | 'schedule';
 
 // ─── Post Card ───
-function PostCard({ post, platform }: { post: Record<string, unknown>; platform: string }) {
+function PostCard({ post, platform }: { post: Record<string, any>; platform: string }) {
   const PIcon = PLATFORM_ICONS[platform] || FileText;
   const gradientClass = PLATFORM_COLORS[platform] || 'from-gray-400 to-gray-600';
 
@@ -91,7 +91,7 @@ function PostCard({ post, platform }: { post: Record<string, unknown>; platform:
 }
 
 // ─── Visual Brief Card ───
-function BriefCard({ brief }: { brief: Record<string, unknown> }) {
+function BriefCard({ brief }: { brief: Record<string, any> }) {
   return (
     <div className="bg-white rounded-lg border p-4">
       <div className="flex items-center gap-2 mb-3">
@@ -138,7 +138,7 @@ function BriefCard({ brief }: { brief: Record<string, unknown> }) {
 }
 
 // ─── Schedule Card ───
-function ScheduleCard({ entry }: { entry: Record<string, unknown> }) {
+function ScheduleCard({ entry }: { entry: Record<string, any> }) {
   const PIcon = PLATFORM_ICONS[String(entry.platform || '')] || Calendar;
 
   return (
@@ -195,16 +195,16 @@ export default function MarketingCampaignDetailPage() {
 
   // Extract posts by platform from content_output
   const contentOutput = campaign.content_output || {};
-  const platformPosts: Record<string, Record<string, unknown>[]> = {};
+  const platformPosts: Record<string, Record<string, any>[]> = {};
   for (const platform of ['instagram', 'linkedin', 'twitter']) {
     const key = `${platform}_posts`;
     if (contentOutput[key] && Array.isArray(contentOutput[key])) {
-      platformPosts[platform] = contentOutput[key] as Record<string, unknown>[];
+      platformPosts[platform] = contentOutput[key] as Record<string, any>[];
     }
   }
   // Also check for flat posts array
   if (contentOutput.posts && Array.isArray(contentOutput.posts)) {
-    for (const post of contentOutput.posts as Record<string, unknown>[]) {
+    for (const post of contentOutput.posts as Record<string, any>[]) {
       const p = String(post.platform || 'other');
       if (!platformPosts[p]) platformPosts[p] = [];
       platformPosts[p].push(post);
@@ -213,20 +213,20 @@ export default function MarketingCampaignDetailPage() {
 
   // Extract visual briefs
   const visualBriefs = campaign.visual_briefs || {};
-  const briefsList: Record<string, unknown>[] = Array.isArray(visualBriefs)
+  const briefsList: Record<string, any>[] = Array.isArray(visualBriefs)
     ? visualBriefs
-    : (visualBriefs as Record<string, unknown>).briefs
-      ? ((visualBriefs as Record<string, unknown>).briefs as Record<string, unknown>[])
+    : (visualBriefs as Record<string, any>).briefs
+      ? ((visualBriefs as Record<string, any>).briefs as Record<string, any>[])
       : [];
 
   // Extract schedule
   const scheduleData = campaign.schedule || {};
-  const scheduleEntries: Record<string, unknown>[] = Array.isArray(scheduleData)
+  const scheduleEntries: Record<string, any>[] = Array.isArray(scheduleData)
     ? scheduleData
-    : (scheduleData as Record<string, unknown>).schedule
-      ? ((scheduleData as Record<string, unknown>).schedule as Record<string, unknown>[])
-      : (scheduleData as Record<string, unknown>).entries
-        ? ((scheduleData as Record<string, unknown>).entries as Record<string, unknown>[])
+    : (scheduleData as Record<string, any>).schedule
+      ? ((scheduleData as Record<string, any>).schedule as Record<string, any>[])
+      : (scheduleData as Record<string, any>).entries
+        ? ((scheduleData as Record<string, any>).entries as Record<string, any>[])
         : [];
 
   const totalPosts = Object.values(platformPosts).reduce((sum, arr) => sum + arr.length, 0);

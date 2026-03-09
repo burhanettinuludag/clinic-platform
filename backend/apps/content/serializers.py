@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import ContentCategory, Article, EducationItem, EducationProgress
+from .models import ContentCategory, Article, NewsArticle, EducationItem, EducationProgress
+from apps.accounts.models import DoctorAuthor
 
 
 class ContentCategorySerializer(serializers.ModelSerializer):

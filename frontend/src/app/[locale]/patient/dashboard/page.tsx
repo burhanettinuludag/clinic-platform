@@ -26,7 +26,6 @@ import {
   Trophy,
   Clock,
 } from 'lucide-react';
-import WeatherWidget from '@/components/patient/WeatherWidget';
 
 export default function PatientDashboard() {
   const t = useTranslations();

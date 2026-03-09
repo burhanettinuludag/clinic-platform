@@ -5,7 +5,7 @@ import Breadcrumb from '@/components/common/Breadcrumb';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { LayoutDashboard, Users, AlertTriangle, Sparkles, BookOpen, ShieldCheck, Terminal, BarChart3, Settings, User, Megaphone, Share2 } from 'lucide-react';
+import { LayoutDashboard, Users, AlertTriangle, Sparkles, BookOpen, ShieldCheck, Terminal, BarChart3, Settings, User, Megaphone, Share2, MessageSquare } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
 import { ToastProvider } from '@/components/Toast';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -25,6 +25,7 @@ const sidebarItems: SidebarItem[] = [
   { href: '/doctor/dashboard', icon: LayoutDashboard, labelKey: 'dashboard', fallback: 'Dashboard' },
   { href: '/doctor/patients', icon: Users, labelKey: 'patients', fallback: 'Hastalar' },
   { href: '/doctor/alerts', icon: AlertTriangle, labelKey: 'alerts', fallback: 'Uyarilar' },
+  { href: '/doctor/messages', icon: MessageSquare, labelKey: 'messages', fallback: 'Mesajlar' },
   { href: '/doctor/content', icon: Sparkles, labelKey: 'content', fallback: 'Icerik Uret' },
   { href: '/doctor/author', icon: BookOpen, labelKey: 'author', fallback: 'Yazar Paneli' },
   { href: '/doctor/editor', icon: ShieldCheck, labelKey: 'editor', fallback: 'Editor Paneli' },

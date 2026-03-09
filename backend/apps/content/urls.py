@@ -1,8 +1,10 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views_upload import ImageUploadView
-from .views import PublicDoctorAuthorViewSet, PublicNewsViewSet, PublicEducationViewSet,\
-     (
+from .views import (
+    PublicDoctorAuthorViewSet,
+    PublicNewsViewSet,
+    PublicEducationViewSet,
     ContentCategoryViewSet,
     ArticleViewSet,
     NewsArticleViewSet,

@@ -5,7 +5,7 @@ import api from '@/lib/api';
 
 export interface AuthorArticle {
   id: string; slug: string; title_tr: string; title_en: string; excerpt_tr: string;
-  status: 'draft' | 'published' | 'archived'; is_featured: boolean;
+  status: 'draft' | 'review' | 'revision' | 'approved' | 'published' | 'archived'; is_featured: boolean;
   category: string | null; category_name: string | null;
   published_at: string | null; created_at: string; updated_at: string; review_count: number;
 }
@@ -19,7 +19,9 @@ export interface AuthorNews {
 
 export interface ArticleReview {
   id: string; review_type_display: string; reviewer_name: string;
-  overall_score: number; decision: string; decision_display: string; created_at: string;
+  overall_score: number; medical_accuracy_score: number; language_quality_score: number;
+  seo_score: number; style_compliance_score: number; ethics_score: number;
+  decision: string; decision_display: string; feedback: string; created_at: string;
 }
 
 export interface AuthorStats {
@@ -133,5 +135,87 @@ export function useDeleteNews() {
   return useMutation({
     mutationFn: async (id: string) => { await api.delete('/doctor/author/news/' + id + '/'); },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['author-news'] }),
+  });
+}
+
+
+// ===== Author Profile Hooks =====
+
+export interface AuthorProfile {
+  id: string;
+  full_name: string; email: string;
+  primary_specialty: string;
+  bio_tr: string; bio_en: string;
+  headline_tr: string; headline_en: string;
+  institution: string; department: string; city: string;
+  orcid_id: string; google_scholar_url: string; pubmed_author_id: string;
+  linkedin_url: string; website_url: string;
+  memberships: string[];
+  level: number; level_display: string;
+  author_level: number;
+  total_articles: number; total_views: number; average_rating: number;
+  is_verified: boolean;
+}
+
+export function useAuthorProfile() {
+  return useQuery<AuthorProfile>({
+    queryKey: ['author-profile'],
+    queryFn: async () => { const { data } = await api.get('/doctor/author/profile/'); return data; },
+    retry: false,
+  });
+}
+
+export function useUpdateAuthorProfile() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: Partial<AuthorProfile>) => {
+      const { data } = await api.patch('/doctor/author/profile/', input);
+      return data;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['author-profile'] }); qc.invalidateQueries({ queryKey: ['author-stats'] }); },
+  });
+}
+
+export function useCreateAuthorProfile() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: Partial<AuthorProfile>) => {
+      const { data } = await api.post('/doctor/author/profile/', input);
+      return data;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['author-profile'] }); qc.invalidateQueries({ queryKey: ['author-stats'] }); },
+  });
+}
+
+
+// ===== Single Article Hooks =====
+
+export interface AuthorArticleDetail extends AuthorArticle {
+  body_tr: string; body_en: string;
+  excerpt_en: string;
+  meta_title: string; meta_description: string;
+  seo_title_tr: string; seo_title_en: string;
+  seo_description_tr: string; seo_description_en: string;
+  keywords: string[]; schema_markup: Record<string, unknown>;
+  featured_image: string; featured_image_alt: string;
+  reviews: ArticleReview[];
+}
+
+export function useAuthorArticle(id: string) {
+  return useQuery<AuthorArticleDetail>({
+    queryKey: ['author-articles', id],
+    queryFn: async () => { const { data } = await api.get('/doctor/author/articles/' + id + '/'); return data; },
+    enabled: !!id,
+  });
+}
+
+export function useUpdateArticle() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...input }: { id: string } & Record<string, any>) => {
+      const { data } = await api.patch('/doctor/author/articles/' + id + '/', input);
+      return data;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['author-articles'] }); qc.invalidateQueries({ queryKey: ['author-stats'] }); },
   });
 }

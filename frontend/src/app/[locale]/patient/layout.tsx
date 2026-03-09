@@ -20,6 +20,8 @@ import {
   Bell,
   User,
   Clock,
+  Bot,
+  MessageSquare,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 
@@ -32,6 +34,8 @@ const sidebarItems = [
   { href: '/patient/migraine', icon: Brain, labelKey: 'migraine', fallback: 'Migren' },
   { href: '/patient/epilepsy', icon: Zap, labelKey: 'epilepsy', fallback: 'Epilepsi' },
   { href: '/patient/dementia', icon: Sparkles, labelKey: 'dementia', fallback: 'Demans' },
+  { href: '/patient/ai-assistant', icon: Bot, labelKey: 'aiAssistant', fallback: 'AI Asistan' },
+  { href: '/patient/messages', icon: MessageSquare, labelKey: 'messages', fallback: 'Mesajlar' },
   { href: '/patient/wellness', icon: Heart, labelKey: 'wellness', fallback: 'Wellness' },
   { href: '/patient/rewards', icon: Trophy, labelKey: 'rewards', fallback: 'Oduller' },
   { href: '/patient/reminders', icon: Clock, labelKey: 'reminders', fallback: 'Hatirlaticilar' },

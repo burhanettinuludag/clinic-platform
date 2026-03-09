@@ -385,3 +385,96 @@ class CognitiveScreening(TimeStampedModel):
 
     def __str__(self):
         return f"{self.patient} - Tarama {self.assessment_date}: {self.total_score}%"
+
+
+class ReportRecipient(TimeStampedModel):
+    """
+    Patient-defined recipients for sharing cognitive health reports.
+    KVKK requires explicit consent for each recipient.
+    """
+    class RelationshipType(models.TextChoices):
+        SPOUSE = 'spouse', 'Spouse'
+        CHILD = 'child', 'Child'
+        SIBLING = 'sibling', 'Sibling'
+        PARENT = 'parent', 'Parent'
+        DOCTOR = 'doctor', 'Doctor'
+        OTHER = 'other', 'Other'
+
+    class NotifyVia(models.TextChoices):
+        EMAIL = 'email', 'Email'
+        TELEGRAM = 'telegram', 'Telegram'
+        BOTH = 'both', 'Both'
+
+    patient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='report_recipients',
+    )
+    name = models.CharField(max_length=200)
+    email = models.EmailField(blank=True, default='')
+    phone = models.CharField(max_length=20, blank=True, default='')
+    relationship = models.CharField(
+        max_length=20,
+        choices=RelationshipType.choices,
+        default=RelationshipType.OTHER,
+    )
+    notify_via = models.CharField(
+        max_length=10,
+        choices=NotifyVia.choices,
+        default=NotifyVia.EMAIL,
+    )
+    telegram_chat_id = models.CharField(max_length=50, blank=True, default='')
+    is_active = models.BooleanField(default=True)
+
+    # KVKK consent
+    consent_given_at = models.DateTimeField(
+        null=True, blank=True,
+        help_text='KVKK explicit consent timestamp',
+    )
+    consent_text = models.TextField(
+        blank=True, default='',
+        help_text='Consent text shown to user at the time of approval',
+    )
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['patient', 'is_active']),
+        ]
+
+    def __str__(self):
+        return f"{self.name} ({self.get_relationship_display()}) - {self.patient}"
+
+
+class ReportShareRecord(TimeStampedModel):
+    """
+    Audit log for every report share action. Required for KVKK compliance.
+    """
+    patient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='report_shares',
+    )
+    recipient = models.ForeignKey(
+        ReportRecipient,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='share_records',
+    )
+    shared_at = models.DateTimeField(auto_now_add=True)
+    share_type = models.CharField(max_length=10)  # 'email' or 'telegram'
+    report_period_start = models.DateField()
+    report_period_end = models.DateField()
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    consent_version = models.CharField(max_length=20, default='1.0')
+    success = models.BooleanField(default=True)
+    error_message = models.TextField(blank=True, default='')
+
+    class Meta:
+        ordering = ['-shared_at']
+        indexes = [
+            models.Index(fields=['patient', '-shared_at']),
+        ]
+
+    def __str__(self):
+        return f"Share to {self.recipient} via {self.share_type} ({self.shared_at})"

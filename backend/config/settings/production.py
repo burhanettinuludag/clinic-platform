@@ -36,8 +36,14 @@ CORS_ALLOWED_ORIGINS = os.environ.get(  # noqa: F405
 
 CORS_ALLOW_CREDENTIALS = True
 
+# ---------- CSRF ----------
+CSRF_TRUSTED_ORIGINS = os.environ.get(  # noqa: F405
+    'CSRF_TRUSTED_ORIGINS',
+    'https://norosera.com,https://www.norosera.com'
+).split(',')
+
 # ---------- Static files ----------
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')  # noqa: F405
 

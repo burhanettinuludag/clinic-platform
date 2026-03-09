@@ -42,5 +42,5 @@ export async function getNews(locale = 'tr') {
 }
 
 export async function getNewsBySlug(slug: string, locale = 'tr') {
-  return serverFetch<any>(\`/content/news/\${slug}/\`, { locale, revalidate: 600, tags: ['news', slug] });
+  return serverFetch<any>(`/content/news/${slug}/`, { locale, revalidate: 600, tags: ['news', slug] });
 }

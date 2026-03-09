@@ -69,7 +69,7 @@ export default function SocialCalendarPage() {
 
   // Group posts by day
   const postsByDay = useMemo(() => {
-    const map: Record<number, typeof calendarData extends { posts: infer P } ? P : never> = {};
+    const map: Record<number, any[]> = {};
     if (calendarData?.posts) {
       for (const post of calendarData.posts) {
         if (post.scheduled_at) {

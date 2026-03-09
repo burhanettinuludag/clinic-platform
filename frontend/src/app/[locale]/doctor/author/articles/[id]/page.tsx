@@ -34,11 +34,12 @@ export default function ArticleDetailPage() {
   const transMut = useArticleTransition();
   const pipeMut = useArticlePipeline();
   const [tab, setTab] = useState<TabId>('edit');
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<Record<string, any>>({
     title_tr: '', title_en: '', excerpt_tr: '', excerpt_en: '',
     body_tr: '', body_en: '',
     seo_title_tr: '', seo_title_en: '',
     seo_description_tr: '', seo_description_en: '',
+    featured_image: '', featured_image_alt: '',
   });
   const [saved, setSaved] = useState(false);
 
@@ -50,6 +51,7 @@ export default function ArticleDetailPage() {
         body_tr: article.body_tr || '', body_en: article.body_en || '',
         seo_title_tr: article.seo_title_tr || '', seo_title_en: article.seo_title_en || '',
         seo_description_tr: article.seo_description_tr || '', seo_description_en: article.seo_description_en || '',
+        featured_image: article.featured_image || '', featured_image_alt: article.featured_image_alt || '',
       });
     }
   }, [article]);
@@ -61,7 +63,7 @@ export default function ArticleDetailPage() {
   const sc = STATUS_CFG[article.status] || STATUS_CFG.draft;
 
   const handleSave = () => {
-    updateMut.mutate({ id, ...form }, { onSuccess: () => { setSaved(true); setTimeout(() => setSaved(false), 2000); } });
+    updateMut.mutate({ id, ...form } as { id: string } & Record<string, any>, { onSuccess: () => { setSaved(true); setTimeout(() => setSaved(false), 2000); } });
   };
 
   const handleTransition = (action: string) => {

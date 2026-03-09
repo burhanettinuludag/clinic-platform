@@ -5,6 +5,8 @@ from .models import (
     DailyAssessment,
     CaregiverNote,
     CognitiveScore,
+    ReportRecipient,
+    ReportShareRecord,
 )
 
 
@@ -47,3 +49,18 @@ class CognitiveScoreAdmin(admin.ModelAdmin):
     list_filter = ['score_date']
     search_fields = ['patient__email']
     date_hierarchy = 'score_date'
+
+
+@admin.register(ReportRecipient)
+class ReportRecipientAdmin(admin.ModelAdmin):
+    list_display = ['patient', 'name', 'email', 'relationship', 'notify_via', 'is_active', 'consent_given_at']
+    list_filter = ['relationship', 'notify_via', 'is_active']
+    search_fields = ['patient__email', 'name', 'email']
+
+
+@admin.register(ReportShareRecord)
+class ReportShareRecordAdmin(admin.ModelAdmin):
+    list_display = ['patient', 'recipient', 'share_type', 'shared_at', 'success', 'report_period_start', 'report_period_end']
+    list_filter = ['share_type', 'success', 'shared_at']
+    search_fields = ['patient__email']
+    date_hierarchy = 'shared_at'

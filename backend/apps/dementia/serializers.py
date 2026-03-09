@@ -6,6 +6,8 @@ from .models import (
     CaregiverNote,
     CognitiveScore,
     CognitiveScreening,
+    ReportRecipient,
+    ReportShareRecord,
 )
 
 
@@ -179,3 +181,118 @@ class CognitiveScreeningCreateSerializer(serializers.ModelSerializer):
             'language_score', 'executive_score',
             'responses', 'duration_minutes', 'notes',
         ]
+
+
+# ==================== CAREGIVER SERIALIZERS ====================
+
+class CaregiverPatientSummarySerializer(serializers.Serializer):
+    """Summary of a patient for caregiver dashboard."""
+    id = serializers.UUIDField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    email = serializers.EmailField()
+    latest_score = serializers.DecimalField(max_digits=5, decimal_places=2, allow_null=True)
+    exercises_today = serializers.IntegerField()
+    exercises_this_week = serializers.IntegerField()
+    streak_days = serializers.IntegerField()
+    has_alerts = serializers.BooleanField()
+    last_activity = serializers.DateTimeField(allow_null=True)
+
+
+class CaregiverPatientDetailSerializer(serializers.Serializer):
+    """Detailed patient summary for caregiver."""
+    patient = CaregiverPatientSummarySerializer()
+    recent_sessions = ExerciseSessionSerializer(many=True)
+    recent_assessments = DailyAssessmentSerializer(many=True)
+    recent_notes = CaregiverNoteSerializer(many=True)
+    cognitive_scores = CognitiveScoreSerializer(many=True)
+    latest_screening = CognitiveScreeningSerializer(allow_null=True)
+
+
+class CaregiverAlertSerializer(serializers.Serializer):
+    """Alert item for caregiver dashboard."""
+    alert_type = serializers.CharField()  # 'flagged_note', 'fall', 'wandering', 'medication', 'score_decline'
+    severity = serializers.IntegerField()
+    patient_id = serializers.UUIDField()
+    patient_name = serializers.CharField()
+    message = serializers.CharField()
+    timestamp = serializers.DateTimeField()
+    related_id = serializers.CharField(allow_null=True)
+
+
+# ==================== REPORT SHARING SERIALIZERS ====================
+
+class ReportRecipientSerializer(serializers.ModelSerializer):
+    relationship_display = serializers.CharField(source='get_relationship_display', read_only=True)
+    notify_via_display = serializers.CharField(source='get_notify_via_display', read_only=True)
+
+    class Meta:
+        model = ReportRecipient
+        fields = [
+            'id', 'name', 'email', 'phone',
+            'relationship', 'relationship_display',
+            'notify_via', 'notify_via_display',
+            'telegram_chat_id', 'is_active',
+            'consent_given_at', 'consent_text',
+            'created_at', 'updated_at',
+        ]
+        read_only_fields = ['consent_given_at', 'created_at', 'updated_at']
+
+
+class ReportRecipientCreateSerializer(serializers.ModelSerializer):
+    kvkk_consent = serializers.BooleanField(write_only=True)
+
+    class Meta:
+        model = ReportRecipient
+        fields = [
+            'name', 'email', 'phone',
+            'relationship', 'notify_via',
+            'telegram_chat_id', 'kvkk_consent',
+        ]
+
+    def validate_kvkk_consent(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                'KVKK kapsaminda acik riza vermeden alici ekleyemezsiniz.'
+            )
+        return value
+
+    def validate(self, data):
+        notify_via = data.get('notify_via', 'email')
+        if notify_via in ('email', 'both') and not data.get('email'):
+            raise serializers.ValidationError(
+                {'email': 'Email ile bildirim icin email adresi zorunludur.'}
+            )
+        if notify_via in ('telegram', 'both') and not data.get('telegram_chat_id'):
+            raise serializers.ValidationError(
+                {'telegram_chat_id': 'Telegram ile bildirim icin chat ID zorunludur.'}
+            )
+        return data
+
+
+class ReportShareRecordSerializer(serializers.ModelSerializer):
+    recipient_name = serializers.CharField(source='recipient.name', read_only=True)
+    recipient_email = serializers.CharField(source='recipient.email', read_only=True)
+
+    class Meta:
+        model = ReportShareRecord
+        fields = [
+            'id', 'recipient', 'recipient_name', 'recipient_email',
+            'shared_at', 'share_type',
+            'report_period_start', 'report_period_end',
+            'success', 'error_message',
+        ]
+
+
+class ShareReportSerializer(serializers.Serializer):
+    """Serializer for the share report action."""
+    recipient_id = serializers.UUIDField()
+    start_date = serializers.DateField()
+    end_date = serializers.DateField()
+
+    def validate(self, data):
+        if data['start_date'] > data['end_date']:
+            raise serializers.ValidationError(
+                'Baslangic tarihi bitis tarihinden sonra olamaz.'
+            )
+        return data

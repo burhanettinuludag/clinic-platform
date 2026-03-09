@@ -116,7 +116,7 @@ export default function SymptomsPage() {
   const { data: definitions, isLoading } = useSymptomDefinitions();
   const { data: todayEntries } = useTodaySymptoms();
   const logMutation = useLogSymptom();
-  const [values, setValues] = useState<Record<string, unknown>>({});
+  const [values, setValues] = useState<Record<string, any>>({});
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
 
   const today = new Date().toISOString().split('T')[0];

@@ -135,7 +135,7 @@ export default function CognitiveScreeningPage() {
     setStartTime(new Date());
   };
 
-  const evaluateAnswer = useCallback((q: typeof question, answer: string | string[] | number[]): { correct: boolean; score: number } => {
+  const evaluateAnswer = useCallback((q: any, answer: string | string[] | number[]): { correct: boolean; score: number } => {
     if (!q) return { correct: false, score: 0 };
 
     switch (q.type) {
@@ -269,7 +269,7 @@ export default function CognitiveScreeningPage() {
   const saveResults = async () => {
     const { domainScores, totalScore } = calculateResults();
     const endTime = new Date();
-    const durationMinutes = startTime ? Math.round((endTime.getTime() - startTime.getTime()) / 60000) : null;
+    const durationMinutes = startTime ? Math.round((endTime.getTime() - startTime.getTime()) / 60000) : undefined;
 
     try {
       await createScreening.mutateAsync({

@@ -19,6 +19,11 @@ import MapReadingGame from '@/components/dementia/games/MapReadingGame';
 import DirectionFollowingGame from '@/components/dementia/games/DirectionFollowingGame';
 import SpotDifferenceGame from '@/components/dementia/games/SpotDifferenceGame';
 import VisualSearchGame from '@/components/dementia/games/VisualSearchGame';
+import WordCompletionGame from '@/components/dementia/games/WordCompletionGame';
+import WordAssociationGame from '@/components/dementia/games/WordAssociationGame';
+import PuzzleArrangeGame from '@/components/dementia/games/PuzzleArrangeGame';
+import DateTimeQuizGame from '@/components/dementia/games/DateTimeQuizGame';
+import LocationQuizGame from '@/components/dementia/games/LocationQuizGame';
 import GenericExercise from '@/components/dementia/games/GenericExercise';
 
 export default function ExercisePage() {
@@ -36,7 +41,7 @@ export default function ExercisePage() {
     maxScore: number;
     accuracy: number;
     duration: number;
-    data?: Record<string, unknown>;
+    data?: Record<string, any>;
   }) => {
     if (!exercise) return;
 
@@ -214,7 +219,42 @@ export default function ExercisePage() {
             onComplete={handleComplete}
           />
         )}
-        {!['memory-cards', 'sequence-recall', 'color-word', 'simple-math', 'word-pairs', 'pattern-recognition', 'category-sorting', 'face-recognition', 'real-face-recognition', 'virtual-home-navigation', 'map-reading', 'direction-following', 'spot-difference', 'visual-search'].includes(exercise.slug) && (
+        {exercise.slug === 'word-completion' && (
+          <WordCompletionGame
+            config={exercise.config}
+            difficulty={exercise.difficulty}
+            onComplete={handleComplete}
+          />
+        )}
+        {exercise.slug === 'word-association' && (
+          <WordAssociationGame
+            config={exercise.config}
+            difficulty={exercise.difficulty}
+            onComplete={handleComplete}
+          />
+        )}
+        {exercise.slug === 'puzzle-arrange' && (
+          <PuzzleArrangeGame
+            config={exercise.config}
+            difficulty={exercise.difficulty}
+            onComplete={handleComplete}
+          />
+        )}
+        {exercise.slug === 'date-time-quiz' && (
+          <DateTimeQuizGame
+            config={exercise.config}
+            difficulty={exercise.difficulty}
+            onComplete={handleComplete}
+          />
+        )}
+        {exercise.slug === 'location-quiz' && (
+          <LocationQuizGame
+            config={exercise.config}
+            difficulty={exercise.difficulty}
+            onComplete={handleComplete}
+          />
+        )}
+        {!['memory-cards', 'sequence-recall', 'color-word', 'simple-math', 'word-pairs', 'pattern-recognition', 'category-sorting', 'face-recognition', 'real-face-recognition', 'virtual-home-navigation', 'map-reading', 'direction-following', 'spot-difference', 'visual-search', 'word-completion', 'word-association', 'puzzle-arrange', 'date-time-quiz', 'location-quiz'].includes(exercise.slug) && (
           <GenericExercise
             exercise={exercise}
             config={exercise.config}

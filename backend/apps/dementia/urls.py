@@ -7,6 +7,8 @@ from .views import (
     CaregiverNoteViewSet,
     CognitiveScoreViewSet,
     CognitiveScreeningViewSet,
+    CaregiverDashboardViewSet,
+    ReportRecipientViewSet,
 )
 
 router = DefaultRouter()
@@ -16,7 +18,13 @@ router.register('assessments', DailyAssessmentViewSet, basename='daily-assessmen
 router.register('notes', CaregiverNoteViewSet, basename='caregiver-note')
 router.register('scores', CognitiveScoreViewSet, basename='cognitive-score')
 router.register('screening', CognitiveScreeningViewSet, basename='cognitive-screening')
+router.register('recipients', ReportRecipientViewSet, basename='report-recipient')
+
+# Caregiver routes (separate router to avoid slug conflicts)
+caregiver_router = DefaultRouter()
+caregiver_router.register('caregiver', CaregiverDashboardViewSet, basename='caregiver-dashboard')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('', include(caregiver_router.urls)),
 ]

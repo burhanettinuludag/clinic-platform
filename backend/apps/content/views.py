@@ -2,18 +2,23 @@ from django.db import models
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.accounts.permissions import IsPatient
-from .models import ContentCategory, Article, EducationItem, EducationProgress
+from apps.accounts.models import DoctorAuthor
+from .models import ContentCategory, Article, NewsArticle, EducationItem, EducationProgress
 from .serializers import (
     ContentCategorySerializer,
     ArticleListSerializer,
     ArticleDetailSerializer,
     EducationItemSerializer,
     EducationProgressSerializer,
+    NewsArticleListSerializer,
+    NewsArticleDetailSerializer,
+    PublicDoctorAuthorSerializer,
 )
 
 

@@ -3,37 +3,29 @@
 
 /* Norosera Medical Theme */
 :root {
-  /* Primary - Teal/Cyan (Medical, Calming) */
-  --primary-50: #ecfeff;
-  --primary-100: #cffafe;
-  --primary-200: #a5f3fc;
-  --primary-300: #67e8f9;
-  --primary-400: #22d3ee;
-  --primary-500: #06b6d4;
-  --primary-600: #0891b2;
-  --primary-700: #0e7490;
-  --primary-800: #155e75;
-  --primary-900: #164e63;
+  /* Primary - Teal (Medical, Calming) */
+  --primary-50: #f0fdfa;
+  --primary-100: #ccfbf1;
+  --primary-200: #99f6e4;
+  --primary-300: #5eead4;
+  --primary-400: #2dd4bf;
+  --primary-500: #14b8a6;
+  --primary-600: #0d9488;
+  --primary-700: #0f766e;
+  --primary-800: #115e59;
+  --primary-900: #134e4a;
 
-  /* Secondary - Deep Purple (Neurology) */
-  --secondary-50: #faf5ff;
-  --secondary-100: #f3e8ff;
-  --secondary-200: #e9d5ff;
-  --secondary-300: #d8b4fe;
-  --secondary-400: #c084fc;
-  --secondary-500: #a855f7;
-  --secondary-600: #9333ea;
-  --secondary-700: #7c3aed;
-  --secondary-800: #6b21a8;
-  --secondary-900: #581c87;
-
-  /* Accent - Soft Rose (Warmth, Care) */
-  --accent-50: #fff1f2;
-  --accent-100: #ffe4e6;
-  --accent-200: #fecdd3;
-  --accent-300: #fda4af;
-  --accent-400: #fb7185;
-  --accent-500: #f43f5e;
+  /* Secondary - Indigo (Trust, Technology) */
+  --secondary-50: #eef2ff;
+  --secondary-100: #e0e7ff;
+  --secondary-200: #c7d2fe;
+  --secondary-300: #a5b4fc;
+  --secondary-400: #818cf8;
+  --secondary-500: #6366f1;
+  --secondary-600: #4f46e5;
+  --secondary-700: #4338ca;
+  --secondary-800: #3730a3;
+  --secondary-900: #312e81;
 
   /* Neutral */
   --neutral-50: #f8fafc;
@@ -57,110 +49,8 @@
 /* Base Styles */
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--neutral-50);
+  background-color: #ffffff;
   color: var(--neutral-800);
-}
-
-/* Gradient Backgrounds */
-.gradient-medical {
-  background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-700) 100%);
-}
-
-.gradient-hero {
-  background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0e7490 100%);
-}
-
-.gradient-card {
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
-}
-
-/* Neural Network Animation Background */
-.neural-bg {
-  position: relative;
-  overflow: hidden;
-}
-
-.neural-bg::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    radial-gradient(circle at 20% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(6, 182, 212, 0.1) 0%, transparent 30%);
-  pointer-events: none;
-}
-
-/* Neuron Pulse Animation */
-@keyframes neuronPulse {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.1);
-  }
-}
-
-@keyframes synapseFlow {
-  0% {
-    stroke-dashoffset: 1000;
-  }
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes pulse-slow {
-  0%, 100% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.animate-neuron-pulse {
-  animation: neuronPulse 3s ease-in-out infinite;
-}
-
-.animate-synapse-flow {
-  stroke-dasharray: 1000;
-  animation: synapseFlow 3s linear infinite;
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 4s ease-in-out infinite;
-}
-
-/* Glass Effect */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.glass-dark {
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Card Styles */
@@ -168,63 +58,54 @@ body {
   background: white;
   border-radius: 1rem;
   border: 1px solid var(--neutral-200);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
 }
 
 .card-medical:hover {
-  box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.15), 0 8px 10px -6px rgba(147, 51, 234, 0.1);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
   border-color: var(--primary-200);
 }
 
 /* Button Styles */
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+  background-color: var(--primary-600);
   color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
   font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 14px 0 rgba(6, 182, 212, 0.3);
+  transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px 0 rgba(6, 182, 212, 0.4);
+  background-color: var(--primary-700);
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, var(--secondary-600) 0%, var(--secondary-700) 100%);
+  background-color: var(--secondary-600);
   color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
   font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 14px 0 rgba(147, 51, 234, 0.3);
+  transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px 0 rgba(147, 51, 234, 0.4);
+  background-color: var(--secondary-700);
 }
 
 /* Text Gradient */
 .text-gradient {
-  background: linear-gradient(135deg, var(--primary-400) 0%, var(--secondary-400) 100%);
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Brain Icon Glow */
-.brain-glow {
-  filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.5));
-}
-
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -232,19 +113,19 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary-400);
-  border-radius: 4px;
+  background: var(--neutral-300);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-500);
+  background: var(--neutral-400);
 }
 
 /* Focus States */
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
 }
 
 /* Disease Module Colors */
@@ -272,17 +153,17 @@ input:focus, select:focus, textarea:focus {
 .prose-education h2 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #6b21a8;
+  color: #0f766e;
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #e9d5ff;
+  border-bottom: 2px solid #ccfbf1;
 }
 
 .prose-education h3 {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #7c3aed;
+  color: #0d9488;
   margin-top: 1.25rem;
   margin-bottom: 0.5rem;
 }
@@ -305,7 +186,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .prose-education ul li::marker {
-  color: #a855f7;
+  color: #14b8a6;
 }
 
 .prose-education ol {
@@ -324,74 +205,6 @@ input:focus, select:focus, textarea:focus {
   margin-bottom: 0.75rem;
   line-height: 1.7;
   color: #4b5563;
-}
-
-
-/* Dark Mode */
-.dark {
-  --neutral-50: #0f172a;
-  --neutral-100: #1e293b;
-  --neutral-200: #334155;
-  --neutral-300: #475569;
-  --neutral-400: #64748b;
-  --neutral-500: #94a3b8;
-  --neutral-600: #cbd5e1;
-  --neutral-700: #e2e8f0;
-  --neutral-800: #f1f5f9;
-  --neutral-900: #f8fafc;
-}
-
-.dark body,
-.dark {
-  background-color: #0f172a;
-  color: #f1f5f9;
-}
-
-.dark .card-medical {
-  background: #1e293b;
-  border-color: #334155;
-}
-
-.dark .card-medical:hover {
-  border-color: var(--primary-400);
-  box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.1);
-}
-
-.dark input, .dark select, .dark textarea {
-  background-color: #1e293b;
-  border-color: #334155;
-  color: #f1f5f9;
-}
-
-.dark input:focus, .dark select:focus, .dark textarea:focus {
-  border-color: var(--primary-400);
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
-}
-
-/* Dark mode overrides for common Tailwind classes */
-.dark .bg-white { background-color: #1e293b; }
-.dark .bg-gray-50 { background-color: #0f172a; }
-.dark .bg-gray-100 { background-color: #1e293b; }
-.dark .border-gray-200 { border-color: #334155; }
-.dark .border { border-color: #334155; }
-.dark .text-gray-900 { color: #f1f5f9; }
-.dark .text-gray-800 { color: #e2e8f0; }
-.dark .text-gray-700 { color: #cbd5e1; }
-.dark .text-gray-600 { color: #94a3b8; }
-.dark .text-gray-500 { color: #64748b; }
-.dark .text-gray-400 { color: #475569; }
-.dark .divide-y > * + * { border-color: #334155; }
-.dark .border-t { border-color: #334155; }
-.dark .border-r { border-color: #334155; }
-
-/* Dark scrollbar */
-.dark ::-webkit-scrollbar-track { background: #1e293b; }
-.dark ::-webkit-scrollbar-thumb { background: var(--primary-600); }
-
-/* Dark glass */
-.dark .glass {
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Anti-scraping: print engelleme */

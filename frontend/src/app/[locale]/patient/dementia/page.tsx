@@ -29,6 +29,8 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   ArrowRight,
+  Send,
+  Bot,
 } from 'lucide-react';
 
 const EXERCISE_TYPE_ICONS: Record<string, string> = {
@@ -552,6 +554,14 @@ function AssessmentTab({ todayAssessment }: { todayAssessment: any }) {
       {/* Quick Links */}
       <div className="grid grid-cols-2 gap-3">
         <Link
+          href="/patient/ai-assistant"
+          className="bg-white rounded-xl border border-gray-200 p-4 hover:border-purple-300 transition col-span-2"
+        >
+          <Bot className="w-5 h-5 text-purple-600 mb-2" />
+          <div className="font-medium text-gray-900">AI Saglik Asistani</div>
+          <div className="text-xs text-gray-500">Demansla ilgili sorularinizi yanitlasin</div>
+        </Link>
+        <Link
           href="/patient/dementia/screening"
           className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition"
         >
@@ -575,6 +585,49 @@ function AssessmentTab({ todayAssessment }: { todayAssessment: any }) {
           <div className="font-medium text-gray-900">Gecmis</div>
           <div className="text-xs text-gray-500">Tum degerlendirmeleri gor</div>
         </Link>
+        <Link
+          href="/patient/dementia/share"
+          className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition"
+        >
+          <Send className="w-5 h-5 text-blue-600 mb-2" />
+          <div className="font-medium text-gray-900">Rapor Paylas</div>
+          <div className="text-xs text-gray-500">Yakinlarinizla paylasim</div>
+        </Link>
+      </div>
+
+      {/* PDF Report Download */}
+      <div className="mt-4 bg-white rounded-xl border border-gray-200 p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-medium text-gray-900">PDF Rapor Indir</h3>
+            <p className="text-xs text-gray-500">Son 30 gunluk bilissel takip raporunuzu indirin</p>
+          </div>
+          <button
+            onClick={() => {
+              const endDate = new Date().toISOString().split('T')[0];
+              const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+              const token = Cookies.get('access_token');
+              const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'}/dementia/sessions/report/?start_date=${startDate}&end_date=${endDate}`;
+              // Open in new tab with auth
+              fetch(url, {
+                headers: { Authorization: `Bearer ${token}` },
+              })
+                .then((res) => res.blob())
+                .then((blob) => {
+                  const link = document.createElement('a');
+                  link.href = URL.createObjectURL(blob);
+                  link.download = `bilissel_rapor_${endDate}.pdf`;
+                  link.click();
+                  URL.revokeObjectURL(link.href);
+                })
+                .catch(() => alert('Rapor indirilemedi. Lutfen tekrar deneyin.'));
+            }}
+            className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition flex items-center gap-2"
+          >
+            <ArrowDownRight className="w-4 h-4" />
+            Rapor Indir
+          </button>
+        </div>
       </div>
     </div>
   );

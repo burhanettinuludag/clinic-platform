@@ -50,6 +50,7 @@ urlpatterns = [
     path('api/v1/wellness/', include('apps.wellness.urls')),
     path('api/v1/gamification/', include('apps.gamification.urls')),
     path('api/v1/social/', include('apps.social.urls')),
+    path('api/v1/chat/', include('apps.chat.urls')),
 ]
 
 # Store & Payments: sadece DEBUG modda aktif (production'da gecici olarak kapali)
