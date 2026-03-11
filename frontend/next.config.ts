@@ -41,7 +41,7 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https:",
-      `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}`,
+      `connect-src 'self' ${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').trim()}`,
       "font-src 'self'",
       "frame-ancestors 'none'",
     ].join('; '),

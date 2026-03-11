@@ -163,5 +163,5 @@ class PublicNewsViewSet(viewsets.ReadOnlyModelViewSet):
         return NewsArticle.objects.filter(status='published').order_by('-created_at')
 
     def get_serializer_class(self):
-        from apps.content.serializers import NewsArticleSerializer
-        return NewsArticleSerializer
+        from apps.content.serializers import NewsArticleListSerializer
+        return NewsArticleListSerializer
