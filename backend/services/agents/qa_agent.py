@@ -23,28 +23,26 @@ class QAAgent(BaseAgent):
         if not question:
             return {'error': 'Soru (question) bos'}
         context_docs = self._search_content(question, language, module)
-        if not context_docs:
-            return {
-                'answer': 'Bu konuda yayinlanmis bir icerik bulunamadi. Lutfen hekiminize danisin.' if language == 'tr'
-                    else 'No published content found on this topic. Please consult your physician.',
-                'sources': [],
-                'disclaimer': self._get_disclaimer(language),
-                'confidence': 'low',
-                'no_context': True,
-            }
-        context_text = self._build_context(context_docs, language)
-        prompt = self._build_prompt(question, context_text, language)
+        if context_docs:
+            context_text = self._build_context(context_docs, language)
+            prompt = self._build_prompt(question, context_text, language)
+        else:
+            prompt = self._build_general_prompt(question, language, module)
         response = self.llm_call(prompt)
         result = self._parse_response(response.content)
         result['sources'] = [
             {'id': str(doc['id']), 'title': doc['title'], 'type': doc['type']}
             for doc in context_docs
-        ]
+        ] if context_docs else []
         result['disclaimer'] = self._get_disclaimer(language)
         result['qa_provider'] = response.provider
         result['qa_tokens'] = response.tokens_used
         if not result.get('confidence'):
-            result['confidence'] = 'high' if len(context_docs) >= 2 else 'medium'
+            if context_docs:
+                result['confidence'] = 'high' if len(context_docs) >= 2 else 'medium'
+            else:
+                result['confidence'] = 'medium'
+                result['general_response'] = True
         return result
 
     def _search_content(self, question, language, module=None, max_results=3):
@@ -86,6 +84,51 @@ class QAAgent(BaseAgent):
         except Exception as e:
             logger.error(f"Content search error: {e}")
             return []
+
+    def _build_general_prompt(self, question, language, module=None):
+        module_info = ''
+        if module:
+            module_names = {
+                'migraine': 'migren', 'epilepsy': 'epilepsi',
+                'dementia': 'demans', 'parkinson': 'parkinson'
+            }
+            module_info = f"\nHastanin takip modulu: {module_names.get(module, module)}"
+        if language == 'tr':
+            return f"""Sen Norosera noroloji platformunun hasta bilgilendirme asistanisin.
+Hasta sana bir soru soruyor. Genel noroloji bilgine dayanarak yardimci ve bilgilendirici bir yanit ver.
+{module_info}
+HASTA SORUSU: {question}
+
+KESIN KURALLAR:
+1. Samimi, anlasilir ve rahatlatici bir dil kullan
+2. Genel saglik bilgisi ver ama ASLA kesin teshis koyma
+3. ASLA spesifik ilac ismi veya dozaj soyleme
+4. ASLA kesin tedavi plani onerme
+5. Genel oneriler ver (ornegin: dinlenme, su icme, stres yonetimi gibi)
+6. Belirtilerin ciddi olabilecegi durumlarda mutlaka hekime basvurmayi oner
+7. Yanitini 3-5 cumle ile sinirla, cok uzun yazma
+
+CIKTI (JSON):
+{{"answer": "Yanitiniz", "confidence": "medium", "key_points": ["Noktalar"]}}
+SADECE JSON dondur."""
+        else:
+            return f"""You are Norosera neurology platform's patient information assistant.
+A patient is asking you a question. Provide a helpful and informative answer based on general neurology knowledge.
+{module_info}
+PATIENT QUESTION: {question}
+
+STRICT RULES:
+1. Use a friendly, understandable and reassuring tone
+2. Provide general health information but NEVER make a definitive diagnosis
+3. NEVER mention specific medication names or dosages
+4. NEVER suggest a specific treatment plan
+5. Give general advice (e.g. rest, hydration, stress management)
+6. Always recommend consulting a doctor for serious symptoms
+7. Keep your answer to 3-5 sentences
+
+OUTPUT (JSON):
+{{"answer": "Your answer", "confidence": "medium", "key_points": ["Points"]}}
+Return ONLY JSON."""
 
     def _build_context(self, docs, language):
         parts = []

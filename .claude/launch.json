@@ -1,0 +1,33 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "frontend",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd frontend && npm run dev"],
+      "port": 3000
+    },
+    {
+      "name": "backend",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["backend/manage.py", "runserver", "0.0.0.0:8000"],
+      "port": 8000
+    },
+    {
+      "name": "celery-worker",
+      "runtimeExecutable": "celery",
+      "runtimeArgs": ["-A", "config", "worker", "-l", "info"]
+    },
+    {
+      "name": "celery-beat",
+      "runtimeExecutable": "celery",
+      "runtimeArgs": ["-A", "config", "beat", "-l", "info", "--scheduler", "django_celery_beat.schedulers:DatabaseScheduler"]
+    },
+    {
+      "name": "docker-all",
+      "runtimeExecutable": "docker",
+      "runtimeArgs": ["compose", "up"],
+      "port": 3000
+    }
+  ]
+}

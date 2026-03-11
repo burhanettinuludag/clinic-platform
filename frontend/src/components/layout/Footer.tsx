@@ -161,9 +161,16 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Copyright */}
-            <p className="text-gray-400 text-sm">
-              {footerText || `\u00a9 ${new Date().getFullYear()} Norosera. ${t('footer.copyright')}`}
-            </p>
+            <div className="text-center md:text-left">
+              <p className="text-gray-400 text-sm">
+                {footerText || `\u00a9 ${new Date().getFullYear()} Norosera. ${t('footer.copyright')}`}
+              </p>
+              <p className="text-gray-400 text-xs mt-1">
+                {locale === 'en'
+                  ? 'All rights reserved by UlgarTech. Developer: Prof. Dr. Burhanettin Uluda\u011f'
+                  : 'T\u00fcm haklar\u0131 UlgarTech\u2019a aittir. Geli\u015ftirici: Prof. Dr. Burhanettin Uluda\u011f'}
+              </p>
+            </div>
 
             {/* Social Links */}
             <div className="flex items-center gap-3">
