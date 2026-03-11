@@ -93,10 +93,13 @@
       "title": "Digital Tracking Platform for Chronic Diseases",
       "titleFallback1": "Your Brain —",
       "titleHighlight1": "Understand",
+      "titleFallback2": "Your Health —",
       "titleHighlight2": "Manage",
       "subtitle": "Home education, symptom tracking, and physician panel for migraine, epilepsy, Parkinson's, and dementia patients.",
       "cta": "Get Started",
-      "secondaryCta": "Learn More"
+      "secondaryCta": "Learn More",
+      "disclaimer": "Start for free. No credit card required.",
+      "satisfaction": "Satisfaction"
     },
     "stats": {
       "activeUsers": "Active Users",

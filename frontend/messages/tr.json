@@ -93,10 +93,13 @@
       "title": "Kronik Hastalıklar İçin Dijital Takip Platformu",
       "titleFallback1": "Beyninizi",
       "titleHighlight1": "Anlayın",
+      "titleFallback2": "Sağlığınızı",
       "titleHighlight2": "Yönetin",
       "subtitle": "Migren, epilepsi, parkinson ve demans hastaları için ev eğitimi, semptom takibi ve hekim paneli.",
       "cta": "Hemen Başlayın",
-      "secondaryCta": "Daha Fazla Bilgi"
+      "secondaryCta": "Daha Fazla Bilgi",
+      "disclaimer": "Ücretsiz başlayın. Kredi kartı gerekmez.",
+      "satisfaction": "Memnuniyet"
     },
     "stats": {
       "activeUsers": "Aktif Kullanıcı",
