@@ -119,6 +119,13 @@ class Command(BaseCommand):
             {'key': 'agent_marketing_content', 'label': 'Marketing Icerik Agent', 'is_enabled': True, 'description': 'Sosyal medya post uretimi'},
             {'key': 'agent_visual_brief', 'label': 'Gorsel Brief Agent', 'is_enabled': True, 'description': 'Tasarim brief uretimi'},
             {'key': 'agent_scheduling', 'label': 'Zamanlama Agent', 'is_enabled': True, 'description': 'Haftalik yayin plani'},
+            {'key': 'agent_content', 'label': 'Icerik Uretim Agent', 'is_enabled': True, 'description': 'Makale ve icerik uretimi'},
+            {'key': 'agent_seo', 'label': 'SEO Agent', 'is_enabled': True, 'description': 'SEO optimizasyonu ve meta tag uretimi'},
+            {'key': 'agent_legal', 'label': 'Hukuki Uyumluluk Agent', 'is_enabled': True, 'description': 'Tibbi ve hukuki icerik kontrolu'},
+            {'key': 'agent_translation', 'label': 'Ceviri Agent', 'is_enabled': True, 'description': 'Icerik ceviri islemi (TR/EN)'},
+            {'key': 'agent_qa', 'label': 'Kalite Kontrol Agent', 'is_enabled': True, 'description': 'Hasta soru-cevap ve kalite kontrol'},
+            {'key': 'agent_devops', 'label': 'DevOps Agent', 'is_enabled': False, 'description': 'Sistem ve altyapi islemleri'},
+            {'key': 'agent_uiux', 'label': 'UI/UX Agent', 'is_enabled': True, 'description': 'Kullanici arayuzu iyilestirme onerileri'},
         ]
 
         created_flags = 0
