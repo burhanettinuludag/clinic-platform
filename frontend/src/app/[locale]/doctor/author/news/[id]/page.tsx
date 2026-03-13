@@ -222,9 +222,9 @@ export default function NewsDetailPage() {
             </div>
             <div className="flex gap-2">
               {news.status === 'draft' && <button onClick={() => handleTransition('submit_for_review')} disabled={transMut.isPending}
-                className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"><Send className="h-4 w-4" />Incelemeye Gonder</button>}
+                className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"><Send className="h-4 w-4" />İncelemeye Gönder</button>}
               {news.status === 'revision' && <button onClick={() => handleTransition('submit_for_review')} disabled={transMut.isPending}
-                className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"><Send className="h-4 w-4" />Tekrar Gonder</button>}
+                className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"><Send className="h-4 w-4" />Tekrar Gönder</button>}
             </div>
           </div>
         </div>

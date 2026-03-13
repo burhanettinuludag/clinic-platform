@@ -239,3 +239,241 @@ export function useUpdateSocialLink() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['site-social-links'] }),
   });
 }
+
+// ==================== BROKEN LINKS ====================
+
+export interface BrokenLinkItem {
+  id: string;
+  broken_url: string;
+  http_status: number | null;
+  error_message: string;
+  link_type: string;
+  link_type_display: string;
+  source_type: string;
+  source_type_display: string;
+  source_id: string;
+  source_title: string;
+  source_field: string;
+  source_language: string;
+  status: string;
+  status_display: string;
+  suggested_url: string;
+  fix_notes: string;
+  fixed_at: string | null;
+  check_count: number;
+  last_checked: string;
+  created_at: string;
+}
+
+export interface BrokenLinkScanItem {
+  id: string;
+  status: string;
+  status_display: string;
+  total_links_checked: number;
+  broken_links_found: number;
+  auto_fixed_count: number;
+  duration_seconds: number;
+  error_message: string;
+  details: Record<string, number>;
+  created_at: string;
+}
+
+export interface BrokenLinkStats {
+  total: number;
+  detected: number;
+  auto_fixed: number;
+  manually_fixed: number;
+  ai_suggested: number;
+  ignored: number;
+  by_type: Record<string, number>;
+  by_source: Record<string, number>;
+  last_scan: BrokenLinkScanItem | null;
+}
+
+export function useBrokenLinks(params?: { status?: string; link_type?: string; source_type?: string; search?: string }) {
+  return useQuery<BrokenLinkItem[]>({
+    queryKey: ['broken-links', params],
+    queryFn: async () => {
+      const { data } = await api.get('/doctor/broken-links/', { params });
+      return data;
+    },
+  });
+}
+
+export function useBrokenLinkStats() {
+  return useQuery<BrokenLinkStats>({
+    queryKey: ['broken-links-stats'],
+    queryFn: async () => {
+      const { data } = await api.get('/doctor/broken-links/stats/');
+      return data;
+    },
+  });
+}
+
+export function useBrokenLinkScans() {
+  return useQuery<BrokenLinkScanItem[]>({
+    queryKey: ['broken-link-scans'],
+    queryFn: async () => {
+      const { data } = await api.get('/doctor/broken-links/scans/');
+      return data;
+    },
+  });
+}
+
+export function useTriggerScan() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await api.post('/doctor/broken-links/scan/');
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['broken-links'] });
+      qc.invalidateQueries({ queryKey: ['broken-links-stats'] });
+      qc.invalidateQueries({ queryKey: ['broken-link-scans'] });
+    },
+  });
+}
+
+export function useFixBrokenLink() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, new_url }: { id: string; new_url: string }) => {
+      const { data } = await api.post(`/doctor/broken-links/${id}/fix/`, { new_url });
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['broken-links'] });
+      qc.invalidateQueries({ queryKey: ['broken-links-stats'] });
+    },
+  });
+}
+
+export function useRecheckBrokenLink() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await api.post(`/doctor/broken-links/${id}/recheck/`);
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['broken-links'] });
+      qc.invalidateQueries({ queryKey: ['broken-links-stats'] });
+    },
+  });
+}
+
+export function useBulkBrokenLinkAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { ids: string[]; action: 'ignore' | 'recheck' }) => {
+      const { data } = await api.post('/doctor/broken-links/bulk/', payload);
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['broken-links'] });
+      qc.invalidateQueries({ queryKey: ['broken-links-stats'] });
+    },
+  });
+}
+
+// ==================== AGENT MANAGEMENT ====================
+
+export interface AgentLastRun {
+  status: string | null;
+  created_at: string | null;
+  duration_ms: number | null;
+  tokens_used: number | null;
+}
+
+export interface AgentItem {
+  key: string;
+  name_tr: string;
+  name_en: string;
+  description_tr: string;
+  description_en: string;
+  category: string;
+  risk_level: 'low' | 'medium' | 'high';
+  cooldown_minutes: number;
+  cooldown_remaining_seconds: number;
+  schedule_info: string;
+  last_run: AgentLastRun | null;
+}
+
+export interface AgentListResponse {
+  agents: AgentItem[];
+  daily_triggers_used: number;
+  daily_trigger_limit: number;
+}
+
+export interface AgentTriggerHistoryItem {
+  id: string;
+  task_key: string;
+  task_name: string;
+  user_email: string;
+  ip_address: string;
+  celery_task_id: string;
+  created_at: string;
+}
+
+export interface AgentWeeklyStats {
+  weekly: {
+    total: number;
+    completed: number;
+    failed: number;
+    running: number;
+    total_tokens: number;
+  };
+  by_task: Array<{
+    task_type: string;
+    count: number;
+    success: number;
+    fail: number;
+    tokens: number;
+  }>;
+}
+
+export function useAgentList() {
+  return useQuery<AgentListResponse>({
+    queryKey: ['agents-list'],
+    queryFn: async () => {
+      const { data } = await api.get('/doctor/agents/');
+      return data;
+    },
+    refetchInterval: 30000, // Her 30 saniyede cooldown guncelle
+  });
+}
+
+export function useTriggerAgent() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (task_key: string) => {
+      const { data } = await api.post('/doctor/agents/trigger/', { task_key });
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['agents-list'] });
+      qc.invalidateQueries({ queryKey: ['agents-history'] });
+    },
+  });
+}
+
+export function useAgentTriggerHistory() {
+  return useQuery<{ history: AgentTriggerHistoryItem[] }>({
+    queryKey: ['agents-history'],
+    queryFn: async () => {
+      const { data } = await api.get('/doctor/agents/history/');
+      return data;
+    },
+  });
+}
+
+export function useAgentStats() {
+  return useQuery<AgentWeeklyStats>({
+    queryKey: ['agents-stats'],
+    queryFn: async () => {
+      const { data } = await api.get('/doctor/agents/stats/');
+      return data;
+    },
+  });
+}

@@ -41,7 +41,7 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https:",
-      `connect-src 'self' ${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').trim()}`,
+      `connect-src 'self' ${(() => { try { return new URL(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').origin; } catch { return 'http://localhost:8000'; } })()} ws://localhost:3000`,
       "font-src 'self'",
       "frame-ancestors 'none'",
     ].join('; '),

@@ -514,6 +514,7 @@ export interface EducationItem {
   disease_module: string | null;
   disease_module_slug?: string;
   category: string | null;
+  category_slug?: string;
   category_name?: string;
   order: number;
   estimated_duration_minutes: number;
@@ -606,6 +607,101 @@ export function useUpdateEducationProgress() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['education-progress'] });
       queryClient.invalidateQueries({ queryKey: ['education-items'] });
+    },
+  });
+}
+
+// ==================== QUIZZES ====================
+
+export interface QuizOption {
+  text: string;
+  is_correct?: boolean;
+}
+
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: QuizOption[];
+  explanation: string;
+  order: number;
+}
+
+export interface QuizBestAttempt {
+  score: number;
+  total_questions: number;
+  passed: boolean;
+  completed_at: string;
+}
+
+export interface EducationQuiz {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  disease_module: string | null;
+  category: string | null;
+  category_slug: string | null;
+  passing_score_percent: number;
+  points_reward: number;
+  question_count: number;
+  questions?: QuizQuestion[];
+  best_attempt: QuizBestAttempt | null;
+  order: number;
+}
+
+export interface QuizAttempt {
+  id: string;
+  quiz: string;
+  score: number;
+  total_questions: number;
+  passed: boolean;
+  duration_seconds: number | null;
+  answers: { question_id: string; selected_option_index: number; is_correct?: boolean }[];
+  completed_at: string;
+  created_at: string;
+}
+
+export function useQuizzes(params?: { disease_module?: string }) {
+  return useQuery<EducationQuiz[]>({
+    queryKey: ['quizzes', params],
+    queryFn: async () => {
+      const { data } = await api.get('/content/quizzes/', { params });
+      return data.results ?? data;
+    },
+  });
+}
+
+export function useQuiz(slug: string) {
+  return useQuery<EducationQuiz>({
+    queryKey: ['quizzes', slug],
+    queryFn: async () => {
+      const { data } = await api.get(`/content/quizzes/${slug}/`);
+      return data;
+    },
+    enabled: !!slug,
+  });
+}
+
+export function useSubmitQuiz() {
+  const queryClient = useQueryClient();
+  return useMutation<QuizAttempt, Error, { quiz: string; answers: { question_id: string; selected_option_index: number }[]; duration_seconds?: number }>({
+    mutationFn: async (payload) => {
+      const { data } = await api.post('/content/quiz-attempts/', payload);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quizzes'] });
+      queryClient.invalidateQueries({ queryKey: ['education-items'] });
+    },
+  });
+}
+
+export function useQuizAttempts() {
+  return useQuery<QuizAttempt[]>({
+    queryKey: ['quiz-attempts'],
+    queryFn: async () => {
+      const { data } = await api.get('/content/quiz-attempts/');
+      return data.results ?? data;
     },
   });
 }

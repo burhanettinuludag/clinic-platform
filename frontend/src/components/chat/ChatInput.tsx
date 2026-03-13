@@ -45,7 +45,7 @@ export default function ChatInput({ onSend, isLoading, placeholder, disabled }: 
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder={placeholder || 'Mesajinizi yazin...'}
+        placeholder={placeholder || 'Mesajınızı yazın...'}
         disabled={isLoading || disabled}
         rows={1}
         className="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:bg-gray-50"

@@ -27,6 +27,8 @@ export default function Header() {
       ? '/doctor/dashboard'
       : user?.role === 'caregiver'
       ? '/caregiver/dashboard'
+      : user?.role === 'relative'
+      ? '/relative/dashboard'
       : '/patient/dashboard';
 
   return (

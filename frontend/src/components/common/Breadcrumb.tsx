@@ -5,15 +5,15 @@ import { Link } from '@/i18n/navigation';
 import { ChevronRight, Home } from 'lucide-react';
 
 const LABELS: Record<string, string> = {
-  patient: 'Hasta Paneli', doctor: 'Doktor Paneli', editor: 'Editor',
+  patient: 'Hasta Paneli', doctor: 'Doktor Paneli', editor: 'Editör',
   dashboard: 'Dashboard', settings: 'Ayarlar', profile: 'Profil',
-  medications: 'Ilaclar', symptoms: 'Semptomlar', tasks: 'Gorevler',
+  medications: 'İlaçlar', symptoms: 'Semptomlar', tasks: 'Görevler',
   migraine: 'Migren', epilepsy: 'Epilepsi', dementia: 'Demans',
-  wellness: 'Wellness', rewards: 'Oduller', reminders: 'Hatirlaticilar',
-  modules: 'Moduller', blog: 'Blog', news: 'Haberler', doctors: 'Doktorlar',
-  education: 'Egitim', contact: 'Iletisim', author: 'Yazar Paneli',
-  content: 'Icerik', alerts: 'Uyarilar', patients: 'Hastalar',
-  analytics: 'Analitik', 'change-password': 'Sifre Degistir',
+  wellness: 'Wellness', rewards: 'Ödüller', reminders: 'Hatırlatıcılar',
+  modules: 'Modüller', blog: 'Blog', news: 'Haberler', doctors: 'Doktorlar',
+  education: 'Eğitim', contact: 'İletişim', author: 'Yazar Paneli',
+  content: 'İçerik', alerts: 'Uyarılar', patients: 'Hastalar',
+  analytics: 'Analitik', 'change-password': 'Şifre Değiştir',
   'notification-settings': 'Bildirim Tercihleri',
 };
 

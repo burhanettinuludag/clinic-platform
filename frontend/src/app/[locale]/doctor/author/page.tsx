@@ -165,7 +165,7 @@ function ArticlesTab() {
               <div className="flex gap-1">
                 {a.status === 'draft' && <>
                   <button onClick={() => transitionMut.mutate({ id: a.id, action: 'submit_for_review' })} disabled={transitionMut.isPending}
-                    className="rounded px-2 py-1 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100" title="Yayina Gonder"><Send className="h-3.5 w-3.5" /></button>
+                    className="rounded px-2 py-1 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100" title="Yayına Gönder"><Send className="h-3.5 w-3.5" /></button>
                   <button onClick={() => pipelineMut.mutate({ id: a.id, pipeline: 'seo_optimize' })}
                     className="rounded px-2 py-1 text-xs font-medium text-purple-700 bg-purple-50 hover:bg-purple-100" title="SEO Optimize"><Zap className="h-3.5 w-3.5" /></button>
                   <button onClick={() => { if(confirm('Taslagi silmek istediginize emin misiniz?')) deleteMut.mutate(a.id); }}
@@ -226,7 +226,7 @@ function NewsTab() {
               </div>
               <div className="flex gap-1">
                 {(n.status === 'draft' || n.status === 'revision') && <button onClick={() => transitionMut.mutate({ id: n.id, action: 'submit_for_review' })} disabled={transitionMut.isPending}
-                  className="rounded px-2 py-1 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100" title="Incelemeye Gonder"><Send className="h-3.5 w-3.5" /></button>}
+                  className="rounded px-2 py-1 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100" title="İncelemeye Gönder"><Send className="h-3.5 w-3.5" /></button>}
                 {n.status === 'published' && <button onClick={() => transitionMut.mutate({ id: n.id, action: 'archive' })} disabled={transitionMut.isPending}
                   className="rounded px-2 py-1 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-gray-100" title="Arsivle"><Archive className="h-3.5 w-3.5" /></button>}
                 {n.status === 'archived' && <button onClick={() => transitionMut.mutate({ id: n.id, action: 'revert_to_draft' })} disabled={transitionMut.isPending}

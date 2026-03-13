@@ -52,4 +52,14 @@ app.conf.beat_schedule = {
         'task': 'apps.social.tasks.refresh_social_tokens',
         'schedule': crontab(hour=4, minute=0),  # Her gun 04:00
     },
+    # Education drip
+    'send-daily-education-drip': {
+        'task': 'apps.content.tasks.send_daily_education_drip',
+        'schedule': crontab(hour=9, minute=0),  # Her gun 09:00
+    },
+    # Broken Link Scanner
+    'scan-broken-links-weekly': {
+        'task': 'apps.common.tasks.scan_broken_links',
+        'schedule': crontab(hour=4, minute=0, day_of_week=3),  # Carsamba 04:00
+    },
 }

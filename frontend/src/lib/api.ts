@@ -56,12 +56,12 @@ api.interceptors.response.use(
     if (error.response) {
       const status = error.response.status;
       const detail = error.response.data?.detail || error.response.data?.message;
-      if (status === 403) emitToast('error', detail || 'Bu isleme yetkiniz yok.');
-      else if (status === 404) emitToast('warning', detail || 'Kayit bulunamadi.');
-      else if (status === 429) emitToast('warning', 'Cok fazla istek. Lutfen bekleyin.');
-      else if (status >= 500) emitToast('error', 'Sunucu hatasi. Lutfen tekrar deneyin.');
+      if (status === 403) emitToast('error', detail || 'Bu işleme yetkiniz yok.');
+      else if (status === 404) emitToast('warning', detail || 'Kayıt bulunamadı.');
+      else if (status === 429) emitToast('warning', 'Çok fazla istek. Lütfen bekleyin.');
+      else if (status >= 500) emitToast('error', 'Sunucu hatası. Lütfen tekrar deneyin.');
     } else if (error.code === 'ERR_NETWORK') {
-      emitToast('error', 'Baglanti hatasi. Internet baglantinizi kontrol edin.');
+      emitToast('error', 'Bağlantı hatası. İnternet bağlantınızı kontrol edin.');
     }
     return Promise.reject(error);
   }

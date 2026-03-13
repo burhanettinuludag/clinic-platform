@@ -10,7 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
-from apps.accounts.permissions import IsPatient, IsCaregiver, IsPatientOrCaregiver
+from apps.accounts.permissions import IsPatient, IsCaregiver, IsRelative, IsPatientOrCaregiver
 from .models import (
     CognitiveExercise,
     ExerciseSession,
@@ -723,4 +723,178 @@ class ReportRecipientViewSet(viewsets.ModelViewSet):
             patient=request.user,
         ).select_related('recipient')[:50]
         serializer = ReportShareRecordSerializer(records, many=True)
+        return Response(serializer.data)
+
+
+class RelativeDashboardViewSet(viewsets.ViewSet):
+    """
+    Read-only dashboard for patient relatives.
+    Relatives can only view caregiver notes, daily assessments, and basic patient status.
+    """
+    permission_classes = [permissions.IsAuthenticated, IsRelative]
+
+    def _get_patient(self, user):
+        """Get the patient linked to this relative."""
+        from apps.accounts.models import RelativeProfile
+        try:
+            profile = RelativeProfile.objects.select_related('patient').get(
+                user=user, is_approved=True
+            )
+            return profile.patient
+        except RelativeProfile.DoesNotExist:
+            return None
+
+    @action(detail=False, methods=['get'], url_path='patient')
+    def patient_info(self, request):
+        """Get basic info about the linked patient."""
+        patient = self._get_patient(request.user)
+        if not patient:
+            return Response(
+                {'detail': 'Onaylanmis hasta baglantiniz bulunamadi.'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        today = date.today()
+        week_ago = today - timedelta(days=7)
+
+        # Latest cognitive score
+        latest_score_obj = CognitiveScore.objects.filter(patient=patient).first()
+        latest_score = latest_score_obj.overall_score if latest_score_obj else None
+
+        # Today assessment
+        today_assessment = DailyAssessment.objects.filter(
+            patient=patient, assessment_date=today
+        ).first()
+
+        # Exercises this week
+        exercises_this_week = ExerciseSession.objects.filter(
+            patient=patient, started_at__date__gte=week_ago
+        ).count()
+
+        # Recent alerts (incidents in last week)
+        recent_incidents = DailyAssessment.objects.filter(
+            patient=patient,
+            assessment_date__gte=week_ago,
+        ).filter(
+            Q(fall_occurred=True) | Q(wandering_occurred=True) | Q(medication_missed=True)
+        ).count()
+
+        data = {
+            'id': patient.id,
+            'first_name': patient.first_name,
+            'last_name': patient.last_name,
+            'latest_score': latest_score,
+            'exercises_this_week': exercises_this_week,
+            'has_today_assessment': today_assessment is not None,
+            'today_mood': today_assessment.mood_score if today_assessment else None,
+            'recent_incidents': recent_incidents,
+        }
+        return Response(data)
+
+    @action(detail=False, methods=['get'], url_path='notes')
+    def notes(self, request):
+        """View caregiver notes for the linked patient (read-only)."""
+        patient = self._get_patient(request.user)
+        if not patient:
+            return Response(
+                {'detail': 'Onaylanmis hasta baglantiniz bulunamadi.'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        notes = CaregiverNote.objects.filter(
+            patient=patient
+        ).order_by('-created_at')[:30]
+
+        serializer = CaregiverNoteSerializer(notes, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='assessments')
+    def assessments(self, request):
+        """View daily assessments for the linked patient (read-only)."""
+        patient = self._get_patient(request.user)
+        if not patient:
+            return Response(
+                {'detail': 'Onaylanmis hasta baglantiniz bulunamadi.'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        month_ago = date.today() - timedelta(days=30)
+        assessments = DailyAssessment.objects.filter(
+            patient=patient,
+            assessment_date__gte=month_ago,
+        ).order_by('-assessment_date')[:30]
+
+        serializer = DailyAssessmentSerializer(assessments, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='alerts')
+    def alerts(self, request):
+        """View recent alerts for the linked patient."""
+        patient = self._get_patient(request.user)
+        if not patient:
+            return Response(
+                {'detail': 'Onaylanmis hasta baglantiniz bulunamadi.'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        alerts = []
+        week_ago = date.today() - timedelta(days=7)
+        patient_name = patient.get_full_name()
+
+        # Flagged notes
+        flagged_notes = CaregiverNote.objects.filter(
+            patient=patient,
+            is_flagged_for_doctor=True,
+            created_at__date__gte=week_ago,
+        )
+        for note in flagged_notes:
+            alerts.append({
+                'alert_type': 'flagged_note',
+                'severity': note.severity,
+                'patient_id': patient.id,
+                'patient_name': patient_name,
+                'message': f'{note.get_note_type_display()}: {note.title}',
+                'timestamp': note.created_at,
+                'related_id': str(note.id),
+            })
+
+        # Incident alerts
+        recent_assessments = DailyAssessment.objects.filter(
+            patient=patient,
+            assessment_date__gte=week_ago,
+        )
+        for assessment in recent_assessments:
+            if assessment.fall_occurred:
+                alerts.append({
+                    'alert_type': 'fall',
+                    'severity': 3,
+                    'patient_id': patient.id,
+                    'patient_name': patient_name,
+                    'message': f'Dusme olayi kaydedildi ({assessment.assessment_date})',
+                    'timestamp': assessment.created_at,
+                    'related_id': str(assessment.id),
+                })
+            if assessment.wandering_occurred:
+                alerts.append({
+                    'alert_type': 'wandering',
+                    'severity': 3,
+                    'patient_id': patient.id,
+                    'patient_name': patient_name,
+                    'message': f'Kaybolma/gezinme olayi ({assessment.assessment_date})',
+                    'timestamp': assessment.created_at,
+                    'related_id': str(assessment.id),
+                })
+            if assessment.medication_missed:
+                alerts.append({
+                    'alert_type': 'medication',
+                    'severity': 2,
+                    'patient_id': patient.id,
+                    'patient_name': patient_name,
+                    'message': f'Ilac atlama ({assessment.assessment_date})',
+                    'timestamp': assessment.created_at,
+                    'related_id': str(assessment.id),
+                })
+
+        alerts.sort(key=lambda a: -a['severity'])
+        serializer = CaregiverAlertSerializer(alerts, many=True)
         return Response(serializer.data)

@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { Inter } from 'next/font/google';
 import { routing } from '@/i18n/routing';
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
@@ -13,6 +14,12 @@ import DisclaimerBanner from '@/components/common/DisclaimerBanner';
 import AntiCopyProtection from '@/components/common/AntiCopyProtection';
 import AnnouncementBanner from '@/components/common/AnnouncementBanner';
 import '../globals.css';
+
+const inter = Inter({
+  subsets: ['latin', 'latin-ext'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   title: {
@@ -59,8 +66,8 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <body className="min-h-screen flex flex-col bg-white text-gray-900">
+    <html lang={locale} className={inter.variable}>
+      <body className={`${inter.className} min-h-screen flex flex-col bg-white text-gray-900`}>
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <AuthProvider>

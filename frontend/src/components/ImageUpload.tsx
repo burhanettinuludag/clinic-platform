@@ -39,10 +39,10 @@ export default function ImageUpload({ value, onChange, type = 'articles', disabl
       if (data.success) {
         onChange(data.url);
       } else {
-        setError(data.error || 'Yukleme hatasi');
+        setError(data.error || 'Yükleme hatası');
       }
     } catch (e: any) {
-      setError(e.response?.data?.error || 'Yukleme basarisiz');
+      setError(e.response?.data?.error || 'Yükleme başarısız');
     } finally {
       setUploading(false);
     }

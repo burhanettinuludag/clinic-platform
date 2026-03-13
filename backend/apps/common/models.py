@@ -289,6 +289,93 @@ class AgentTask(TimeStampedModel):
         self.save(update_fields=['status', 'error_message', 'completed_at'])
 
 
+class BrokenLink(TimeStampedModel):
+    """Kirik link kayitlari. Crawler tarafindan tespit edilir."""
+
+    class Status(models.TextChoices):
+        DETECTED = 'detected', 'Tespit Edildi'
+        AUTO_FIXED = 'auto_fixed', 'Otomatik Tamir'
+        AI_SUGGESTED = 'ai_suggested', 'AI Onerisi Var'
+        MANUALLY_FIXED = 'manually_fixed', 'Manuel Tamir'
+        IGNORED = 'ignored', 'Yok Sayildi'
+
+    class SourceType(models.TextChoices):
+        ARTICLE = 'article', 'Blog Yazisi'
+        NEWS = 'news', 'Haber'
+        EDUCATION = 'education', 'Egitim Icerigi'
+        ANNOUNCEMENT = 'announcement', 'Duyuru'
+        SOCIAL_LINK = 'social_link', 'Sosyal Medya'
+
+    class LinkType(models.TextChoices):
+        INTERNAL = 'internal', 'Dahili'
+        EXTERNAL = 'external', 'Harici'
+        IMAGE = 'image', 'Gorsel'
+        VIDEO = 'video', 'Video'
+
+    broken_url = models.URLField(max_length=2000)
+    http_status = models.IntegerField(null=True, blank=True, help_text='HTTP yanit kodu (404, 500, vb.)')
+    error_message = models.CharField(max_length=500, blank=True, default='')
+    link_type = models.CharField(max_length=10, choices=LinkType.choices, default=LinkType.EXTERNAL)
+
+    source_type = models.CharField(max_length=20, choices=SourceType.choices)
+    source_id = models.UUIDField(help_text='Kaynak icerigin UUID si')
+    source_title = models.CharField(max_length=300, blank=True, default='')
+    source_field = models.CharField(max_length=50, help_text='Linkin bulundugu alan (body_tr, video_url, vb.)')
+    source_language = models.CharField(max_length=5, blank=True, default='')
+
+    status = models.CharField(max_length=15, choices=Status.choices, default=Status.DETECTED)
+    suggested_url = models.URLField(max_length=2000, blank=True, default='')
+    fix_notes = models.TextField(blank=True, default='')
+    fixed_at = models.DateTimeField(null=True, blank=True)
+    fixed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='fixed_links',
+    )
+
+    last_checked = models.DateTimeField(auto_now=True)
+    check_count = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Kirik Link'
+        verbose_name_plural = 'Kirik Linkler'
+        indexes = [
+            models.Index(fields=['status', '-created_at']),
+            models.Index(fields=['source_type', 'source_id']),
+        ]
+        unique_together = ['broken_url', 'source_type', 'source_id', 'source_field']
+
+    def __str__(self):
+        return f"[{self.get_status_display()}] {self.broken_url[:80]} ({self.http_status or 'N/A'})"
+
+
+class BrokenLinkScan(TimeStampedModel):
+    """Tarama oturumu. Her crawler calismasini kaydeder."""
+
+    class Status(models.TextChoices):
+        RUNNING = 'running', 'Calisiyor'
+        COMPLETED = 'completed', 'Tamamlandi'
+        FAILED = 'failed', 'Basarisiz'
+
+    status = models.CharField(max_length=15, choices=Status.choices, default=Status.RUNNING)
+    total_links_checked = models.PositiveIntegerField(default=0)
+    broken_links_found = models.PositiveIntegerField(default=0)
+    auto_fixed_count = models.PositiveIntegerField(default=0)
+    duration_seconds = models.PositiveIntegerField(default=0)
+    error_message = models.TextField(blank=True, default='')
+    details = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Link Taramasi'
+        verbose_name_plural = 'Link Taramalari'
+
+    def __str__(self):
+        return f"Tarama {self.created_at:%Y-%m-%d %H:%M} - {self.broken_links_found} kirik link"
+
+
 class MarketingCampaign(TimeStampedModel):
     """Haftalik marketing icerik paketi."""
 

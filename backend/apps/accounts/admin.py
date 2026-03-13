@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, PatientProfile, DoctorProfile, CaregiverProfile
+from .models import CustomUser, PatientProfile, DoctorProfile, CaregiverProfile, RelativeProfile
 
 
 @admin.register(CustomUser)
@@ -50,10 +50,27 @@ class CaregiverProfileAdmin(admin.ModelAdmin):
     get_patients_count.short_description = 'Patients'
 
 
-from apps.accounts.models import DoctorAuthor
+@admin.register(RelativeProfile)
+class RelativeProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'patient', 'relationship_type', 'is_approved', 'approved_at')
+    list_filter = ('relationship_type', 'is_approved')
+    search_fields = ('user__email', 'user__first_name', 'patient__first_name', 'patient__last_name')
+    raw_id_fields = ('user', 'patient', 'approved_by')
+
+
+from apps.accounts.models import DoctorAuthor, RelativeInvitation
 
 @admin.register(DoctorAuthor)
 class DoctorAuthorAdmin(admin.ModelAdmin):
     list_display = ['doctor', 'primary_specialty', 'author_level', 'total_articles', 'is_verified', 'is_active']
     list_filter = ['primary_specialty', 'author_level', 'is_verified', 'is_active']
     search_fields = ['doctor__user__first_name', 'doctor__user__last_name', 'institution']
+
+
+@admin.register(RelativeInvitation)
+class RelativeInvitationAdmin(admin.ModelAdmin):
+    list_display = ['invited_email', 'patient', 'invited_by', 'relationship_type', 'is_used', 'expires_at', 'created_at']
+    list_filter = ['is_used', 'relationship_type']
+    search_fields = ['invited_email', 'invited_name', 'patient__first_name', 'patient__last_name']
+    raw_id_fields = ('invited_by', 'patient')
+    readonly_fields = ('token',)

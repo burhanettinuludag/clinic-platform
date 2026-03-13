@@ -20,8 +20,16 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
-      router.push('/patient/dashboard');
+      const user = await login(email, password);
+      // Role-based redirect
+      const roleRedirects: Record<string, string> = {
+        doctor: '/doctor/dashboard',
+        admin: '/doctor/dashboard',
+        caregiver: '/caregiver/dashboard',
+        relative: '/relative/dashboard',
+        patient: '/patient/dashboard',
+      };
+      router.push(roleRedirects[user.role] || '/patient/dashboard');
     } catch {
       setError(t('common.error'));
     } finally {

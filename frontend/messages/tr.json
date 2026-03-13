@@ -87,6 +87,27 @@
     "noScores": "Henüz skor hesaplanmamış",
     "accessDenied": "Bu hastaya erişim izniniz yok"
   },
+  "relative": {
+    "dashboard": "Hasta Yakını Paneli",
+    "patientStatus": "Hasta Durumu",
+    "readOnly": "Salt Okunur Erişim",
+    "readOnlyNote": "Hasta yakını olarak yalnızca izleme verilerine erişiminiz var.",
+    "cognitiveScore": "Bilişsel Skor",
+    "weeklyExercises": "Haftalık Egzersiz",
+    "todayMood": "Bugünkü Ruh Hali",
+    "recentIncidents": "Son Olaylar",
+    "overview": "Genel Bakış",
+    "caregiverNotes": "Bakıcı Notları",
+    "dailyAssessments": "Günlük Değerlendirmeler",
+    "noApprovedPatient": "Onaylı hasta bağlantınız bulunmuyor",
+    "inviteTitle": "Hasta Yakını Daveti",
+    "inviteDesc": "Doktor veya bakıcı tarafından davet edildiğiniz hastanın bilişsel durumunu uzaktan takip edin.",
+    "registerTitle": "Hasta Yakını Kaydı",
+    "secureInvite": "Güvenli Davet",
+    "inviteExpired": "Davet Süresi Dolmuş",
+    "inviteUsed": "Davet Kullanılmış",
+    "inviteInvalid": "Geçersiz Davet"
+  },
   "home": {
     "badge": "Nöroloji Platformu",
     "hero": {

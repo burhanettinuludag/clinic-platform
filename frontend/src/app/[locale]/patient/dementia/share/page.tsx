@@ -122,7 +122,7 @@ export default function SharePage() {
         onError: () => {
           setShareResult({
             success: false,
-            message: 'Rapor gonderilemedi. Lutfen tekrar deneyin.',
+            message: 'Rapor gÃ¶nderilemedi. LÃ¼tfen tekrar deneyin.',
           });
         },
       }

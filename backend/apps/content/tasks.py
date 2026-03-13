@@ -85,6 +85,20 @@ def auto_generate_weekly_content():
                 article_id = str(article.id)
                 logger.info(f"Auto content article saved: '{title_tr}' (id={article_id})")
 
+                # Otomatik gorsel ata (ucretsiz stok gorseller)
+                try:
+                    from services.stock_images import get_medical_image
+                    img_result = get_medical_image(
+                        category='general',
+                        seed=slug,
+                    )
+                    article.featured_image_url = img_result['url']
+                    article.featured_image_alt = img_result.get('alt', '')[:200]
+                    article.save(update_fields=['featured_image_url', 'featured_image_alt'])
+                    logger.info(f"Auto image assigned: {article.slug}")
+                except Exception as img_err:
+                    logger.warning(f"Auto image failed for '{title_tr}': {img_err}")
+
             results.append({
                 'topic': topic,
                 'success': result.success,
@@ -204,3 +218,107 @@ def send_weekly_content_report():
         'success_rate': success_rate,
         'total_tokens': total_tokens,
     }
+
+
+@shared_task(name='apps.content.tasks.send_daily_education_drip')
+def send_daily_education_drip():
+    """
+    Gunluk mikro-egitim bildirimi.
+
+    Migren modulune kayitli her hasta icin, henuz tamamlanmamis
+    siradaki egitim kartini bildirim olarak gonderir.
+    Her gun 1 kart, 20-25 gunde set tamamlanir.
+    """
+    from apps.content.models import EducationItem, EducationProgress
+    from apps.patients.models import PatientModule
+    from apps.notifications.models import Notification, NotificationPreference
+    from apps.accounts.models import CustomUser
+
+    # Migren modulune kayitli aktif hastalar
+    migraine_enrollments = PatientModule.objects.filter(
+        disease_module__slug='migraine',
+        is_active=True,
+    ).select_related('patient')
+
+    sent = 0
+    skipped = 0
+
+    for enrollment in migraine_enrollments:
+        patient = enrollment.patient
+
+        # Egitim bildirimi tercihini kontrol et
+        try:
+            prefs = NotificationPreference.objects.get(user=patient)
+            if not prefs.email_education:
+                skipped += 1
+                continue
+        except NotificationPreference.DoesNotExist:
+            pass  # Tercih yoksa gonder
+
+        # Tamamlanmis kartlarin ID'lerini al
+        completed_ids = set(
+            EducationProgress.objects.filter(
+                patient=patient,
+                completed_at__isnull=False,
+            ).values_list('education_item_id', flat=True)
+        )
+
+        # Siradaki tamamlanmamis karti bul (order'a gore)
+        next_item = (
+            EducationItem.objects.filter(
+                disease_module__slug='migraine',
+                is_published=True,
+            )
+            .exclude(id__in=completed_ids)
+            .order_by('order')
+            .first()
+        )
+
+        if not next_item:
+            skipped += 1
+            continue
+
+        # Bugun zaten bildirim gonderdik mi kontrol et
+        today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        already_sent = Notification.objects.filter(
+            recipient=patient,
+            notification_type='info',
+            metadata__drip_education_item=str(next_item.id),
+            created_at__gte=today_start,
+        ).exists()
+
+        if already_sent:
+            skipped += 1
+            continue
+
+        # Bildirim olustur
+        card_number = next_item.order
+        total_cards = EducationItem.objects.filter(
+            disease_module__slug='migraine', is_published=True,
+        ).count()
+
+        Notification.objects.create(
+            recipient=patient,
+            notification_type='info',
+            title_tr=f"Gunun Migren Bilgisi: {next_item.title_tr}",
+            title_en=f"Today's Migraine Tip: {next_item.title_en}",
+            message_tr=(
+                f"Migren egitim setinizde yeni bir kart sizi bekliyor! "
+                f"({completed_ids.__len__() + 1}/{total_cards})"
+            ),
+            message_en=(
+                f"A new card is waiting in your migraine education set! "
+                f"({len(completed_ids) + 1}/{total_cards})"
+            ),
+            action_url='/patient/migraine/education',
+            metadata={
+                'drip_education_item': str(next_item.id),
+                'education_slug': next_item.slug,
+                'card_number': card_number,
+                'total_cards': total_cards,
+            },
+        )
+        sent += 1
+
+    logger.info(f"Daily education drip: sent={sent}, skipped={skipped}")
+    return {'sent': sent, 'skipped': skipped}

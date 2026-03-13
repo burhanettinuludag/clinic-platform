@@ -10,6 +10,7 @@ class Badge(models.Model):
         ('milestone', 'Kilometre Taşı'),
         ('wellness', 'Sağlık'),
         ('social', 'Sosyal'),
+        ('education', 'Eğitim'),
     ]
 
     RARITY_CHOICES = [
@@ -65,6 +66,7 @@ class UserStreak(models.Model):
         ('water_intake', 'Su Tüketimi'),
         ('sleep_log', 'Uyku Kaydı'),
         ('exercise', 'Egzersiz'),
+        ('education', 'Eğitim'),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

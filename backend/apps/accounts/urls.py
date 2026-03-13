@@ -8,4 +8,10 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
     path('password/change/', views.ChangePasswordView.as_view(), name='change_password'),
+
+    # Relative invitation flow
+    path('relative/invite/', views.InviteRelativeView.as_view(), name='invite-relative'),
+    path('relative/invitations/', views.InviteRelativeListView.as_view(), name='relative-invitations'),
+    path('relative/invite/verify/<uuid:token>/', views.VerifyInvitationView.as_view(), name='verify-invitation'),
+    path('relative/register/', views.RegisterRelativeView.as_view(), name='register-relative'),
 ]

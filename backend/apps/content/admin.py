@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import ContentCategory, Article, EducationItem, EducationProgress
+from .models import (
+    ContentCategory, Article, EducationItem, EducationProgress,
+    EducationQuiz, QuizQuestion, QuizAttempt,
+)
 
 
 @admin.register(ContentCategory)
@@ -33,6 +36,31 @@ class EducationProgressAdmin(admin.ModelAdmin):
     list_display = ('patient', 'education_item', 'progress_percent', 'completed_at')
     list_filter = ('completed_at',)
     search_fields = ('patient__email',)
+
+
+class QuizQuestionInline(admin.TabularInline):
+    model = QuizQuestion
+    extra = 1
+    fields = ('order', 'question_tr', 'question_en', 'options', 'explanation_tr')
+
+
+@admin.register(EducationQuiz)
+class EducationQuizAdmin(admin.ModelAdmin):
+    list_display = ('title_tr', 'disease_module', 'category', 'passing_score_percent', 'order', 'is_published')
+    list_filter = ('disease_module', 'is_published')
+    list_editable = ('order', 'is_published')
+    prepopulated_fields = {'slug': ('title_en',)}
+    search_fields = ('title_tr', 'title_en')
+    filter_horizontal = ('education_items',)
+    inlines = [QuizQuestionInline]
+
+
+@admin.register(QuizAttempt)
+class QuizAttemptAdmin(admin.ModelAdmin):
+    list_display = ('patient', 'quiz', 'score', 'total_questions', 'passed', 'created_at')
+    list_filter = ('passed', 'quiz')
+    search_fields = ('patient__email',)
+    readonly_fields = ('patient', 'quiz', 'score', 'total_questions', 'passed', 'answers')
 
 
 from apps.content.models import NewsArticle, ArticleReview

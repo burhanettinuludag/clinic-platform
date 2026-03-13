@@ -8,8 +8,8 @@ import { User, LoginResponse } from '@/lib/types/user';
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (data: Record<string, string>) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
+  register: (data: Record<string, string>) => Promise<User>;
   logout: () => void;
 }
 
@@ -35,21 +35,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<User> => {
     const { data } = await api.post<LoginResponse>('/auth/login/', {
       email,
       password,
     });
     Cookies.set('access_token', data.tokens.access);
     Cookies.set('refresh_token', data.tokens.refresh);
+    Cookies.set('user_role', data.user.role);
     setUser(data.user);
+    return data.user;
   };
 
-  const register = async (formData: Record<string, string>) => {
+  const register = async (formData: Record<string, string>): Promise<User> => {
     const { data } = await api.post<LoginResponse>('/auth/register/', formData);
     Cookies.set('access_token', data.tokens.access);
     Cookies.set('refresh_token', data.tokens.refresh);
+    Cookies.set('user_role', data.user.role);
     setUser(data.user);
+    return data.user;
   };
 
   const logout = () => {
@@ -59,6 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     Cookies.remove('access_token');
     Cookies.remove('refresh_token');
+    Cookies.remove('user_role');
     setUser(null);
   };
 

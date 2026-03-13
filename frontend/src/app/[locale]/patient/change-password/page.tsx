@@ -36,8 +36,8 @@ export default function ChangePasswordPage() {
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
           <CheckCircle className="h-8 w-8 text-green-500" />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Sifreniz Degistirildi</h2>
-        <p className="text-gray-500">Yeni sifreniz aktif edildi.</p>
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Şifreniz Değiştirildi</h2>
+        <p className="text-gray-500">Yeni şifreniz aktif edildi.</p>
       </div>
     );
   }
@@ -46,12 +46,12 @@ export default function ChangePasswordPage() {
     <div className="max-w-md mx-auto px-4 py-12">
       <div className="flex items-center gap-3 mb-6">
         <Lock className="h-6 w-6 text-blue-600" />
-        <h1 className="text-xl font-bold text-gray-900">Sifre Degistir</h1>
+        <h1 className="text-xl font-bold text-gray-900">Şifre Değiştir</h1>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Mevcut Sifre</label>
+          <label className="block text-xs font-medium text-gray-600 mb-1">Mevcut Şifre</label>
           <div className="relative">
             <input type={showOld ? 'text' : 'password'} value={form.old_password}
               onChange={e => setForm({...form, old_password: e.target.value})}
@@ -65,7 +65,7 @@ export default function ChangePasswordPage() {
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Yeni Sifre</label>
+          <label className="block text-xs font-medium text-gray-600 mb-1">Yeni Şifre</label>
           <div className="relative">
             <input type={showNew ? 'text' : 'password'} value={form.new_password}
               onChange={e => setForm({...form, new_password: e.target.value})}
@@ -75,26 +75,26 @@ export default function ChangePasswordPage() {
               {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
-          {tooShort && <p className="text-xs text-orange-500 mt-1">Sifre en az 8 karakter olmali</p>}
+          {tooShort && <p className="text-xs text-orange-500 mt-1">Şifre en az 8 karakter olmalı</p>}
           {errors.new_password && <p className="text-xs text-red-500 mt-1">{errors.new_password}</p>}
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Yeni Sifre (Tekrar)</label>
+          <label className="block text-xs font-medium text-gray-600 mb-1">Yeni Şifre (Tekrar)</label>
           <input type="password" value={form.confirm_password}
             onChange={e => setForm({...form, confirm_password: e.target.value})}
             className="w-full rounded-lg border px-3 py-2 text-sm" />
-          {passwordMismatch && <p className="text-xs text-red-500 mt-1">Sifreler eslesmiyor</p>}
+          {passwordMismatch && <p className="text-xs text-red-500 mt-1">Şifreler eşleşmiyor</p>}
         </div>
 
         <button onClick={() => mutation.mutate(form)} disabled={!canSubmit}
           className="w-full flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">
           {mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
-          Sifreyi Degistir
+          Şifreyi Değiştir
         </button>
 
         {mutation.isError && !errors.old_password && !errors.new_password && (
-          <p className="text-sm text-red-500 text-center">Bir hata olustu. Tekrar deneyin.</p>
+          <p className="text-sm text-red-500 text-center">Bir hata oluştu. Tekrar deneyin.</p>
         )}
       </div>
     </div>

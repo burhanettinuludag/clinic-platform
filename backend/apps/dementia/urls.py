@@ -8,6 +8,7 @@ from .views import (
     CognitiveScoreViewSet,
     CognitiveScreeningViewSet,
     CaregiverDashboardViewSet,
+    RelativeDashboardViewSet,
     ReportRecipientViewSet,
 )
 
@@ -24,7 +25,12 @@ router.register('recipients', ReportRecipientViewSet, basename='report-recipient
 caregiver_router = DefaultRouter()
 caregiver_router.register('caregiver', CaregiverDashboardViewSet, basename='caregiver-dashboard')
 
+# Relative routes (read-only access for patient relatives)
+relative_router = DefaultRouter()
+relative_router.register('relative', RelativeDashboardViewSet, basename='relative-dashboard')
+
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(caregiver_router.urls)),
+    path('', include(relative_router.urls)),
 ]

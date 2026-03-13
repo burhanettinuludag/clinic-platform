@@ -1,5 +1,8 @@
+from uuid import uuid4
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.utils import timezone
+from datetime import timedelta
 from apps.common.models import TimeStampedModel
 
 
@@ -26,13 +29,14 @@ class CustomUser(AbstractUser):
         DOCTOR = 'doctor', 'Doctor'
         ADMIN = 'admin', 'Admin'
         CAREGIVER = 'caregiver', 'Caregiver'
+        RELATIVE = 'relative', 'Relative'
 
     username = None
     email = models.EmailField(unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
-    role = models.CharField(max_length=10, choices=Role.choices, default=Role.PATIENT)
+    role = models.CharField(max_length=12, choices=Role.choices, default=Role.PATIENT)
     phone = models.CharField(max_length=20, blank=True, default='')
     preferred_language = models.CharField(
         max_length=5,
@@ -141,6 +145,54 @@ class CaregiverProfile(TimeStampedModel):
         return f"Caregiver: {self.user.get_full_name()} ({self.get_relationship_type_display()})"
 
 
+class RelativeProfile(TimeStampedModel):
+    """
+    Profile for patient relatives who remotely monitor dementia/Parkinson patients.
+    Read-only access to observation notes and caregiver notes only.
+    """
+    class RelationshipType(models.TextChoices):
+        CHILD = 'child', 'Child'
+        SPOUSE = 'spouse', 'Spouse'
+        SIBLING = 'sibling', 'Sibling'
+        GRANDCHILD = 'grandchild', 'Grandchild'
+        OTHER = 'other', 'Other'
+
+    user = models.OneToOneField(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='relative_profile',
+    )
+    patient = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='relatives',
+        limit_choices_to={'role': 'patient'},
+    )
+    relationship_type = models.CharField(
+        max_length=20,
+        choices=RelationshipType.choices,
+        default=RelationshipType.OTHER,
+    )
+    is_approved = models.BooleanField(default=False)
+    approved_by = models.ForeignKey(
+        CustomUser,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='approved_relatives',
+    )
+    approved_at = models.DateTimeField(null=True, blank=True)
+    notes = models.TextField(blank=True, default='')
+
+    class Meta:
+        verbose_name = 'Relative Profile'
+        verbose_name_plural = 'Relative Profiles'
+        unique_together = ['user', 'patient']
+
+    def __str__(self):
+        return f"Relative: {self.user.get_full_name()} → {self.patient.get_full_name()} ({self.get_relationship_type_display()})"
+
+
 class DoctorAuthor(TimeStampedModel):
     """Doktor yazar profili. Platform uzerinde yazi yazan hekimlerin detayli profili."""
 
@@ -221,3 +273,50 @@ class DoctorAuthor(TimeStampedModel):
     @property
     def min_publish_score(self):
         return {0: 999, 1: 80, 2: 70, 3: 60, 4: 0}.get(self.author_level, 999)
+
+
+class RelativeInvitation(TimeStampedModel):
+    """
+    Invitation token for patient relatives.
+    Created by doctor/caregiver, sent via email.
+    Expires after 48 hours. Single-use.
+    """
+    token = models.UUIDField(default=uuid4, unique=True, editable=False, db_index=True)
+    invited_by = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='sent_relative_invitations',
+    )
+    patient = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='relative_invitations',
+        limit_choices_to={'role': 'patient'},
+    )
+    invited_email = models.EmailField()
+    invited_name = models.CharField(max_length=150, blank=True, default='')
+    relationship_type = models.CharField(
+        max_length=20,
+        choices=RelativeProfile.RelationshipType.choices,
+        default=RelativeProfile.RelationshipType.OTHER,
+    )
+    is_used = models.BooleanField(default=False)
+    used_at = models.DateTimeField(null=True, blank=True)
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        verbose_name = 'Relative Invitation'
+        verbose_name_plural = 'Relative Invitations'
+        ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        if not self.expires_at:
+            self.expires_at = timezone.now() + timedelta(hours=48)
+        super().save(*args, **kwargs)
+
+    @property
+    def is_valid(self):
+        return not self.is_used and timezone.now() < self.expires_at
+
+    def __str__(self):
+        return f"Invite: {self.invited_email} → {self.patient.get_full_name()} (by {self.invited_by.get_full_name()})"

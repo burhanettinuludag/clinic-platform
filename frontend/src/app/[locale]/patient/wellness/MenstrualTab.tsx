@@ -67,9 +67,9 @@ export default function MenstrualTab() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Dongu Takibi</h3>
+        <h3 className="text-lg font-semibold text-gray-900">Döngü Takibi</h3>
         <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-1 rounded-lg bg-pink-500 px-3 py-1.5 text-sm text-white hover:bg-pink-600">
-          <Plus className="h-4 w-4" /> Kayit Ekle
+          <Plus className="h-4 w-4" /> Kayıt Ekle
         </button>
       </div>
 

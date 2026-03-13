@@ -101,11 +101,11 @@ export default function NewMessagePage() {
       {selectedDoctor && (
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="font-semibold text-gray-800 mb-3">
-            2. Mesajinizi Yazin
+            2. Mesajınızı Yazın
           </h2>
 
           <div className="mb-3 p-3 bg-teal-50 rounded-lg text-sm text-teal-800">
-            Secilen doktor: <strong>{selectedDoctor.full_name}</strong>
+            Seçilen doktor: <strong>{selectedDoctor.full_name}</strong>
             {selectedDoctor.specialty && ` - ${selectedDoctor.specialty}`}
           </div>
 
@@ -118,19 +118,19 @@ export default function NewMessagePage() {
                 type="text"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                placeholder="Ornegin: Ilac yan etkileri hakkinda"
+                placeholder="Örneğin: İlaç yan etkileri hakkında"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Mesajiniz *
+                Mesajınız *
               </label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Doktorunuza iletmek istediginiz mesaji yazin..."
+                placeholder="Doktorunuza iletmek istediğiniz mesajı yazın..."
                 rows={4}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
               />
@@ -142,7 +142,7 @@ export default function NewMessagePage() {
               className="flex items-center gap-2 px-6 py-2.5 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 transition disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
-              {startConversation.isPending ? 'Gonderiliyor...' : 'Mesaj Gonder'}
+              {startConversation.isPending ? 'Gönderiliyor...' : 'Mesaj Gönder'}
             </button>
           </div>
         </div>

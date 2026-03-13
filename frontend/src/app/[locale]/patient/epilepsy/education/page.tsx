@@ -53,7 +53,7 @@ export default function EpilepsyEducationPage() {
         <div className="text-center py-12 bg-white rounded-xl border border-red-200">
           <BookOpen className="w-12 h-12 text-red-300 mx-auto mb-3" />
           <p className="text-red-500 font-medium mb-2">Icerikler yuklenemedi</p>
-          <p className="text-sm text-gray-400">Lutfen giris yaptiginizdan emin olun ve sayfayi yenileyin.</p>
+          <p className="text-sm text-gray-400">LÃ¼tfen giriÅ yaptÄ±ÄÄ±nÄ±zdan emin olun ve sayfayÄ± yenileyin.</p>
         </div>
       </div>
     );

@@ -21,6 +21,21 @@ from .views_marketing import (
     MarketingCampaignApproveView,
     MarketingCampaignRegenerateView,
 )
+from .views_broken_links import (
+    BrokenLinkListView,
+    BrokenLinkStatsView,
+    BrokenLinkScanListView,
+    TriggerScanView,
+    FixBrokenLinkView,
+    BulkBrokenLinkActionView,
+    RecheckBrokenLinkView,
+)
+from .views_agents import (
+    AgentListView,
+    TriggerAgentView,
+    AgentTriggerHistoryView,
+    AgentStatsView,
+)
 from .views_editor import (
     ReviewQueueView,
     ReviewQueueStatsView,
@@ -101,6 +116,21 @@ urlpatterns = [
     # Toplu islemler
     path('editor/articles/bulk-transition/', EditorBulkArticleTransitionView.as_view(), name='editor-bulk-article-transition'),
     path('editor/news/bulk-transition/', EditorBulkNewsTransitionView.as_view(), name='editor-bulk-news-transition'),
+
+    # ═══ Agent Management ═══
+    path('agents/', AgentListView.as_view(), name='agent-list'),
+    path('agents/trigger/', TriggerAgentView.as_view(), name='agent-trigger'),
+    path('agents/history/', AgentTriggerHistoryView.as_view(), name='agent-trigger-history'),
+    path('agents/stats/', AgentStatsView.as_view(), name='agent-stats'),
+
+    # ═══ Broken Links ═══
+    path('broken-links/', BrokenLinkListView.as_view(), name='broken-links'),
+    path('broken-links/stats/', BrokenLinkStatsView.as_view(), name='broken-links-stats'),
+    path('broken-links/scans/', BrokenLinkScanListView.as_view(), name='broken-link-scans'),
+    path('broken-links/scan/', TriggerScanView.as_view(), name='trigger-scan'),
+    path('broken-links/<uuid:pk>/fix/', FixBrokenLinkView.as_view(), name='fix-broken-link'),
+    path('broken-links/<uuid:pk>/recheck/', RecheckBrokenLinkView.as_view(), name='recheck-broken-link'),
+    path('broken-links/bulk/', BulkBrokenLinkActionView.as_view(), name='bulk-broken-link-action'),
 
     # ═══ Marketing Campaign ═══
     path('marketing/', MarketingCampaignListCreateView.as_view(), name='marketing-campaigns'),

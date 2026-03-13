@@ -45,6 +45,8 @@ class Article(TimeStampedModel):
         related_name='articles',
     )
     featured_image = models.ImageField(upload_to='articles/', blank=True)
+    featured_image_url = models.URLField(max_length=500, blank=True, default='',
+                                         help_text='Harici gorsel URL (Unsplash/Pexels)')
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -141,6 +143,100 @@ class EducationProgress(TimeStampedModel):
 
 
 
+class EducationQuiz(TimeStampedModel):
+    """Egitim modulu sonundaki quiz. Bir grup EducationItem'a baglidir."""
+    slug = models.SlugField(unique=True, max_length=200)
+    title_tr = models.CharField(max_length=300)
+    title_en = models.CharField(max_length=300)
+    description_tr = models.TextField(blank=True, default='')
+    description_en = models.TextField(blank=True, default='')
+    disease_module = models.ForeignKey(
+        'patients.DiseaseModule',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='education_quizzes',
+    )
+    category = models.ForeignKey(
+        ContentCategory,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='quizzes',
+    )
+    education_items = models.ManyToManyField(
+        EducationItem,
+        blank=True,
+        related_name='quizzes',
+    )
+    passing_score_percent = models.PositiveSmallIntegerField(default=60)
+    points_reward = models.PositiveIntegerField(default=10)
+    is_published = models.BooleanField(default=False)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['disease_module', 'order']
+        verbose_name = 'Egitim Quiz'
+        verbose_name_plural = 'Egitim Quizler'
+
+    def __str__(self):
+        return self.title_tr
+
+
+class QuizQuestion(TimeStampedModel):
+    """Quiz icindeki coktan secmeli soru."""
+    quiz = models.ForeignKey(
+        EducationQuiz,
+        on_delete=models.CASCADE,
+        related_name='questions',
+    )
+    question_tr = models.TextField()
+    question_en = models.TextField()
+    options = models.JSONField(
+        help_text='[{text_tr, text_en, is_correct}] listesi'
+    )
+    explanation_tr = models.TextField(blank=True, default='')
+    explanation_en = models.TextField(blank=True, default='')
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['quiz', 'order']
+
+    def __str__(self):
+        return f"S{self.order}: {self.question_tr[:50]}"
+
+
+class QuizAttempt(TimeStampedModel):
+    """Hastanin bir quiz denemesi."""
+    patient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='quiz_attempts',
+    )
+    quiz = models.ForeignKey(
+        EducationQuiz,
+        on_delete=models.CASCADE,
+        related_name='attempts',
+    )
+    score = models.PositiveSmallIntegerField(default=0)
+    total_questions = models.PositiveSmallIntegerField(default=0)
+    passed = models.BooleanField(default=False)
+    answers = models.JSONField(
+        default=list,
+        help_text='[{question_id, selected_option_index, is_correct}]'
+    )
+    duration_seconds = models.PositiveIntegerField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['patient', '-created_at']),
+            models.Index(fields=['quiz', 'patient']),
+        ]
+
+    def __str__(self):
+        return f"{self.patient} - {self.quiz}: {self.score}/{self.total_questions}"
+
+
 class NewsArticle(TimeStampedModel):
     """Noroloji haberleri - FDA onaylari, klinik calismalar, yeni cihazlar."""
 
@@ -192,6 +288,8 @@ class NewsArticle(TimeStampedModel):
     keywords = models.JSONField(default=list, blank=True)
     schema_markup = models.JSONField(default=dict, blank=True)
     featured_image = models.ImageField(upload_to='news_images/', blank=True)
+    featured_image_url = models.URLField(max_length=500, blank=True, default='',
+                                         help_text='Harici gorsel URL (Unsplash/Pexels)')
     featured_image_alt = models.CharField(max_length=200, blank=True, default='')
     is_auto_generated = models.BooleanField(default=False)
     author = models.ForeignKey('accounts.DoctorAuthor', null=True, blank=True, on_delete=models.SET_NULL, related_name='news_articles')

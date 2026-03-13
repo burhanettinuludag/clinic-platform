@@ -1,5 +1,8 @@
 from rest_framework import serializers
-from .models import ContentCategory, Article, NewsArticle, EducationItem, EducationProgress
+from .models import (
+    ContentCategory, Article, NewsArticle, EducationItem, EducationProgress,
+    EducationQuiz, QuizQuestion, QuizAttempt,
+)
 from apps.accounts.models import DoctorAuthor
 
 
@@ -121,13 +124,15 @@ class EducationItemSerializer(serializers.ModelSerializer):
     body = serializers.SerializerMethodField()
     progress = serializers.SerializerMethodField()
     disease_module_slug = serializers.SerializerMethodField()
+    category_slug = serializers.SerializerMethodField()
     category_name = serializers.SerializerMethodField()
 
     class Meta:
         model = EducationItem
         fields = [
             'id', 'slug', 'title', 'body', 'content_type', 'video_url',
-            'image', 'disease_module', 'disease_module_slug', 'category', 'category_name', 'order',
+            'image', 'disease_module', 'disease_module_slug',
+            'category', 'category_slug', 'category_name', 'order',
             'estimated_duration_minutes', 'progress',
         ]
 
@@ -146,6 +151,11 @@ class EducationItemSerializer(serializers.ModelSerializer):
     def get_disease_module_slug(self, obj):
         if obj.disease_module:
             return obj.disease_module.slug
+        return None
+
+    def get_category_slug(self, obj):
+        if obj.category:
+            return obj.category.slug
         return None
 
     def get_category_name(self, obj):
@@ -181,6 +191,8 @@ class NewsArticleListSerializer(serializers.ModelSerializer):
     category_display = serializers.SerializerMethodField()
     priority_display = serializers.SerializerMethodField()
     author_name = serializers.SerializerMethodField()
+    related_diseases = serializers.SerializerMethodField()
+    featured_image = serializers.SerializerMethodField()
 
     class Meta:
         model = NewsArticle
@@ -191,13 +203,28 @@ class NewsArticleListSerializer(serializers.ModelSerializer):
             'priority', 'priority_display',
             'featured_image', 'featured_image_alt',
             'author_name', 'published_at', 'view_count',
+            'related_diseases',
         ]
+
+    def get_featured_image(self, obj):
+        # Harici URL varsa onu kullan, yoksa upload edilen dosyayi kullan
+        if obj.featured_image_url:
+            return obj.featured_image_url
+        if obj.featured_image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.featured_image.url)
+            return obj.featured_image.url
+        return None
 
     def get_category_display(self, obj):
         return obj.get_category_display()
 
     def get_priority_display(self, obj):
         return obj.get_priority_display()
+
+    def get_related_diseases(self, obj):
+        return list(obj.related_diseases.values_list('slug', flat=True))
 
     def get_author_name(self, obj):
         if obj.author:
@@ -213,6 +240,8 @@ class NewsArticleDetailSerializer(serializers.ModelSerializer):
     author_name = serializers.SerializerMethodField()
     author_profile = serializers.SerializerMethodField()
     schema_markup = serializers.SerializerMethodField()
+    related_diseases = serializers.SerializerMethodField()
+    featured_image = serializers.SerializerMethodField()
 
     class Meta:
         model = NewsArticle
@@ -226,7 +255,18 @@ class NewsArticleDetailSerializer(serializers.ModelSerializer):
             'featured_image', 'featured_image_alt',
             'author_name', 'author_profile', 'schema_markup',
             'published_at', 'updated_at', 'view_count',
+            'related_diseases',
         ]
+
+    def get_featured_image(self, obj):
+        if obj.featured_image_url:
+            return obj.featured_image_url
+        if obj.featured_image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.featured_image.url)
+            return obj.featured_image.url
+        return None
 
     def get_category_display(self, obj):
         return obj.get_category_display()
@@ -252,6 +292,9 @@ class NewsArticleDetailSerializer(serializers.ModelSerializer):
             'orcid_id': da.orcid_id,
             'profile_photo': da.profile_photo.url if da.profile_photo else None,
         }
+
+    def get_related_diseases(self, obj):
+        return list(obj.related_diseases.values_list('slug', flat=True))
 
     def get_schema_markup(self, obj):
         try:
@@ -301,3 +344,157 @@ class PublicDoctorAuthorSerializer(serializers.ModelSerializer):
             "image": obj.profile_photo.url if obj.profile_photo else None,
             "sameAs": [u for u in [obj.orcid_id and f"https://orcid.org/{obj.orcid_id}", obj.google_scholar_url, obj.linkedin_url, obj.website_url] if u],
         }
+
+
+# ─────────────────────────────────────────────
+# Education Quiz Serializers
+# ─────────────────────────────────────────────
+
+class QuizQuestionSerializer(serializers.ModelSerializer):
+    question = serializers.SerializerMethodField()
+    explanation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = QuizQuestion
+        fields = ['id', 'question', 'options', 'explanation', 'order']
+
+    def _get_lang(self):
+        request = self.context.get('request')
+        if request and hasattr(request, 'headers'):
+            return request.headers.get('Accept-Language', 'tr')[:2]
+        return 'tr'
+
+    def get_question(self, obj):
+        return getattr(obj, f'question_{self._get_lang()}', obj.question_tr)
+
+    def get_explanation(self, obj):
+        return getattr(obj, f'explanation_{self._get_lang()}', obj.explanation_tr)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        lang = self._get_lang()
+        request = self.context.get('request')
+        localized_options = []
+        for opt in (data.get('options') or []):
+            localized_opt = {
+                'text': opt.get(f'text_{lang}', opt.get('text_tr', '')),
+            }
+            # is_correct sadece staff gorebilir
+            if request and request.user.is_staff:
+                localized_opt['is_correct'] = opt.get('is_correct', False)
+            localized_options.append(localized_opt)
+        data['options'] = localized_options
+        return data
+
+
+class EducationQuizSerializer(serializers.ModelSerializer):
+    title = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    questions = QuizQuestionSerializer(many=True, read_only=True)
+    question_count = serializers.SerializerMethodField()
+    best_attempt = serializers.SerializerMethodField()
+    category_slug = serializers.SerializerMethodField()
+
+    class Meta:
+        model = EducationQuiz
+        fields = [
+            'id', 'slug', 'title', 'description', 'disease_module',
+            'category', 'category_slug', 'passing_score_percent', 'points_reward',
+            'question_count', 'questions', 'best_attempt', 'order',
+        ]
+
+    def _get_lang(self):
+        request = self.context.get('request')
+        if request and hasattr(request, 'headers'):
+            return request.headers.get('Accept-Language', 'tr')[:2]
+        return 'tr'
+
+    def get_title(self, obj):
+        return getattr(obj, f'title_{self._get_lang()}', obj.title_tr)
+
+    def get_description(self, obj):
+        return getattr(obj, f'description_{self._get_lang()}', obj.description_tr)
+
+    def get_category_slug(self, obj):
+        if obj.category:
+            return obj.category.slug
+        return None
+
+    def get_question_count(self, obj):
+        return obj.questions.count()
+
+    def get_best_attempt(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            attempt = obj.attempts.filter(
+                patient=request.user, passed=True
+            ).order_by('-score').first()
+            if attempt:
+                return {
+                    'score': attempt.score,
+                    'total_questions': attempt.total_questions,
+                    'passed': attempt.passed,
+                    'completed_at': attempt.completed_at,
+                }
+        return None
+
+
+class EducationQuizListSerializer(serializers.ModelSerializer):
+    """Quiz listesi icin hafif serializer (sorular dahil degil)."""
+    title = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    question_count = serializers.SerializerMethodField()
+    best_attempt = serializers.SerializerMethodField()
+    category_slug = serializers.SerializerMethodField()
+
+    class Meta:
+        model = EducationQuiz
+        fields = [
+            'id', 'slug', 'title', 'description', 'disease_module',
+            'category', 'category_slug', 'passing_score_percent', 'points_reward',
+            'question_count', 'best_attempt', 'order',
+        ]
+
+    def _get_lang(self):
+        request = self.context.get('request')
+        if request and hasattr(request, 'headers'):
+            return request.headers.get('Accept-Language', 'tr')[:2]
+        return 'tr'
+
+    def get_title(self, obj):
+        return getattr(obj, f'title_{self._get_lang()}', obj.title_tr)
+
+    def get_description(self, obj):
+        return getattr(obj, f'description_{self._get_lang()}', obj.description_tr)
+
+    def get_category_slug(self, obj):
+        if obj.category:
+            return obj.category.slug
+        return None
+
+    def get_question_count(self, obj):
+        return obj.questions.count()
+
+    def get_best_attempt(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            attempt = obj.attempts.filter(
+                patient=request.user, passed=True
+            ).order_by('-score').first()
+            if attempt:
+                return {
+                    'score': attempt.score,
+                    'total_questions': attempt.total_questions,
+                    'passed': attempt.passed,
+                }
+        return None
+
+
+class QuizAttemptSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuizAttempt
+        fields = [
+            'id', 'quiz', 'score', 'total_questions', 'passed',
+            'answers', 'duration_seconds', 'created_at', 'completed_at',
+        ]
+        read_only_fields = ['created_at', 'passed', 'score', 'total_questions']

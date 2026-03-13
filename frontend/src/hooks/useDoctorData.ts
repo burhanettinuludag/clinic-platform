@@ -132,6 +132,62 @@ export function useGrantConsent() {
   });
 }
 
+// ==================== RELATIVE INVITATIONS ====================
+
+export interface RelativeInvitationData {
+  id: string;
+  token: string;
+  invited_email: string;
+  invited_name: string;
+  relationship_type: string;
+  patient_name: string;
+  is_used: boolean;
+  expires_at: string;
+  created_at: string;
+  status: 'active' | 'used' | 'expired';
+}
+
+export interface InviteRelativePayload {
+  patient_id: string;
+  invited_email: string;
+  invited_name?: string;
+  relationship_type: string;
+}
+
+export interface InviteRelativeResponse {
+  id: string;
+  token: string;
+  invited_email: string;
+  patient_name: string;
+  invite_url: string;
+  email_sent: boolean;
+  expires_at: string;
+}
+
+export function useRelativeInvitations(patientId?: string) {
+  return useQuery<RelativeInvitationData[]>({
+    queryKey: ['relative-invitations', patientId],
+    queryFn: async () => {
+      const params = patientId ? { patient_id: patientId } : {};
+      const { data } = await api.get('/auth/relative/invitations/', { params });
+      return data;
+    },
+  });
+}
+
+export function useInviteRelative() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: InviteRelativePayload) => {
+      const { data } = await api.post('/auth/relative/invite/', payload);
+      return data as InviteRelativeResponse;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['relative-invitations'] });
+    },
+  });
+}
+
 // ==================== DEMENTIA REPORT ====================
 
 export interface DementiaReport {

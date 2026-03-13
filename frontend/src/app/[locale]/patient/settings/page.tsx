@@ -30,16 +30,16 @@ export default function PatientSettingsPage() {
   };
 
   const quickLinks = [
-    { href: '/patient/profile', icon: User, label: 'Profil Duzenle', desc: 'Kisisel ve saglik bilgileri', color: 'text-blue-600 bg-blue-50' },
-    { href: '/patient/change-password', icon: Lock, label: 'Sifre Degistir', desc: 'Hesap guvenlik ayarlari', color: 'text-red-500 bg-red-50' },
+    { href: '/patient/profile', icon: User, label: 'Profil Düzenle', desc: 'Kişisel ve sağlık bilgileri', color: 'text-blue-600 bg-blue-50' },
+    { href: '/patient/change-password', icon: Lock, label: 'Şifre Değiştir', desc: 'Hesap güvenlik ayarları', color: 'text-red-500 bg-red-50' },
     { href: '/patient/notification-settings', icon: Bell, label: 'Bildirim Tercihleri', desc: 'Email, push ve sessiz saatler', color: 'text-purple-600 bg-purple-50' },
   ];
 
   const consentItems = [
-    { key: 'health_data', label: 'Saglik Verisi Isleme', desc: 'Saglik verilerinizin takip amacli islenmesine izin verin.', icon: Shield, color: 'text-blue-600' },
-    { key: 'doctor_sharing', label: 'Hekim ile Paylasim', desc: 'Verilerinizin hekiminizle paylasilmasina izin verin.', icon: User, color: 'text-green-600' },
-    { key: 'marketing', label: 'Pazarlama Iletisimi', desc: 'Promosyon ve bilgilendirme e-postalari alin.', icon: Mail, color: 'text-purple-600' },
-    { key: 'cookies', label: 'Cerez Kullanimi', desc: 'Analitik cerezlerin kullanimina izin verin.', icon: Cookie, color: 'text-amber-600' },
+    { key: 'health_data', label: 'Sağlık Verisi İşleme', desc: 'Sağlık verilerinizin takip amaçlı işlenmesine izin verin.', icon: Shield, color: 'text-blue-600' },
+    { key: 'doctor_sharing', label: 'Hekim ile Paylaşım', desc: 'Verilerinizin hekiminizle paylaşılmasına izin verin.', icon: User, color: 'text-green-600' },
+    { key: 'marketing', label: 'Pazarlama İletişimi', desc: 'Promosyon ve bilgilendirme e-postaları alın.', icon: Mail, color: 'text-purple-600' },
+    { key: 'cookies', label: 'Çerez Kullanımı', desc: 'Analitik çerezlerin kullanımına izin verin.', icon: Cookie, color: 'text-amber-600' },
   ];
 
   if (isLoading) {
@@ -75,7 +75,7 @@ export default function PatientSettingsPage() {
       {/* KVKK */}
       <div className="rounded-xl border bg-white p-4">
         <h2 className="text-sm font-semibold text-gray-700 mb-1">Onay ve KVKK Tercihleri</h2>
-        <p className="text-xs text-gray-400 mb-4">Kisisel verilerinizin islenmesine iliskin tercihlerinizi yonetin.</p>
+        <p className="text-xs text-gray-400 mb-4">Kişisel verilerinizin işlenmesine ilişkin tercihlerinizi yönetin.</p>
         <div className="divide-y">
           {consentItems.map(item => (
             <div key={item.key} className="flex items-center justify-between py-3">

@@ -5,12 +5,14 @@ import { routing } from './i18n/routing';
 const intlMiddleware = createMiddleware(routing);
 
 // Protected routes - auth required
-const PROTECTED_PREFIXES = ['/patient', '/doctor', '/editor'];
+const PROTECTED_PREFIXES = ['/patient', '/doctor', '/editor', '/caregiver', '/relative'];
 // Role-based routes
 const ROLE_ROUTES: Record<string, string[]> = {
   '/doctor/site-settings': ['admin'],
   '/doctor': ['doctor', 'admin'],
   '/editor': ['doctor', 'admin'],
+  '/caregiver': ['caregiver', 'admin'],
+  '/relative': ['relative', 'admin'],
   '/patient': ['patient', 'doctor', 'admin'],
 };
 // Public routes (no auth needed)

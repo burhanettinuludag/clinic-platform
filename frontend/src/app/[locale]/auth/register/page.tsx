@@ -44,7 +44,7 @@ export default function RegisterPage() {
       return;
     }
     if (formData.password !== formData.password_confirm) {
-      setError('Sifreler eslesmedi.');
+      setError('Şifreler eşleşmedi.');
       return;
     }
 

@@ -31,6 +31,7 @@ import {
   ArrowRight,
   Send,
   Bot,
+  BookOpen,
 } from 'lucide-react';
 
 const EXERCISE_TYPE_ICONS: Record<string, string> = {
@@ -554,6 +555,21 @@ function AssessmentTab({ todayAssessment }: { todayAssessment: any }) {
       {/* Quick Links */}
       <div className="grid grid-cols-2 gap-3">
         <Link
+          href="/patient/dementia/education"
+          className="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl border-2 border-teal-200 p-4 hover:border-teal-400 hover:shadow-md transition col-span-2"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-teal-100 rounded-lg">
+              <BookOpen className="w-6 h-6 text-teal-600" />
+            </div>
+            <div className="flex-1">
+              <div className="font-semibold text-gray-900">Demans Egitim Seti</div>
+              <div className="text-xs text-gray-500">5 modul, 25 kart, 5 quiz - demans hakkinda her sey</div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-teal-400" />
+          </div>
+        </Link>
+        <Link
           href="/patient/ai-assistant"
           className="bg-white rounded-xl border border-gray-200 p-4 hover:border-purple-300 transition col-span-2"
         >
@@ -620,7 +636,7 @@ function AssessmentTab({ todayAssessment }: { todayAssessment: any }) {
                   link.click();
                   URL.revokeObjectURL(link.href);
                 })
-                .catch(() => alert('Rapor indirilemedi. Lutfen tekrar deneyin.'));
+                .catch(() => alert('Rapor indirilemedi. LÃ¼tfen tekrar deneyin.'));
             }}
             className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition flex items-center gap-2"
           >

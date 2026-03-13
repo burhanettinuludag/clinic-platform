@@ -10,6 +10,8 @@ from .views import (
     NewsArticleViewSet,
     EducationItemViewSet,
     EducationProgressViewSet,
+    EducationQuizViewSet,
+    QuizAttemptViewSet,
 )
 
 router = DefaultRouter()
@@ -21,6 +23,8 @@ router.register('public-news', PublicNewsViewSet, basename='public-news')
 router.register('public-education', PublicEducationViewSet, basename='public-education')
 router.register('doctors', PublicDoctorAuthorViewSet, basename='public-doctor')
 router.register('education-progress', EducationProgressViewSet, basename='education-progress')
+router.register('quizzes', EducationQuizViewSet, basename='education-quiz')
+router.register('quiz-attempts', QuizAttemptViewSet, basename='quiz-attempt')
 
 urlpatterns = [
     path('upload-image/', ImageUploadView.as_view(), name='upload-image'),

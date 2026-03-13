@@ -188,11 +188,11 @@ export default function ArticleDetailPage() {
             </div>
             <div className="flex gap-2">
               {article.status === 'draft' && <button onClick={() => handleTransition('submit_for_review')} disabled={transMut.isPending}
-                className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"><Send className="h-4 w-4" />Incelemeye Gonder</button>}
+                className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"><Send className="h-4 w-4" />İncelemeye Gönder</button>}
               {article.status === 'revision' && <button onClick={() => handleTransition('submit_for_review')} disabled={transMut.isPending}
-                className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"><Send className="h-4 w-4" />Tekrar Gonder</button>}
+                className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"><Send className="h-4 w-4" />Tekrar Gönder</button>}
               {article.status === 'published' && <button onClick={() => handleTransition('archive')} disabled={transMut.isPending}
-                className="flex items-center gap-2 rounded-lg bg-gray-600 px-3 py-2 text-sm font-medium text-white hover:bg-gray-700"><Archive className="h-4 w-4" />Arsivle</button>}
+                className="flex items-center gap-2 rounded-lg bg-gray-600 px-3 py-2 text-sm font-medium text-white hover:bg-gray-700"><Archive className="h-4 w-4" />Arşivle</button>}
               {article.status === 'archived' && <button onClick={() => handleTransition('revert_to_draft')} disabled={transMut.isPending}
                 className="flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700"><RotateCcw className="h-4 w-4" />Taslaga Al</button>}
             </div>

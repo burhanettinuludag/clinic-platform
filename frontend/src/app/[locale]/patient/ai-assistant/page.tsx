@@ -187,15 +187,15 @@ export default function AIAssistantPage() {
               <ChatInput
                 onSend={handleAskQuestion}
                 isLoading={askQuestion.isPending}
-                placeholder="Sagliginizla ilgili sorunuzu yazin..."
+                placeholder="Sağlığınızla ilgili sorunuzu yazın..."
               />
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
               <Bot className="w-16 h-16 text-gray-200 mb-4" />
-              <p className="text-lg font-medium text-gray-500">Sorularinizi Sorun</p>
+              <p className="text-lg font-medium text-gray-500">Sorularınızı Sorun</p>
               <p className="text-sm text-gray-400 mt-1 text-center max-w-sm">
-                Sol panelden bir sohbet secin veya asagidaki alandan dogrudan soru sorun
+                Sol panelden bir sohbet seçin veya aşağıdaki alandan doğrudan soru sorun
               </p>
               <div className="mt-6 w-full max-w-md px-4">
                 <ChatInput

@@ -87,6 +87,27 @@
     "noScores": "No scores calculated yet",
     "accessDenied": "You don't have access to this patient"
   },
+  "relative": {
+    "dashboard": "Patient Relative Dashboard",
+    "patientStatus": "Patient Status",
+    "readOnly": "Read-Only Access",
+    "readOnlyNote": "As a patient relative, you only have access to monitoring data.",
+    "cognitiveScore": "Cognitive Score",
+    "weeklyExercises": "Weekly Exercises",
+    "todayMood": "Today's Mood",
+    "recentIncidents": "Recent Incidents",
+    "overview": "Overview",
+    "caregiverNotes": "Caregiver Notes",
+    "dailyAssessments": "Daily Assessments",
+    "noApprovedPatient": "No approved patient connection found",
+    "inviteTitle": "Patient Relative Invitation",
+    "inviteDesc": "Remotely monitor your patient's cognitive health through a secure invitation from a doctor or caregiver.",
+    "registerTitle": "Patient Relative Registration",
+    "secureInvite": "Secure Invitation",
+    "inviteExpired": "Invitation Expired",
+    "inviteUsed": "Invitation Already Used",
+    "inviteInvalid": "Invalid Invitation"
+  },
   "home": {
     "badge": "Neurology Platform",
     "hero": {
