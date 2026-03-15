@@ -7,6 +7,8 @@ from .models import CustomUser, PatientProfile, DoctorProfile, RelativeProfile, 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
     password_confirm = serializers.CharField(write_only=True)
+    specialty = serializers.CharField(max_length=100, required=False, default='')
+    license_number = serializers.CharField(max_length=50, required=False, default='')
 
     class Meta:
         model = CustomUser
@@ -14,19 +16,45 @@ class RegisterSerializer(serializers.ModelSerializer):
             'email', 'password', 'password_confirm',
             'first_name', 'last_name', 'role',
             'phone', 'preferred_language',
+            'specialty', 'license_number',
         ]
 
     def validate(self, data):
         if data['password'] != data['password_confirm']:
             raise serializers.ValidationError({'password_confirm': 'Passwords do not match.'})
+        # Doctor role requires specialty and license_number
+        if data.get('role') == CustomUser.Role.DOCTOR:
+            if not data.get('specialty'):
+                raise serializers.ValidationError({'specialty': 'Uzmanlik alani zorunludur.'})
+            if not data.get('license_number'):
+                raise serializers.ValidationError({'license_number': 'Diploma/sicil numarasi zorunludur.'})
         return data
 
     def create(self, validated_data):
         validated_data.pop('password_confirm')
         password = validated_data.pop('password')
+        specialty = validated_data.pop('specialty', '')
+        license_number = validated_data.pop('license_number', '')
+
         user = CustomUser(**validated_data)
         user.set_password(password)
+
+        # Doctor accounts start as inactive until approved
+        if user.role == CustomUser.Role.DOCTOR:
+            user.is_active = False
+
         user.save()
+
+        # Update doctor profile with specialty and license (signal already created it)
+        if user.role == CustomUser.Role.DOCTOR and (specialty or license_number):
+            try:
+                profile = user.doctor_profile
+                profile.specialty = specialty
+                profile.license_number = license_number
+                profile.save(update_fields=['specialty', 'license_number'])
+            except DoctorProfile.DoesNotExist:
+                pass
+
         return user
 
 
@@ -35,7 +63,30 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField()
 
     def validate(self, data):
-        user = authenticate(email=data['email'], password=data['password'])
+        # Check for pending/rejected doctors before authenticate()
+        # (authenticate returns None for inactive users, losing context)
+        try:
+            user_obj = CustomUser.objects.get(email=data['email'])
+            if user_obj.role == 'doctor' and not user_obj.is_active:
+                # Verify password first so we don't leak user existence
+                if user_obj.check_password(data['password']):
+                    if hasattr(user_obj, 'doctor_profile'):
+                        approval = user_obj.doctor_profile.approval_status
+                        if approval == 'pending':
+                            raise serializers.ValidationError({
+                                'non_field_errors': ['Doktor basvurunuz inceleniyor. Onaylandiktan sonra giris yapabileceksiniz.'],
+                                'approval_status': 'pending_approval',
+                            })
+                        elif approval == 'rejected':
+                            raise serializers.ValidationError({
+                                'non_field_errors': ['Doktor basvurunuz reddedildi. Detaylar icin destek ile iletisime gecin.'],
+                                'approval_status': 'rejected',
+                            })
+        except CustomUser.DoesNotExist:
+            pass
+
+        request = self.context.get('request')
+        user = authenticate(request=request, email=data['email'], password=data['password'])
         if not user:
             raise serializers.ValidationError('Invalid email or password.')
         if not user.is_active:
@@ -74,9 +125,25 @@ class DoctorProfileSerializer(serializers.ModelSerializer):
         model = DoctorProfile
         fields = [
             'id', 'user', 'specialty', 'license_number',
-            'bio', 'is_accepting_patients',
+            'bio', 'is_accepting_patients', 'approval_status',
         ]
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'approval_status']
+
+
+class DoctorApplicationSerializer(serializers.ModelSerializer):
+    """Serializer for admin to view/manage doctor applications."""
+    user = UserSerializer(read_only=True)
+    approval_status_display = serializers.CharField(source='get_approval_status_display', read_only=True)
+
+    class Meta:
+        model = DoctorProfile
+        fields = [
+            'id', 'user', 'specialty', 'license_number', 'bio',
+            'approval_status', 'approval_status_display',
+            'approved_by', 'approved_at', 'rejection_reason',
+            'created_at',
+        ]
+        read_only_fields = ['id', 'approved_by', 'approved_at', 'created_at']
 
 
 class ChangePasswordSerializer(serializers.Serializer):

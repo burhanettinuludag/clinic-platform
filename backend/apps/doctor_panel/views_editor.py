@@ -155,10 +155,20 @@ class ReviewQueueStatsView(views.APIView):
             created_at__gte=week_ago,
         ).count()
 
+        articles_pending = Article.objects.filter(status='draft').count()
+        news_pending = NewsArticle.objects.filter(
+            status__in=['draft', 'review'],
+        ).count()
+        approved_unpublished = NewsArticle.objects.filter(status='approved').count()
+
         return Response({
             'articles_by_status': {s['status']: s['count'] for s in article_stats},
             'news_by_status': {s['status']: s['count'] for s in news_stats},
             'reviews_last_7_days': recent_reviews,
+            'total_pending': articles_pending + news_pending,
+            'articles_pending': articles_pending,
+            'news_pending': news_pending,
+            'approved_unpublished': approved_unpublished,
             'pending_news_review': NewsArticle.objects.filter(status='review').count(),
             'pending_news_approved': NewsArticle.objects.filter(status='approved').count(),
         })
@@ -193,8 +203,8 @@ class EditorArticleListView(generics.ListAPIView):
         return qs
 
 
-class EditorArticleDetailView(generics.RetrieveAPIView):
-    """Makale detay + tum review gecmisi."""
+class EditorArticleDetailView(generics.RetrieveUpdateAPIView):
+    """Makale detay + tum review gecmisi + duzenleme."""
     serializer_class = AuthorArticleDetailSerializer
     permission_classes = [IsAuthenticated, IsEditorOrAdmin]
     queryset = Article.objects.select_related('category', 'author')

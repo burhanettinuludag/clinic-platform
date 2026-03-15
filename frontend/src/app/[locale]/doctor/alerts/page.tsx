@@ -29,12 +29,12 @@ export default function DoctorAlertsPage() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Uyarilar</h1>
+      <h1 className="text-2xl font-bold mb-6">Uyarılar</h1>
 
       {sortedAlerts.length === 0 ? (
         <div className="text-center py-12">
           <AlertTriangle className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500">Aktif uyari yok</p>
+          <p className="text-gray-500">Aktif uyarı yok</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -69,7 +69,7 @@ export default function DoctorAlertsPage() {
                             : 'bg-yellow-100 text-yellow-800'
                         }`}
                       >
-                        {isCritical ? 'Kritik' : 'Uyari'}
+                        {isCritical ? 'Kritik' : 'Uyarı'}
                       </span>
 
                       {/* Alert Type */}

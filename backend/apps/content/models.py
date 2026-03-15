@@ -1,6 +1,8 @@
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.conf import settings
 from apps.common.models import TimeStampedModel
+from apps.common.validators import validate_image_file_size
 
 
 class ContentCategory(TimeStampedModel):
@@ -44,7 +46,13 @@ class Article(TimeStampedModel):
         blank=True,
         related_name='articles',
     )
-    featured_image = models.ImageField(upload_to='articles/', blank=True)
+    featured_image = models.ImageField(
+        upload_to='articles/', blank=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp']),
+            validate_image_file_size,
+        ],
+    )
     featured_image_url = models.URLField(max_length=500, blank=True, default='',
                                          help_text='Harici gorsel URL (Unsplash/Pexels)')
     author = models.ForeignKey(
@@ -94,7 +102,13 @@ class EducationItem(TimeStampedModel):
     body_en = models.TextField(blank=True, default='')
     content_type = models.CharField(max_length=20, choices=ContentType.choices)
     video_url = models.URLField(blank=True, default='')
-    image = models.ImageField(upload_to='education/', blank=True)
+    image = models.ImageField(
+        upload_to='education/', blank=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp']),
+            validate_image_file_size,
+        ],
+    )
     disease_module = models.ForeignKey(
         'patients.DiseaseModule',
         on_delete=models.SET_NULL,
@@ -287,7 +301,13 @@ class NewsArticle(TimeStampedModel):
     meta_description = models.CharField(max_length=160, blank=True, default='')
     keywords = models.JSONField(default=list, blank=True)
     schema_markup = models.JSONField(default=dict, blank=True)
-    featured_image = models.ImageField(upload_to='news_images/', blank=True)
+    featured_image = models.ImageField(
+        upload_to='news_images/', blank=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp']),
+            validate_image_file_size,
+        ],
+    )
     featured_image_url = models.URLField(max_length=500, blank=True, default='',
                                          help_text='Harici gorsel URL (Unsplash/Pexels)')
     featured_image_alt = models.CharField(max_length=200, blank=True, default='')

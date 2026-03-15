@@ -50,14 +50,10 @@ class AnalyticsOverviewView(APIView):
         published_news = news_qs.filter(status='published').count()
 
         total_views = (
-            art_qs.aggregate(s=Sum('view_count'))['s'] or 0
-        ) + (
             news_qs.aggregate(s=Sum('view_count'))['s'] or 0
         )
 
-        avg_rating = art_qs.filter(
-            average_rating__gt=0
-        ).aggregate(a=Avg('average_rating'))['a'] or 0
+        avg_rating = 0
 
         # Son 30 gun yayinlanan
         recent_published = art_qs.filter(
@@ -135,9 +131,9 @@ class ContentStatsView(APIView):
             ).order_by('month')
         )
 
-        # Gunluk goruntulenme (son 30 gun)
+        # Gunluk goruntulenme (son 30 gun) - sadece NewsArticle'da view_count var
         views_by_day = list(
-            art_qs.filter(
+            news_qs.filter(
                 published_at__gte=timezone.now() - timedelta(days=30),
                 status='published',
             ).annotate(

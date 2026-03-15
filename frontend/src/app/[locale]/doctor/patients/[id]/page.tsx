@@ -42,11 +42,11 @@ const timelineIcons: Record<string, { icon: typeof Brain; color: string }> = {
 };
 
 const RELATIONSHIP_LABELS: Record<string, string> = {
-  child: 'Cocuk',
-  spouse: 'Es',
-  sibling: 'Kardes',
+  child: 'Çocuk',
+  spouse: 'Eş',
+  sibling: 'Kardeş',
   grandchild: 'Torun',
-  other: 'Diger',
+  other: 'Diğer',
 };
 
 export default function DoctorPatientDetailPage() {
@@ -107,7 +107,7 @@ export default function DoctorPatientDetailPage() {
       const msg = err?.response?.data?.invited_email?.[0]
         || err?.response?.data?.error
         || err?.response?.data?.detail
-        || 'Davet olusturulamadi.';
+        || 'Davet oluşturulamadı.';
       setInviteError(msg);
     }
   };
@@ -136,9 +136,9 @@ export default function DoctorPatientDetailPage() {
           className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 mb-4"
         >
           <ArrowLeft className="h-4 w-4" />
-          Geri Don
+          Geri Dön
         </Link>
-        <p className="text-gray-500">Hasta bulunamadi.</p>
+        <p className="text-gray-500">Hasta bulunamadı.</p>
       </div>
     );
   }
@@ -157,7 +157,7 @@ export default function DoctorPatientDetailPage() {
         className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 mb-6"
       >
         <ArrowLeft className="h-4 w-4" />
-        Hastalara Don
+        Hastalara Dön
       </Link>
 
       {/* Patient Header */}
@@ -182,7 +182,7 @@ export default function DoctorPatientDetailPage() {
             <span className="text-gray-900">{patient.phone || '-'}</span>
           </div>
           <div>
-            <span className="text-gray-500">Dogum Tarihi:</span>{' '}
+            <span className="text-gray-500">Doğum Tarihi:</span>{' '}
             <span className="text-gray-900">
               {patient.date_of_birth
                 ? new Date(patient.date_of_birth).toLocaleDateString('tr-TR')
@@ -194,7 +194,7 @@ export default function DoctorPatientDetailPage() {
             <span className="text-gray-900">{patient.gender || '-'}</span>
           </div>
           <div>
-            <span className="text-gray-500">Acil Durum Irtibat:</span>{' '}
+            <span className="text-gray-500">Acil Durum İrtibat:</span>{' '}
             <span className="text-gray-900">
               {patient.emergency_contact_name
                 ? `${patient.emergency_contact_name} (${patient.emergency_contact_phone})`
@@ -255,7 +255,7 @@ export default function DoctorPatientDetailPage() {
             }`}
           >
             <Users className="h-4 w-4" />
-            Hasta Yakinlari
+            Hasta Yakınları
           </button>
         </nav>
       </div>
@@ -270,7 +270,7 @@ export default function DoctorPatientDetailPage() {
           ) : sortedTimeline.length === 0 ? (
             <div className="text-center py-12">
               <Clock className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">Henuz timeline verisi yok.</p>
+              <p className="text-gray-500">Henüz timeline verisi yok.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -350,7 +350,7 @@ export default function DoctorPatientDetailPage() {
                 ) : (
                   <div className="text-center py-8">
                     <MessageSquare className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500">Henuz not eklenmemis.</p>
+                    <p className="text-gray-500">Henüz not eklenmemiş.</p>
                   </div>
                 )}
               </div>
@@ -362,7 +362,7 @@ export default function DoctorPatientDetailPage() {
                   <textarea
                     value={noteContent}
                     onChange={(e) => setNoteContent(e.target.value)}
-                    placeholder="Notunuzu yazin..."
+                    placeholder="Notunuzu yazın..."
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   />
@@ -373,7 +373,7 @@ export default function DoctorPatientDetailPage() {
                       className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="general">Genel</option>
-                      <option value="observation">Gozlem</option>
+                      <option value="observation">Gözlem</option>
                       <option value="treatment">Tedavi</option>
                       <option value="follow_up">Takip</option>
                     </select>
@@ -401,11 +401,11 @@ export default function DoctorPatientDetailPage() {
             <div className="flex items-start gap-3">
               <Users className="h-5 w-5 text-teal-600 mt-0.5 flex-shrink-0" />
               <div>
-                <h3 className="text-sm font-semibold text-teal-800">Hasta Yakini Davet Sistemi</h3>
+                <h3 className="text-sm font-semibold text-teal-800">Hasta Yakını Davet Sistemi</h3>
                 <p className="text-sm text-teal-700 mt-1">
-                  Hastanin cocugu veya yakini, hastanin durumunu uzaktan takip edebilir.
-                  Davet linki ile guvenli kayit olur ve yalnizca bu hastanin bilissel verilerine
-                  salt-okunur erisim saglar.
+                  Hastanın çocuğu veya yakını, hastanın durumunu uzaktan takip edebilir.
+                  Davet linki ile güvenli kayıt olur ve yalnızca bu hastanın bilişsel verilerine
+                  salt-okunur erişim sağlar.
                 </p>
               </div>
             </div>
@@ -415,7 +415,7 @@ export default function DoctorPatientDetailPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <UserPlus className="h-5 w-5 text-teal-600" />
-              Yeni Yakin Davet Et
+              Yeni Yakın Davet Et
             </h3>
 
             {inviteSuccess && (
@@ -423,16 +423,16 @@ export default function DoctorPatientDetailPage() {
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="h-5 w-5 text-green-600" />
                   <span className="text-sm font-medium text-green-800">
-                    Davet basariyla olusturuldu!
+                    Davet başarıyla oluşturuldu!
                   </span>
                 </div>
                 {inviteSuccess.emailSent ? (
                   <p className="text-sm text-green-700">
-                    Davet e-postasi gonderildi. Yakin, e-postadaki linke tiklayarak kayit olabilir.
+                    Davet e-postası gönderildi. Yakın, e-postadaki linke tıklayarak kayıt olabilir.
                   </p>
                 ) : (
                   <p className="text-sm text-yellow-700">
-                    E-posta gonderilemedi. Asagidaki linki yakinla manuel olarak paylasiniz:
+                    E-posta gönderilemedi. Aşağıdaki linki yakınla manuel olarak paylaşınız:
                   </p>
                 )}
                 <div className="mt-2 flex items-center gap-2">
@@ -447,7 +447,7 @@ export default function DoctorPatientDetailPage() {
                     className="inline-flex items-center gap-1 px-3 py-2 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition"
                   >
                     <Copy className="h-3.5 w-3.5" />
-                    {copied ? 'Kopyalandi!' : 'Kopyala'}
+                    {copied ? 'Kopyalandı!' : 'Kopyala'}
                   </button>
                 </div>
               </div>
@@ -490,18 +490,18 @@ export default function DoctorPatientDetailPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Yakinlik Derecesi
+                  Yakınlık Derecesi
                 </label>
                 <select
                   value={inviteRelType}
                   onChange={(e) => setInviteRelType(e.target.value)}
                   className="w-full md:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 >
-                  <option value="child">Cocuk</option>
-                  <option value="spouse">Es</option>
-                  <option value="sibling">Kardes</option>
+                  <option value="child">Çocuk</option>
+                  <option value="spouse">Eş</option>
+                  <option value="sibling">Kardeş</option>
                   <option value="grandchild">Torun</option>
-                  <option value="other">Diger</option>
+                  <option value="other">Diğer</option>
                 </select>
               </div>
               <button
@@ -526,7 +526,7 @@ export default function DoctorPatientDetailPage() {
             ) : !invitations || invitations.length === 0 ? (
               <div className="text-center py-8">
                 <Mail className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 text-sm">Henuz davet gonderilmemis.</p>
+                <p className="text-gray-500 text-sm">Henüz davet gönderilmemiş.</p>
               </div>
             ) : (
               <div className="space-y-3">

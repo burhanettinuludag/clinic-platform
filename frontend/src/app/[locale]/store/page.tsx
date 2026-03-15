@@ -37,7 +37,7 @@ export default function StorePage() {
         <Clock className="w-16 h-16 text-blue-400 mx-auto mb-6" />
         <h1 className="text-3xl font-bold text-gray-900 mb-3">{t('nav.comingSoon')}</h1>
         <p className="text-gray-500 text-lg mb-8">
-          Dijital magaza ve odeme sistemi cok yakinda hizmetinizde olacak.
+          {t('store.comingSoonDesc')}
         </p>
         <Link
           href="/"
@@ -66,7 +66,7 @@ export default function StorePage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{t('store.title')}</h1>
-          <p className="text-gray-500 mt-1">Gelistirdigimiz dijital saglik yazilimlari ve araclari.</p>
+          <p className="text-gray-500 mt-1">{t('store.subtitle')}</p>
         </div>
         <Link
           href="/store/cart"
@@ -134,7 +134,7 @@ export default function StorePage() {
                     <div>
                       {product.is_featured && (
                         <span className="inline-flex items-center gap-1 text-xs text-yellow-600 mb-1">
-                          <Star className="w-3 h-3" /> One Cikan
+                          <Star className="w-3 h-3" /> {t('store.featured')}
                         </span>
                       )}
                       <h2 className="text-lg font-semibold text-gray-900">{product.name}</h2>

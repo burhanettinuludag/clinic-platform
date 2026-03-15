@@ -477,3 +477,66 @@ export function useAgentStats() {
     },
   });
 }
+
+// ==================== DOCTOR APPROVALS ====================
+
+export interface DoctorApplication {
+  id: string;
+  user: {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    date_joined: string;
+  };
+  specialty: string;
+  license_number: string;
+  bio: string;
+  approval_status: 'pending' | 'approved' | 'rejected';
+  approval_status_display: string;
+  approved_by: string | null;
+  approved_at: string | null;
+  rejection_reason: string;
+  created_at: string;
+}
+
+export function useDoctorApplications(statusFilter?: string) {
+  return useQuery<DoctorApplication[]>({
+    queryKey: ['doctor-applications', statusFilter],
+    queryFn: async () => {
+      const params: Record<string, string> = {};
+      if (statusFilter) params.status = statusFilter;
+      const { data } = await api.get('/auth/doctor-applications/', { params });
+      return data;
+    },
+  });
+}
+
+export function useApproveDoctorApplication() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await api.post(`/auth/doctor-applications/${id}/approve/`);
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['doctor-applications'] });
+      qc.invalidateQueries({ queryKey: ['site-dashboard-stats'] });
+    },
+  });
+}
+
+export function useRejectDoctorApplication() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
+      const { data } = await api.post(`/auth/doctor-applications/${id}/reject/`, { reason });
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['doctor-applications'] });
+      qc.invalidateQueries({ queryKey: ['site-dashboard-stats'] });
+    },
+  });
+}

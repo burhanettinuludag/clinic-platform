@@ -6,12 +6,12 @@ import { Code, FileSearch, Loader2, Copy, CheckCircle, Terminal, Sparkles } from
 import api from '@/lib/api';
 
 const TASK_TYPES = [
-  { value: 'create_model', label: 'Model Olustur', hint: 'Django model + migration' },
-  { value: 'create_view', label: 'View Olustur', hint: 'DRF endpoint' },
-  { value: 'create_serializer', label: 'Serializer Olustur', hint: 'DRF serializer' },
-  { value: 'create_test', label: 'Test Olustur', hint: 'unittest + mock' },
-  { value: 'create_page', label: 'Sayfa Olustur', hint: 'Next.js page' },
-  { value: 'refactor', label: 'Refactor', hint: 'Kod iyilestirme' },
+  { value: 'create_model', label: 'Model Oluştur', hint: 'Django model + migration' },
+  { value: 'create_view', label: 'View Oluştur', hint: 'DRF endpoint' },
+  { value: 'create_serializer', label: 'Serializer Oluştur', hint: 'DRF serializer' },
+  { value: 'create_test', label: 'Test Oluştur', hint: 'unittest + mock' },
+  { value: 'create_page', label: 'Sayfa Oluştur', hint: 'Next.js page' },
+  { value: 'refactor', label: 'Refactor', hint: 'Kod iyileştirme' },
   { value: 'analyze', label: 'Analiz', hint: 'Kod analizi' },
 ];
 
@@ -56,7 +56,7 @@ export default function DevOpsPage() {
 
   const handleReview = () => {
     if (!reviewCode.trim()) return;
-    reviewMut.mutate({ file_content: reviewCode, task: 'Kodu incele ve kalite raporu olustur' });
+    reviewMut.mutate({ file_content: reviewCode, task: 'Kodu incele ve kalite raporu oluştur' });
   };
 
   const copyCode = (content: string, id: string) => {
@@ -77,7 +77,7 @@ export default function DevOpsPage() {
 
       {/* Tabs */}
       <div className="flex gap-1 border-b mb-6">
-        {[{ id: 'generate' as TabId, label: 'Kod Uret', icon: Sparkles }, { id: 'review' as TabId, label: 'Kod Review', icon: FileSearch }].map(t => (
+        {[{ id: 'generate' as TabId, label: 'Kod Üret', icon: Sparkles }, { id: 'review' as TabId, label: 'Kod Review', icon: FileSearch }].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             className={'flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 transition-colors ' + (tab === t.id ? 'border-cyan-600 text-cyan-600' : 'border-transparent text-gray-500 hover:text-gray-700')}>
             <t.icon className="h-4 w-4" />{t.label}
@@ -90,7 +90,7 @@ export default function DevOpsPage() {
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Gorev Tipi</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Görev Tipi</label>
               <select value={taskType} onChange={e => setTaskType(e.target.value)} className="w-full rounded-lg border px-3 py-2 text-sm bg-white">
                 {TASK_TYPES.map(t => <option key={t.value} value={t.value}>{t.label} - {t.hint}</option>)}
               </select>
@@ -103,18 +103,18 @@ export default function DevOpsPage() {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Gorev Aciklamasi</label>
-            <textarea value={task} onChange={e => setTask(e.target.value)} rows={3} placeholder="Ornek: FAQ modeli olustur - soru, cevap, kategori, siralama, aktif/pasif alanlari olsun"
+            <label className="block text-xs font-medium text-gray-600 mb-1">Görev Açıklaması</label>
+            <textarea value={task} onChange={e => setTask(e.target.value)} rows={3} placeholder="Örnek: FAQ modeli oluştur - soru, cevap, kategori, sıralama, aktif/pasif alanları olsun"
               className="w-full rounded-lg border px-3 py-2 text-sm" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Ek Baglam (opsiyonel)</label>
-            <textarea value={context} onChange={e => setContext(e.target.value)} rows={3} placeholder="Mevcut model yapisi, ozel gereksinimler..."
+            <label className="block text-xs font-medium text-gray-600 mb-1">Ek Bağlam (opsiyonel)</label>
+            <textarea value={context} onChange={e => setContext(e.target.value)} rows={3} placeholder="Mevcut model yapısı, özel gereksinimler..."
               className="w-full rounded-lg border px-3 py-2 text-sm font-mono" />
           </div>
           <button onClick={handleGenerate} disabled={generateMut.isPending || !task.trim()}
             className="flex items-center gap-2 rounded-lg bg-cyan-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-cyan-700 disabled:opacity-50">
-            {generateMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Code className="h-4 w-4" />}Kod Uret
+            {generateMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Code className="h-4 w-4" />}Kod Üret
           </button>
 
           {/* Results */}
@@ -132,7 +132,7 @@ export default function DevOpsPage() {
                       <span className="ml-2 text-xs text-gray-500">[{f.action}]</span>
                     </div>
                     <button onClick={() => copyCode(f.content, String(i))} className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700">
-                      {copied === String(i) ? <><CheckCircle className="h-3.5 w-3.5 text-green-500" />Kopyalandi</> : <><Copy className="h-3.5 w-3.5" />Kopyala</>}
+                      {copied === String(i) ? <><CheckCircle className="h-3.5 w-3.5 text-green-500" />Kopyalandı</> : <><Copy className="h-3.5 w-3.5" />Kopyala</>}
                     </button>
                   </div>
                   {f.description && <p className="px-4 py-2 text-xs text-gray-500 bg-gray-50 border-b">{f.description}</p>}
@@ -149,13 +149,13 @@ export default function DevOpsPage() {
       {tab === 'review' && (
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Kod (yapistir)</label>
-            <textarea value={reviewCode} onChange={e => setReviewCode(e.target.value)} rows={14} placeholder="Python veya TypeScript kodunu yapistirin..."
+            <label className="block text-xs font-medium text-gray-600 mb-1">Kod (yapıştır)</label>
+            <textarea value={reviewCode} onChange={e => setReviewCode(e.target.value)} rows={14} placeholder="Python veya TypeScript kodunu yapıştırın..."
               className="w-full rounded-lg border px-3 py-2 text-sm font-mono" />
           </div>
           <button onClick={handleReview} disabled={reviewMut.isPending || !reviewCode.trim()}
             className="flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50">
-            {reviewMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileSearch className="h-4 w-4" />}Review Baslat
+            {reviewMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileSearch className="h-4 w-4" />}Review Başlat
           </button>
 
           {/* Review Results */}
@@ -174,10 +174,10 @@ export default function DevOpsPage() {
                 <div key={i} className={'rounded-lg border px-4 py-3 ' + (issue.severity === 'critical' ? 'bg-red-50 border-red-200' : issue.severity === 'warning' ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200')}>
                   <div className="flex items-center gap-2 mb-1">
                     <span className={'text-xs font-medium px-2 py-0.5 rounded-full ' + (issue.severity === 'critical' ? 'bg-red-100 text-red-700' : issue.severity === 'warning' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700')}>{issue.severity}</span>
-                    {issue.line > 0 && <span className="text-xs text-gray-400">Satir {issue.line}</span>}
+                    {issue.line > 0 && <span className="text-xs text-gray-400">Satır {issue.line}</span>}
                   </div>
                   <p className="text-sm text-gray-800">{issue.message}</p>
-                  {issue.suggestion && <p className="text-xs text-gray-500 mt-1">Oneri: {issue.suggestion}</p>}
+                  {issue.suggestion && <p className="text-xs text-gray-500 mt-1">Öneri: {issue.suggestion}</p>}
                 </div>
               ))}
             </div>

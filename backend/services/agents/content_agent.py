@@ -47,11 +47,12 @@ class ContentAgent(BaseAgent):
         audience = input_data.get('audience', 'patient')
         tone = input_data.get('tone', 'friendly')
         content_type = input_data.get('content_type', 'blog')
+        content_length = input_data.get('content_length', 'medium')
 
         if not topic:
             return {'error': 'Konu (topic) belirtilmedi'}
 
-        prompt = self._build_prompt(topic, module, audience, tone, content_type)
+        prompt = self._build_prompt(topic, module, audience, tone, content_type, content_length)
         response = self.llm_call(prompt)
 
         parsed = self._parse_response(response.content)
@@ -61,7 +62,7 @@ class ContentAgent(BaseAgent):
 
         return parsed
 
-    def _build_prompt(self, topic, module, audience, tone, content_type):
+    def _build_prompt(self, topic, module, audience, tone, content_type, content_length='medium'):
         """LLM'e gonderilecek prompt'u olustur."""
         audience_map = {
             'patient': 'hastalar (tibbi jargon kullanma, anlasilir yaz)',
@@ -72,13 +73,30 @@ class ContentAgent(BaseAgent):
             'formal': 'resmi ve akademik',
             'friendly': 'samimi ama bilimsel',
         }
-        type_map = {
-            'blog': 'blog yazisi (800-1200 kelime, giris-gelisme-sonuc)',
-            'education': 'egitim icerigi (maddeler halinde, kisa paragraflar)',
-            'social': 'sosyal medya postu (kisa, dikkat cekici, emoji kullanabilirsin)',
+
+        # Uzunluk parametresine gore icerik tipi aciklamasi
+        length_map = {
+            'short': {
+                'blog': 'blog yazisi (400-600 kelime, yaklasik 2-3 dakika okuma suresi, ozetleyici)',
+                'education': 'egitim icerigi (kisa maddeler, 5-8 madde, pratik ipuclari)',
+                'social': 'sosyal medya postu (kisa, dikkat cekici, emoji kullanabilirsin)',
+            },
+            'medium': {
+                'blog': 'blog yazisi (800-1200 kelime, yaklasik 5 dakika okuma suresi, giris-gelisme-sonuc)',
+                'education': 'egitim icerigi (maddeler halinde, 10-15 madde, detayli aciklamalar)',
+                'social': 'sosyal medya postu (orta uzunlukta, detayli bilgilendirme)',
+            },
+            'long': {
+                'blog': 'blog yazisi (1500-2000 kelime, yaklasik 8-10 dakika okuma suresi, derinlemesine analiz)',
+                'education': 'egitim icerigi (kapsamli rehber, bolumler halinde, ornek vakalar ile)',
+                'social': 'sosyal medya postu (uzun form, carousel/thread formatinda)',
+            },
         }
 
-        return f"""Asagidaki konuda Turkce bir {type_map.get(content_type, 'blog yazisi')} yaz.
+        length_group = length_map.get(content_length, length_map['medium'])
+        type_desc = length_group.get(content_type, length_group['blog'])
+
+        return f"""Asagidaki konuda Turkce bir {type_desc} yaz.
 
 Konu: {topic}
 Hastalik modulu: {module}
@@ -90,6 +108,7 @@ KURALLAR:
 - Her yaziinin sonuna "Bu yazi bilgilendirme amaclidir, hekiminize danisiniz" disclaimeri ekle
 - Bilimsel kaynaklara atif yap (genel referans yeterli)
 - Yanliis bilgi ICERME
+- Icerik uzunluguna dair verilen talimata KESINLIKLE uy
 
 CIKTI FORMATI (JSON):
 {{

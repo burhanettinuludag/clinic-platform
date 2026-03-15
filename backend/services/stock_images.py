@@ -1,14 +1,14 @@
 """
-Ucretsiz tibbi stok gorseller - API key gerektirmez.
+Noroloji odakli ucretsiz stok gorseller - API key gerektirmez.
 
 Unsplash CDN URL'leri herkese acik ve ucretsizdir.
 Unsplash License: https://unsplash.com/license
 - Ucretsiz ticari kullanim
 - Atifta bulunmak zorunlu degil ama tavsiye edilir
 
-Her kategori ve hastalik icin onceden secilmis, yuksek kaliteli
-tibbi gorsellerin URL'lerini icerir. Haber/makale olusturulurken
-ilgili kategori ve hastaliga gore random bir gorsel atanir.
+Tum gorseller beyin, noron, MRI, EEG gibi noroloji temalarina
+odaklanmistir. Her kategori ve hastalik icin farkli beyin gorselleri
+secilmistir.
 
 Kullanim:
     from services.stock_images import get_medical_image
@@ -24,9 +24,9 @@ logger = logging.getLogger(__name__)
 
 
 # ============================================================
-# Unsplash CDN'den secilmis tibbi gorseller
-# Tumunu dogrudan kullanabiliriz, API key gerekmez
-# URL format: https://images.unsplash.com/photo-{id}?w=800&h=450&fit=crop&q=80
+# Unsplash CDN - Noroloji ve Beyin Odakli Gorseller
+# API key gerekmez, dogrudan CDN URL kullanilir
+# Tum photo ID'ler dogrulanmistir (HTTP 200)
 # ============================================================
 
 def _u(photo_id: str, w: int = 800, h: int = 450) -> str:
@@ -34,180 +34,215 @@ def _u(photo_id: str, w: int = 800, h: int = 450) -> str:
     return f'https://images.unsplash.com/{photo_id}?w={w}&h={h}&fit=crop&q=80&auto=format'
 
 
-# ---------- MIGREN ----------
+# ---------- MIGREN (Beyin goruntuleme, norolojik agri, ilac) ----------
 MIGRAINE_IMAGES = [
     {
         'url': _u('photo-1559757175-5700dde675bc'),
-        'alt': 'Beyin goruntulemesi - norolojik arastirma',
+        'alt': 'Renkli beyin MRI goruntulemesi',
         'credit': 'Unsplash',
     },
     {
-        'url': _u('photo-1530026405186-ed1f139313f8'),
-        'alt': 'Tibbi arastirma - laboratuvar ortami',
+        'url': _u('photo-1617791160505-6f00504e3519'),
+        'alt': 'Noron aglari ve sinirsel baglantilar',
         'credit': 'Unsplash',
     },
     {
-        'url': _u('photo-1576091160550-2173dba999ef'),
-        'alt': 'Ilac ve tedavi arastirmasi',
-        'credit': 'Unsplash',
-    },
-    {
-        'url': _u('photo-1579684385127-1ef15d508118'),
-        'alt': 'Tibbi laboratuvar arastirmasi',
+        'url': _u('photo-1614935151651-0bea6508db6b'),
+        'alt': 'Dijital beyin ilustrasyonu - noroloji',
         'credit': 'Unsplash',
     },
     {
         'url': _u('photo-1551076805-e1869033e561'),
-        'alt': 'Noroloji ve beyin bilimi',
+        'alt': 'Beyin bilimi ve norolojik arastirma',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1576091160550-2173dba999ef'),
+        'alt': 'Norolojik ilac tedavisi',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1453847668862-487637052f8a'),
+        'alt': 'Beyin anatomisi ve sinir sistemi',
         'credit': 'Unsplash',
     },
 ]
 
-# ---------- EPILEPSI ----------
+# ---------- EPILEPSI (EEG, noronlar, beyin dalgalari) ----------
 EPILEPSY_IMAGES = [
     {
         'url': _u('photo-1559757148-5c350d0d3c56'),
-        'alt': 'EEG ve beyin dalgalari olcumu',
-        'credit': 'Unsplash',
-    },
-    {
-        'url': _u('photo-1532187863486-abf9dbad1b69'),
-        'alt': 'Tibbi muayene ve tani',
-        'credit': 'Unsplash',
-    },
-    {
-        'url': _u('photo-1631549916768-4f9f5e5b4578'),
-        'alt': 'Norolojik tani ve tedavi',
-        'credit': 'Unsplash',
-    },
-    {
-        'url': _u('photo-1581595220892-b0739db3ba8c'),
-        'alt': 'Beyin arastirmasi ve noroloji',
+        'alt': 'EEG beyin dalgalari olcumu',
         'credit': 'Unsplash',
     },
     {
         'url': _u('photo-1516549655169-df83a0774514'),
-        'alt': 'Sinir bilimi ve noron arastirmasi',
-        'credit': 'Unsplash',
-    },
-]
-
-# ---------- DEMANS ----------
-DEMENTIA_IMAGES = [
-    {
-        'url': _u('photo-1576765608535-5f04d1e3f289'),
-        'alt': 'Kognitif saglik ve hafiza',
+        'alt': 'Noron hucresi - mikroskop goruntusu',
         'credit': 'Unsplash',
     },
     {
-        'url': _u('photo-1573497620053-ea5300f94f21'),
-        'alt': 'Yasli bakim ve saglik hizmetleri',
+        'url': _u('photo-1581093806997-124204d9fa9d'),
+        'alt': 'Sinir hucreleri ve noron aglari',
         'credit': 'Unsplash',
     },
     {
-        'url': _u('photo-1559757175-5700dde675bc'),
-        'alt': 'Beyin goruntulemesi - demans arastirmasi',
+        'url': _u('photo-1617791160536-598cf32026fb'),
+        'alt': 'Norolojik sinyal iletimi',
         'credit': 'Unsplash',
     },
     {
-        'url': _u('photo-1587854692152-cbe660dbde88'),
-        'alt': 'Saglik bakimi ve destek',
-        'credit': 'Unsplash',
-    },
-    {
-        'url': _u('photo-1544991875-5dc1b05f607d'),
-        'alt': 'Hafiza ve bilissel egzersizler',
-        'credit': 'Unsplash',
-    },
-]
-
-# ---------- FDA / ILAC ONAYI ----------
-FDA_IMAGES = [
-    {
-        'url': _u('photo-1585435557343-3f684f1d2e2f'),
-        'alt': 'Farmasotik ilac gelistirme',
-        'credit': 'Unsplash',
-    },
-    {
-        'url': _u('photo-1471864190281-a93a3070b6de'),
-        'alt': 'Ilac molekulleri ve arastirma',
-        'credit': 'Unsplash',
-    },
-    {
-        'url': _u('photo-1576091160550-2173dba999ef'),
-        'alt': 'Ilac tedavisi ve onay sureci',
-        'credit': 'Unsplash',
-    },
-    {
-        'url': _u('photo-1587854692152-cbe660dbde88'),
-        'alt': 'Klinik ilac calismasi',
-        'credit': 'Unsplash',
-    },
-]
-
-# ---------- KLINIK ARASTIRMA ----------
-CLINICAL_TRIAL_IMAGES = [
-    {
-        'url': _u('photo-1532187863486-abf9dbad1b69'),
-        'alt': 'Klinik arastirma ve calisma',
-        'credit': 'Unsplash',
-    },
-    {
-        'url': _u('photo-1579684385127-1ef15d508118'),
-        'alt': 'Tibbi arastirma laboratuvari',
+        'url': _u('photo-1620641788421-7a1c342ea42e'),
+        'alt': 'Beyin aktivitesi ve noroloji',
         'credit': 'Unsplash',
     },
     {
         'url': _u('photo-1581595220892-b0739db3ba8c'),
-        'alt': 'Bilimsel arastirma ve deney',
-        'credit': 'Unsplash',
-    },
-    {
-        'url': _u('photo-1530026405186-ed1f139313f8'),
-        'alt': 'Laboratuvar ortaminda calisma',
+        'alt': 'Beyin arastirmasi ve sinir bilimi',
         'credit': 'Unsplash',
     },
 ]
 
-# ---------- TIBBI CIHAZ ----------
+# ---------- DEMANS / ALZHEIMER (Beyin modeli, kognitif, yasli bakim) ----------
+DEMENTIA_IMAGES = [
+    {
+        'url': _u('photo-1530497610245-94d3c16cda28'),
+        'alt': 'Anatomik beyin modeli - demans arastirmasi',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1559757175-5700dde675bc'),
+        'alt': 'Beyin MRI taramasi - Alzheimer tespiti',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1566438480900-0609be27a4be'),
+        'alt': 'Beyin modeli - kognitif saglik',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1549925245-f20a1bac6454'),
+        'alt': 'Noron baglantilari ve beyin yapisi',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1611532736597-de2d4265fba3'),
+        'alt': 'Beyin aktivite haritalamasi',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1573497620053-ea5300f94f21'),
+        'alt': 'Kognitif saglik ve destek hizmetleri',
+        'credit': 'Unsplash',
+    },
+]
+
+# ---------- FDA / ILAC ONAYI (Ilac + beyin) ----------
+FDA_IMAGES = [
+    {
+        'url': _u('photo-1576091160550-2173dba999ef'),
+        'alt': 'Norolojik ilac tedavisi ve onayi',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1471864190281-a93a3070b6de'),
+        'alt': 'Ilac molekulleri ve norolojik arastirma',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1559757175-5700dde675bc'),
+        'alt': 'Beyin goruntulemesi - ilac etkisi analizi',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1614935151651-0bea6508db6b'),
+        'alt': 'Dijital beyin - farmakolojik calisma',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1606112219348-204d7d8b94ee'),
+        'alt': 'Norolojik ilac gelistirme sureci',
+        'credit': 'Unsplash',
+    },
+]
+
+# ---------- KLINIK ARASTIRMA (Beyin arastirmasi, laboratuvar) ----------
+CLINICAL_TRIAL_IMAGES = [
+    {
+        'url': _u('photo-1581595220892-b0739db3ba8c'),
+        'alt': 'Beyin arastirmasi - klinik calisma',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1507413245164-6160d8298b31'),
+        'alt': 'Norolojik bilimsel arastirma',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1579684385127-1ef15d508118'),
+        'alt': 'Noroloji laboratuvar calismasi',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1557200134-90327ee9fafa'),
+        'alt': 'Sinir bilimi arastirmasi',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1530026405186-ed1f139313f8'),
+        'alt': 'Beyin bilimi laboratuvari',
+        'credit': 'Unsplash',
+    },
+]
+
+# ---------- TIBBI CIHAZ (EEG, MRI, noroloji teknolojisi) ----------
 DEVICE_IMAGES = [
     {
         'url': _u('photo-1576091160399-112ba8d25d1d'),
-        'alt': 'Tibbi teknoloji ve cihazlar',
+        'alt': 'Norolojik tani teknolojisi',
         'credit': 'Unsplash',
     },
     {
-        'url': _u('photo-1551076805-e1869033e561'),
-        'alt': 'Medikal teknoloji inovasyonu',
+        'url': _u('photo-1559757148-5c350d0d3c56'),
+        'alt': 'EEG cihazi ve beyin dalgasi olcumu',
         'credit': 'Unsplash',
     },
     {
-        'url': _u('photo-1530026405186-ed1f139313f8'),
-        'alt': 'Saglik teknolojisi arastirmasi',
+        'url': _u('photo-1589279003513-467d320f47eb'),
+        'alt': 'Yapay zeka ve beyin teknolojisi',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1618005198919-d3d4b5a92ead'),
+        'alt': 'Dijital noron agi ve teknoloji',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1628595351029-c2bf17511435'),
+        'alt': 'Norolojik goruntuleleme teknolojisi',
         'credit': 'Unsplash',
     },
 ]
 
-# ---------- KONGRE ----------
+# ---------- KONGRE (Bilimsel sunum + beyin) ----------
 CONGRESS_IMAGES = [
     {
-        'url': _u('photo-1540575467063-178a50e2fd60'),
-        'alt': 'Tibbi kongre ve konferans',
-        'credit': 'Unsplash',
-    },
-    {
         'url': _u('photo-1475721027785-f74eccf877e2'),
-        'alt': 'Bilimsel sunum ve kongre',
+        'alt': 'Noroloji kongresi ve bilimsel sunum',
         'credit': 'Unsplash',
     },
     {
         'url': _u('photo-1505373877841-8d25f7d46678'),
-        'alt': 'Akademik konferans ve toplanti',
+        'alt': 'Noroloji akademik konferansi',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1558021212-51b6ecfa0db9'),
+        'alt': 'Beyin bilimi sempozyumu',
         'credit': 'Unsplash',
     },
 ]
 
-# ---------- POPULER BILIM ----------
+# ---------- POPULER BILIM (Noron, beyin, sinir sistemi) ----------
 POPULAR_SCIENCE_IMAGES = [
     {
         'url': _u('photo-1559757175-5700dde675bc'),
@@ -215,47 +250,67 @@ POPULAR_SCIENCE_IMAGES = [
         'credit': 'Unsplash',
     },
     {
-        'url': _u('photo-1507413245164-6160d8298b31'),
-        'alt': 'Bilimsel kesif ve arastirma',
-        'credit': 'Unsplash',
-    },
-    {
         'url': _u('photo-1516549655169-df83a0774514'),
-        'alt': 'Noron ve sinir bilimi',
+        'alt': 'Noron hucresi ve sinir bilimi',
         'credit': 'Unsplash',
     },
     {
-        'url': _u('photo-1551076805-e1869033e561'),
-        'alt': 'Beyin arastirmasi ve kesfler',
+        'url': _u('photo-1617791160505-6f00504e3519'),
+        'alt': 'Norolojik baglantilar ve sinaps',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1590859808308-3d2d9c515b1a'),
+        'alt': 'Beyin ve sinir sistemi kesileri',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1564053489984-317bbd824340'),
+        'alt': 'Norolojik arastirma ve kesfler',
         'credit': 'Unsplash',
     },
 ]
 
-# ---------- GENEL SAGLIK ----------
+# ---------- GENEL NOROLOJI (Beyin odakli, karisik) ----------
 GENERAL_IMAGES = [
     {
-        'url': _u('photo-1576091160550-2173dba999ef'),
-        'alt': 'Saglik ve tip bilimi',
-        'credit': 'Unsplash',
-    },
-    {
-        'url': _u('photo-1579684385127-1ef15d508118'),
-        'alt': 'Tibbi arastirma ve saglik',
-        'credit': 'Unsplash',
-    },
-    {
-        'url': _u('photo-1532187863486-abf9dbad1b69'),
-        'alt': 'Doktor muayenesi ve tani',
-        'credit': 'Unsplash',
-    },
-    {
         'url': _u('photo-1559757175-5700dde675bc'),
-        'alt': 'Noroloji ve beyin sagligi',
+        'alt': 'Beyin MRI goruntulemesi',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1617791160505-6f00504e3519'),
+        'alt': 'Noron aglari ve sinirsel baglanti',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1614935151651-0bea6508db6b'),
+        'alt': 'Dijital beyin - noroloji',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1530497610245-94d3c16cda28'),
+        'alt': 'Anatomik beyin modeli',
         'credit': 'Unsplash',
     },
     {
         'url': _u('photo-1551076805-e1869033e561'),
-        'alt': 'Tibbi bilim ve saglik hizmetleri',
+        'alt': 'Beyin bilimi ve noroloji arastirmasi',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1581093806997-124204d9fa9d'),
+        'alt': 'Sinir hucreleri - noroloji',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1566438480900-0609be27a4be'),
+        'alt': 'Beyin modeli - norolojik saglik',
+        'credit': 'Unsplash',
+    },
+    {
+        'url': _u('photo-1589279003513-467d320f47eb'),
+        'alt': 'Beyin ve yapay zeka teknolojisi',
         'credit': 'Unsplash',
     },
 ]
@@ -290,9 +345,10 @@ def get_medical_image(
     seed: str = '',
 ) -> dict:
     """
-    Kategori ve hastaliga uygun tibbi gorsel sec.
+    Kategori ve hastaliga uygun noroloji odakli gorsel sec.
 
     API key gerektirmez - onceden secilmis Unsplash CDN URL'lerini kullanir.
+    Tum gorseller beyin, noron, MRI, EEG gibi noroloji temalaridir.
 
     Args:
         category: Haber kategorisi (fda_approval, clinical_trial, vb.)
@@ -303,7 +359,7 @@ def get_medical_image(
     Returns:
         dict: {'url': str, 'alt': str, 'credit': str}
     """
-    # Hastalik bazli gorsel havuzu
+    # Hastalik bazli gorsel havuzu (oncelikli)
     pool = []
     if diseases:
         for disease in diseases:
@@ -312,7 +368,7 @@ def get_medical_image(
     # Kategori bazli gorsel havuzu
     pool.extend(CATEGORY_IMAGES.get(category, []))
 
-    # Fallback: genel havuz
+    # Fallback: genel noroloji havuzu
     if not pool:
         pool = GENERAL_IMAGES
 
@@ -333,13 +389,18 @@ def get_medical_image(
     return random.choice(unique_pool)
 
 
-def assign_image_to_news(news_article) -> bool:
+def assign_image_to_news(news_article, force: bool = False) -> bool:
     """
-    Bir NewsArticle'a otomatik gorsel ata.
-    Zaten gorseli varsa atlamaz.
-    API key gerektirmez.
+    Bir NewsArticle'a otomatik noroloji odakli gorsel ata.
+
+    Args:
+        news_article: NewsArticle model instance
+        force: True ise mevcut gorsel olsa bile degistir
+
+    Returns:
+        bool: Gorsel atandiysa True
     """
-    if news_article.featured_image_url or news_article.featured_image:
+    if not force and (news_article.featured_image_url or news_article.featured_image):
         return False
 
     diseases = list(news_article.related_diseases.values_list('slug', flat=True))
@@ -347,12 +408,12 @@ def assign_image_to_news(news_article) -> bool:
     result = get_medical_image(
         category=news_article.category,
         diseases=diseases,
-        seed=news_article.slug,  # Ayni slug = ayni gorsel
+        seed=news_article.slug,
     )
 
     if result:
         news_article.featured_image_url = result['url']
-        if not news_article.featured_image_alt:
+        if not news_article.featured_image_alt or force:
             news_article.featured_image_alt = result['alt'][:200]
         news_article.save(update_fields=['featured_image_url', 'featured_image_alt'])
         logger.info(f'Gorsel atandi: {news_article.slug}')

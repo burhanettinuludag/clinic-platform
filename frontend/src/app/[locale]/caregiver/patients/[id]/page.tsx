@@ -21,7 +21,7 @@ export default function CaregiverPatientDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-gray-500">Yukleniyor...</div>
+        <div className="text-gray-500">Yükleniyor...</div>
       </div>
     );
   }
@@ -29,13 +29,13 @@ export default function CaregiverPatientDetailPage() {
   if (!data) {
     return (
       <div className="max-w-4xl mx-auto text-center py-12">
-        <h1 className="text-xl font-bold text-gray-900 mb-2">Hasta Bulunamadi</h1>
+        <h1 className="text-xl font-bold text-gray-900 mb-2">Hasta Bulunamadı</h1>
         <Link
           href="/caregiver/dashboard"
           className="text-teal-600 hover:text-teal-700 flex items-center gap-2 justify-center"
         >
           <ArrowLeft className="w-4 h-4" />
-          Panele Don
+          Panele Dön
         </Link>
       </div>
     );
@@ -45,7 +45,7 @@ export default function CaregiverPatientDetailPage() {
 
   const tabs = [
     { key: 'exercises' as TabType, label: 'Egzersizler', icon: Activity, count: recent_sessions.length },
-    { key: 'assessments' as TabType, label: 'Degerlendirmeler', icon: ClipboardList, count: recent_assessments.length },
+    { key: 'assessments' as TabType, label: 'Değerlendirmeler', icon: ClipboardList, count: recent_assessments.length },
     { key: 'notes' as TabType, label: 'Notlar', icon: FileText, count: recent_notes.length },
     { key: 'scores' as TabType, label: 'Skorlar', icon: TrendingUp, count: cognitive_scores.length },
   ];
@@ -77,7 +77,7 @@ export default function CaregiverPatientDetailPage() {
               </span>
               <span className="flex items-center gap-1">
                 <Target className="w-4 h-4" />
-                Seri: {patient.streak_days} gun
+                Seri: {patient.streak_days} gün
               </span>
             </div>
           </div>
@@ -90,19 +90,19 @@ export default function CaregiverPatientDetailPage() {
           <p className="text-2xl font-bold text-purple-600">
             {patient.latest_score !== null ? Math.round(Number(patient.latest_score)) : '-'}
           </p>
-          <p className="text-xs text-gray-500">Bilissel Skor</p>
+          <p className="text-xs text-gray-500">Bilişsel Skor</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-green-600">{patient.exercises_today}</p>
-          <p className="text-xs text-gray-500">Bugunun Egzersizi</p>
+          <p className="text-xs text-gray-500">Bugünün Egzersizi</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-blue-600">{patient.exercises_this_week}</p>
-          <p className="text-xs text-gray-500">Haftalik Egzersiz</p>
+          <p className="text-xs text-gray-500">Haftalık Egzersiz</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-amber-600">{patient.streak_days}</p>
-          <p className="text-xs text-gray-500">Gun Serisi</p>
+          <p className="text-xs text-gray-500">Gün Serisi</p>
         </div>
       </div>
 
@@ -164,9 +164,9 @@ export default function CaregiverPatientDetailPage() {
         {/* Exercises Tab */}
         {activeTab === 'exercises' && (
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Son Egzersizler (7 Gun)</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">Son Egzersizler (7 Gün)</h3>
             {recent_sessions.length === 0 ? (
-              <p className="text-gray-400 text-center py-8">Bu hafta egzersiz yapilmamis.</p>
+              <p className="text-gray-400 text-center py-8">Bu hafta egzersiz yapılmamış.</p>
             ) : (
               <div className="space-y-3">
                 {recent_sessions.map((session) => (
@@ -198,9 +198,9 @@ export default function CaregiverPatientDetailPage() {
         {/* Assessments Tab */}
         {activeTab === 'assessments' && (
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Gunluk Degerlendirmeler</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">Günlük Değerlendirmeler</h3>
             {recent_assessments.length === 0 ? (
-              <p className="text-gray-400 text-center py-8">Bu hafta degerlendirme yapilmamis.</p>
+              <p className="text-gray-400 text-center py-8">Bu hafta değerlendirme yapılmamış.</p>
             ) : (
               <div className="space-y-3">
                 {recent_assessments.map((assessment) => (
@@ -213,13 +213,13 @@ export default function CaregiverPatientDetailPage() {
                       </span>
                       <div className="flex gap-1">
                         {assessment.fall_occurred && (
-                          <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded text-xs">Dusme</span>
+                          <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded text-xs">Düşme</span>
                         )}
                         {assessment.wandering_occurred && (
                           <span className="px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-xs">Gezinme</span>
                         )}
                         {assessment.medication_missed && (
-                          <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-xs">Ilac</span>
+                          <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-xs">İlaç</span>
                         )}
                       </div>
                     </div>
@@ -229,7 +229,7 @@ export default function CaregiverPatientDetailPage() {
                         <p className="text-sm font-medium">{assessment.mood_score ?? '-'}/5</p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500">Karisiklik</p>
+                        <p className="text-xs text-gray-500">Karışıklık</p>
                         <p className="text-sm font-medium">{assessment.confusion_level ?? '-'}/5</p>
                       </div>
                       <div>
@@ -247,9 +247,9 @@ export default function CaregiverPatientDetailPage() {
         {/* Notes Tab */}
         {activeTab === 'notes' && (
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Bakici Notlari</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">Bakıcı Notları</h3>
             {recent_notes.length === 0 ? (
-              <p className="text-gray-400 text-center py-8">Henuz not eklenmemis.</p>
+              <p className="text-gray-400 text-center py-8">Henüz not eklenmemiş.</p>
             ) : (
               <div className="space-y-3">
                 {recent_notes.map((note) => (
@@ -283,9 +283,9 @@ export default function CaregiverPatientDetailPage() {
         {/* Scores Tab */}
         {activeTab === 'scores' && (
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Bilissel Skorlar (Son 30 Gun)</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">Bilişsel Skorlar (Son 30 Gün)</h3>
             {cognitive_scores.length === 0 ? (
-              <p className="text-gray-400 text-center py-8">Henuz skor hesaplanmamis.</p>
+              <p className="text-gray-400 text-center py-8">Henüz skor hesaplanmamış.</p>
             ) : (
               <div className="space-y-3">
                 {cognitive_scores.map((score) => (
@@ -304,8 +304,8 @@ export default function CaregiverPatientDetailPage() {
                         { label: 'Bellek', value: score.memory_score, color: 'text-blue-600' },
                         { label: 'Dikkat', value: score.attention_score, color: 'text-green-600' },
                         { label: 'Dil', value: score.language_score, color: 'text-indigo-600' },
-                        { label: 'P.Cozme', value: score.problem_solving_score, color: 'text-amber-600' },
-                        { label: 'Yonelim', value: score.orientation_score, color: 'text-teal-600' },
+                        { label: 'P.Çözme', value: score.problem_solving_score, color: 'text-amber-600' },
+                        { label: 'Yönelim', value: score.orientation_score, color: 'text-teal-600' },
                       ].map((domain) => (
                         <div key={domain.label} className="text-center">
                           <p className={`text-sm font-bold ${domain.color}`}>

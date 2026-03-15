@@ -26,33 +26,87 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     fetchAll('/content/public-education/'),
   ]);
 
-  const statics: MetadataRoute.Sitemap = [
-    { url: SITE, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
-    { url: `${SITE}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
-    { url: `${SITE}/news`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
-    { url: `${SITE}/doctors`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${SITE}/education`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${SITE}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${SITE}/privacy-policy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${SITE}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${SITE}/kvkk`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
+  // Static pages with language alternates
+  const staticPaths = [
+    { path: '', changeFrequency: 'weekly' as const, priority: 1 },
+    { path: '/blog', changeFrequency: 'daily' as const, priority: 0.8 },
+    { path: '/news', changeFrequency: 'daily' as const, priority: 0.8 },
+    { path: '/doctors', changeFrequency: 'weekly' as const, priority: 0.8 },
+    { path: '/education', changeFrequency: 'weekly' as const, priority: 0.7 },
+    { path: '/contact', changeFrequency: 'monthly' as const, priority: 0.5 },
+    { path: '/privacy-policy', changeFrequency: 'yearly' as const, priority: 0.3 },
+    { path: '/terms', changeFrequency: 'yearly' as const, priority: 0.3 },
+    { path: '/kvkk', changeFrequency: 'yearly' as const, priority: 0.3 },
   ];
 
+  const statics: MetadataRoute.Sitemap = staticPaths.flatMap(({ path, changeFrequency, priority }) => [
+    {
+      url: `${SITE}/tr${path}`,
+      lastModified: new Date(),
+      changeFrequency,
+      priority,
+      alternates: {
+        languages: {
+          tr: `${SITE}/tr${path}`,
+          en: `${SITE}/en${path}`,
+        },
+      },
+    },
+    {
+      url: `${SITE}/en${path}`,
+      lastModified: new Date(),
+      changeFrequency,
+      priority: priority > 0.3 ? priority - 0.1 : priority,
+      alternates: {
+        languages: {
+          tr: `${SITE}/tr${path}`,
+          en: `${SITE}/en${path}`,
+        },
+      },
+    },
+  ]);
+
   const blogPages = articles.flatMap((a: any) => ['tr', 'en'].map(l => ({
-    url: `${SITE}/${l}/blog/${a.slug}`, lastModified: safeDate(a.updated_at || a.created_at), changeFrequency: 'monthly' as const, priority: 0.7,
+    url: `${SITE}/${l}/blog/${a.slug}`,
+    lastModified: safeDate(a.updated_at || a.created_at),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+    alternates: {
+      languages: {
+        tr: `${SITE}/tr/blog/${a.slug}`,
+        en: `${SITE}/en/blog/${a.slug}`,
+      },
+    },
   })));
 
   const newsPages = news.flatMap((n: any) => ['tr', 'en'].map(l => ({
-    url: `${SITE}/${l}/news/${n.slug}`, lastModified: safeDate(n.updated_at || n.created_at), changeFrequency: 'weekly' as const, priority: 0.7,
+    url: `${SITE}/${l}/news/${n.slug}`,
+    lastModified: safeDate(n.updated_at || n.created_at),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+    alternates: {
+      languages: {
+        tr: `${SITE}/tr/news/${n.slug}`,
+        en: `${SITE}/en/news/${n.slug}`,
+      },
+    },
   })));
 
   const doctorPages = doctors.map((d: any) => {
     const slug = `${(d.full_name || '').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}-${String(d.id).slice(0, 8)}`;
-    return { url: `${SITE}/doctors/${slug}`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 };
+    return {
+      url: `${SITE}/doctors/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    };
   });
 
   const eduPages = education.map((e: any) => ({
-    url: `${SITE}/education/${e.slug}`, lastModified: safeDate(e.updated_at || e.created_at), changeFrequency: 'monthly' as const, priority: 0.6,
+    url: `${SITE}/education/${e.slug}`,
+    lastModified: safeDate(e.updated_at || e.created_at),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
   }));
 
   return [...statics, ...blogPages, ...newsPages, ...doctorPages, ...eduPages];

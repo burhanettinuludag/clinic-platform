@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Link } from '@/i18n/navigation';
 import { ShieldCheck, Inbox, FileText, Newspaper, Users, CheckCircle, XCircle, Send, Archive, RotateCcw, AlertTriangle, Loader2, Search, Shield } from 'lucide-react';
 import { useReviewQueueStats, useEditorArticles, useEditorNews, useEditorArticleTransition, useEditorNewsTransition, useEditorAuthors, useVerifyAuthor, useBulkArticleTransition, useBulkNewsTransition } from '@/hooks/useEditorData';
 import type { EditorArticle, EditorNews, EditorAuthor } from '@/hooks/useEditorData';
@@ -58,8 +59,11 @@ export default function EditorPanelPage() {
 
 function QueueTab() {
   const { data: stats, isLoading } = useReviewQueueStats();
-  const { data: articles } = useEditorArticles({ status: 'review' });
-  const { data: news } = useEditorNews({ status: 'review' });
+  const { data: draftArticles } = useEditorArticles({ status: 'draft' });
+  const { data: reviewNews } = useEditorNews({ status: 'review' });
+  const { data: draftNews } = useEditorNews({ status: 'draft' });
+  const articles = draftArticles || [];
+  const news = [...(reviewNews || []), ...(draftNews || [])];
   const artT = useEditorArticleTransition();
   const newsT = useEditorNewsTransition();
 
@@ -78,7 +82,7 @@ function QueueTab() {
       )}
       {articles && articles.length > 0 && (
         <div>
-          <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2"><FileText className="h-4 w-4" />Makale Incelemeleri</h3>
+          <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2"><FileText className="h-4 w-4" />Taslak Makaleler</h3>
           <div className="space-y-2">{articles.map((a) => (
             <div key={a.id} className="rounded-lg border bg-white p-4 flex items-center justify-between gap-4">
               <div className="min-w-0 flex-1">
@@ -95,7 +99,7 @@ function QueueTab() {
       )}
       {news && news.length > 0 && (
         <div>
-          <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2"><Newspaper className="h-4 w-4" />Haber Incelemeleri</h3>
+          <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2"><Newspaper className="h-4 w-4" />Bekleyen Haberler</h3>
           <div className="space-y-2">{news.map((n) => (
             <div key={n.id} className="rounded-lg border bg-white p-4 flex items-center justify-between gap-4">
               <div className="min-w-0 flex-1">
@@ -150,7 +154,7 @@ function ArticlesTab() {
           <div key={a.id} className="rounded-lg border bg-white p-4 flex items-start justify-between gap-4">
             <input type="checkbox" checked={sel.includes(a.id)} onChange={(e) => setSel(e.target.checked ? [...sel, a.id] : sel.filter(x => x !== a.id))} className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600" />
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-gray-900 truncate">{a.title_tr || 'Basliksiz'}</p>
+              <Link href={`/doctor/editor/articles/${a.id}`} className="font-medium text-gray-900 truncate hover:text-blue-600 transition block">{a.title_tr || 'Basliksiz'}</Link>
               <div className="flex items-center gap-3 mt-1"><SBadge status={a.status} /><span className="text-xs text-gray-500">{a.author_name}</span><span className="text-xs text-gray-400">{fmtD(a.updated_at)}</span></div>
             </div>
             <div className="flex gap-1">

@@ -16,7 +16,7 @@ export default function CaregiverDashboardPage() {
   if (patientsLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-gray-500">Yukleniyor...</div>
+        <div className="text-gray-500">Yükleniyor...</div>
       </div>
     );
   }
@@ -32,9 +32,9 @@ export default function CaregiverDashboardPage() {
             <Shield className="w-6 h-6 text-teal-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Bakici Paneli</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Bakıcı Paneli</h1>
             <p className="text-sm text-gray-500">
-              Hastalarinizin durumunu takip edin
+              Hastalarınızın durumunu takip edin
             </p>
           </div>
         </div>
@@ -46,7 +46,7 @@ export default function CaregiverDashboardPage() {
           <div className="flex items-center gap-2 mb-3">
             <Bell className="w-5 h-5 text-red-600" />
             <h2 className="font-semibold text-red-800">
-              {activeAlerts.length} Aktif Uyari
+              {activeAlerts.length} Aktif Uyarı
             </h2>
           </div>
           <div className="space-y-2">
@@ -82,7 +82,7 @@ export default function CaregiverDashboardPage() {
         <div className="flex items-center gap-2 mb-4">
           <Users className="w-5 h-5 text-gray-600" />
           <h2 className="text-lg font-semibold text-gray-900">
-            Hastalarim ({patients?.length || 0})
+            Hastalarım ({patients?.length || 0})
           </h2>
         </div>
 
@@ -90,10 +90,10 @@ export default function CaregiverDashboardPage() {
           <div className="text-center py-12 bg-gray-50 rounded-xl">
             <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <h3 className="text-lg font-medium text-gray-600 mb-2">
-              Henuz atanmis hasta yok
+              Henüz atanmış hasta yok
             </h3>
             <p className="text-sm text-gray-400">
-              Doktorunuz size hasta atadiktan sonra burada gorunecektir.
+              Doktorunuz size hasta atadıktan sonra burada görünecektir.
             </p>
           </div>
         ) : (
@@ -142,7 +142,7 @@ export default function CaregiverDashboardPage() {
                     <p className="text-lg font-bold text-gray-900">
                       {patient.exercises_today}
                     </p>
-                    <p className="text-[10px] text-gray-500">Bugun</p>
+                    <p className="text-[10px] text-gray-500">Bugün</p>
                   </div>
                   <div className="text-center p-2 bg-gray-50 rounded-lg">
                     <TrendingUp className="w-4 h-4 text-amber-500 mx-auto mb-1" />

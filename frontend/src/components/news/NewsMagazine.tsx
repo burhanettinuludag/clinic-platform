@@ -25,8 +25,14 @@ const DISEASE_TABS = [
   { key: 'all', label_tr: 'Tüm Haberler', label_en: 'All News', icon: Newspaper },
   { key: 'migraine', label_tr: 'Migren', label_en: 'Migraine', icon: Brain },
   { key: 'epilepsy', label_tr: 'Epilepsi', label_en: 'Epilepsy', icon: Zap },
-  { key: 'dementia', label_tr: 'Demans', label_en: 'Dementia', icon: Activity },
+  { key: 'dementia', label_tr: 'Demans / Alzheimer', label_en: 'Dementia / Alzheimer', icon: Activity },
 ];
+
+const DISEASE_LABELS: Record<string, { tr: string; en: string }> = {
+  migraine: { tr: 'Migren', en: 'Migraine' },
+  epilepsy: { tr: 'Epilepsi', en: 'Epilepsy' },
+  dementia: { tr: 'Demans', en: 'Dementia' },
+};
 
 const CATEGORY_COLORS: Record<string, string> = {
   fda_approval: 'bg-blue-100 text-blue-700',
@@ -116,7 +122,7 @@ export default function NewsMagazine({
           <div>
             <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
               <Newspaper className="h-7 w-7 text-teal-600" />
-              {title || t('Noroloji Haberleri', 'Neurology News')}
+              {title || t('Nöroloji Haberleri', 'Neurology News')}
             </h2>
             <p className="text-gray-500 text-sm mt-1">
               {t(
@@ -146,6 +152,9 @@ export default function NewsMagazine({
           {DISEASE_TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeDisease === tab.key;
+            const count = tab.key === 'all'
+              ? articles.length
+              : articles.filter((a) => a.related_diseases?.includes(tab.key)).length;
             return (
               <button
                 key={tab.key}
@@ -158,6 +167,11 @@ export default function NewsMagazine({
               >
                 <Icon className="h-4 w-4" />
                 {locale === 'tr' ? tab.label_tr : tab.label_en}
+                <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                  isActive ? 'bg-white/20' : 'bg-gray-200'
+                }`}>
+                  {count}
+                </span>
               </button>
             );
           })}
@@ -199,8 +213,8 @@ export default function NewsMagazine({
                   {featured.category_display}
                 </span>
                 {featured.related_diseases?.map((d) => (
-                  <span key={d} className="px-2 py-0.5 bg-white/10 text-white/80 rounded text-xs">
-                    {d}
+                  <span key={d} className="px-2 py-0.5 bg-teal-500/30 text-teal-200 rounded text-xs font-medium">
+                    {DISEASE_LABELS[d]?.[locale === 'tr' ? 'tr' : 'en'] || d}
                   </span>
                 ))}
               </div>
@@ -320,8 +334,8 @@ function NewsCard({
               {article.category_display}
             </span>
             {!compact && article.related_diseases?.map((d) => (
-              <span key={d} className="px-1.5 py-0.5 bg-teal-50 text-teal-700 rounded text-[10px]">
-                {d}
+              <span key={d} className="px-1.5 py-0.5 bg-teal-50 text-teal-700 rounded text-[10px] font-medium">
+                {DISEASE_LABELS[d]?.[locale === 'tr' ? 'tr' : 'en'] || d}
               </span>
             ))}
           </div>

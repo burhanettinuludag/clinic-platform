@@ -15,28 +15,28 @@ const statCards = [
   },
   {
     labelKey: 'doctor.dashboard.activePatients',
-    fallback: 'Aktif (7 gun)',
+    fallback: 'Aktif (7 gün)',
     field: 'active_patients_7d',
     icon: Activity,
     color: 'green',
   },
   {
     labelKey: 'doctor.dashboard.criticalAlerts',
-    fallback: 'Kritik Uyari',
+    fallback: 'Kritik Uyarı',
     field: 'critical_alerts',
     icon: AlertTriangle,
     color: 'red',
   },
   {
     labelKey: 'doctor.dashboard.warnings',
-    fallback: 'Uyari',
+    fallback: 'Uyarı',
     field: 'warning_alerts',
     icon: AlertTriangle,
     color: 'yellow',
   },
   {
     labelKey: 'doctor.dashboard.taskCompletion',
-    fallback: 'Gorev Tamamlama',
+    fallback: 'Görev Tamamlama',
     field: 'avg_task_completion_rate',
     icon: TrendingUp,
     color: 'purple',
@@ -44,7 +44,7 @@ const statCards = [
   },
   {
     labelKey: 'doctor.dashboard.attacks30d',
-    fallback: 'Atak (30 gun)',
+    fallback: 'Atak (30 gün)',
     field: 'total_attacks_30d',
     icon: Brain,
     color: 'orange',
@@ -68,7 +68,7 @@ export default function DoctorDashboardPage() {
   if (statsLoading || alertsLoading) {
     return (
       <div className="flex h-full items-center justify-center p-8">
-        <p className="text-gray-500">Yukleniyor...</p>
+        <p className="text-gray-500">Yükleniyor...</p>
       </div>
     );
   }
@@ -123,19 +123,19 @@ export default function DoctorDashboardPage() {
       <div className="rounded-xl border bg-white shadow-sm">
         <div className="flex items-center justify-between border-b px-6 py-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            {getLabel('doctor.dashboard.recentAlerts', 'Son Uyarilar')}
+            {getLabel('doctor.dashboard.recentAlerts', 'Son Uyarılar')}
           </h2>
           <Link
             href="/doctor/alerts"
             className="text-sm font-medium text-blue-600 hover:text-blue-800"
           >
-            {getLabel('doctor.dashboard.viewAll', 'Tumunu Gor')}
+            {getLabel('doctor.dashboard.viewAll', 'Tümünü Gör')}
           </Link>
         </div>
 
         {recentAlerts.length === 0 ? (
           <div className="p-6 text-center text-gray-500">
-            {getLabel('doctor.dashboard.noAlerts', 'Uyari bulunmuyor.')}
+            {getLabel('doctor.dashboard.noAlerts', 'Uyarı bulunmuyor.')}
           </div>
         ) : (
           <ul className="divide-y">
@@ -160,7 +160,7 @@ export default function DoctorDashboardPage() {
                         : 'bg-yellow-100 text-yellow-800'
                     }`}
                   >
-                    {alert.severity === 'critical' ? 'Kritik' : 'Uyari'}
+                    {alert.severity === 'critical' ? 'Kritik' : 'Uyarı'}
                   </span>
                 </Link>
               </li>

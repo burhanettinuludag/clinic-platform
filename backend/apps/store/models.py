@@ -1,7 +1,9 @@
 import uuid
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.conf import settings
 from apps.common.models import TimeStampedModel
+from apps.common.validators import validate_image_file_size
 
 
 class ProductCategory(TimeStampedModel):
@@ -42,7 +44,13 @@ class Product(TimeStampedModel):
         blank=True,
         related_name='products',
     )
-    featured_image = models.ImageField(upload_to='products/', blank=True)
+    featured_image = models.ImageField(
+        upload_to='products/', blank=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp']),
+            validate_image_file_size,
+        ],
+    )
     screenshots = models.JSONField(default=list, blank=True)
     price_monthly = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     price_yearly = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)

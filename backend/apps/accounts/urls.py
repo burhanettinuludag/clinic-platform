@@ -14,4 +14,9 @@ urlpatterns = [
     path('relative/invitations/', views.InviteRelativeListView.as_view(), name='relative-invitations'),
     path('relative/invite/verify/<uuid:token>/', views.VerifyInvitationView.as_view(), name='verify-invitation'),
     path('relative/register/', views.RegisterRelativeView.as_view(), name='register-relative'),
+
+    # Doctor approval (admin endpoints)
+    path('doctor-applications/', views.DoctorApplicationListView.as_view(), name='doctor-applications'),
+    path('doctor-applications/<uuid:pk>/approve/', views.DoctorApplicationApproveView.as_view(), name='doctor-approve'),
+    path('doctor-applications/<uuid:pk>/reject/', views.DoctorApplicationRejectView.as_view(), name='doctor-reject'),
 ]

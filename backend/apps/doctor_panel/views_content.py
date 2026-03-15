@@ -25,6 +25,7 @@ class GenerateContentView(APIView):
         audience = request.data.get('audience', 'patient')
         content_type = request.data.get('content_type', 'blog')
         tone = request.data.get('tone', 'friendly')
+        content_length = request.data.get('content_length', 'medium')
 
         if not topic:
             return Response(
@@ -49,6 +50,7 @@ class GenerateContentView(APIView):
                     'audience': audience,
                     'content_type': content_type,
                     'tone': tone,
+                    'content_length': content_length,
                 },
                 steps=['content_agent', 'seo_agent', 'legal_agent'],
                 triggered_by=request.user,
@@ -62,6 +64,8 @@ class GenerateContentView(APIView):
                     'success': True,
                     'article_id': str(article.id) if article else None,
                     'title': result.final_data.get('title_tr', ''),
+                    'body_tr': result.final_data.get('body_tr', ''),
+                    'excerpt_tr': result.final_data.get('excerpt_tr', ''),
                     'seo_title': result.final_data.get('seo_title_tr', ''),
                     'legal_approved': result.final_data.get('legal_approved', False),
                     'legal_score': result.final_data.get('legal_score', 0),

@@ -2,7 +2,7 @@
 
 import { useDashboardStats, useFeatureFlags } from '@/hooks/useSiteAdmin';
 import { Link } from '@/i18n/navigation';
-import { Settings, ToggleLeft, Megaphone, Home, Share2, FileText, Users, TrendingUp, Bell, Flag, Link2Off, Bot } from 'lucide-react';
+import { Settings, ToggleLeft, Megaphone, Home, Share2, FileText, Users, TrendingUp, Bell, Flag, Link2Off, Bot, UserCheck } from 'lucide-react';
 
 export default function SiteSettingsPage() {
   const { data: stats, isLoading } = useDashboardStats();
@@ -26,6 +26,7 @@ export default function SiteSettingsPage() {
     { href: '/doctor/site-settings/social', label: 'Sosyal Medya', sub: 'Twitter, LinkedIn, Instagram...', icon: Share2, color: 'border-blue-500/30 hover:border-blue-500/60' },
     { href: '/doctor/site-settings/broken-links', label: 'Kirik Linkler', sub: 'Kirik linkleri tara ve tamir et', icon: Link2Off, color: 'border-red-500/30 hover:border-red-500/60' },
     { href: '/doctor/site-settings/agents', label: 'Agent Yonetimi', sub: 'Agent lari izle ve tetikle', icon: Bot, color: 'border-indigo-500/30 hover:border-indigo-500/60' },
+    { href: '/doctor/site-settings/doctor-approvals', label: 'Doktor Onaylari', sub: 'Doktor basvurularini onayla/reddet', icon: UserCheck, color: 'border-emerald-500/30 hover:border-emerald-500/60' },
     { href: '/doctor/editor', label: 'Icerik Yonetimi', sub: 'Makale ve haber onayi', icon: FileText, color: 'border-indigo-500/30 hover:border-indigo-500/60' },
   ];
 

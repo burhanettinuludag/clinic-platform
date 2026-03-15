@@ -30,8 +30,17 @@ export default function LoginPage() {
         patient: '/patient/dashboard',
       };
       router.push(roleRedirects[user.role] || '/patient/dashboard');
-    } catch {
-      setError(t('common.error'));
+    } catch (err: any) {
+      const errorData = err?.response?.data;
+      if (errorData?.approval_status === 'pending_approval') {
+        setError(t('auth.pendingDoctorLogin'));
+      } else if (errorData?.approval_status === 'rejected') {
+        setError(t('auth.rejectedDoctorLogin'));
+      } else if (errorData?.non_field_errors?.[0]) {
+        setError(errorData.non_field_errors[0]);
+      } else {
+        setError(t('auth.invalidCredentials'));
+      }
     } finally {
       setLoading(false);
     }

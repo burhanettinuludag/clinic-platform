@@ -43,7 +43,7 @@ export default function DoctorMessagesPage() {
 
   const handleClose = async () => {
     if (!activeConvId) return;
-    if (confirm('Bu konusmayi kapatmak istediginize emin misiniz?')) {
+    if (confirm('Bu konuşmayı kapatmak istediğinize emin misiniz?')) {
       await closeConversation.mutateAsync(activeConvId);
       setActiveConvId(null);
     }
@@ -61,9 +61,9 @@ export default function DoctorMessagesPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900">
-              {(() => { try { return t('doctorTitle'); } catch { return 'Hasta Mesajlari'; } })()}
+              {(() => { try { return t('doctorTitle'); } catch { return 'Hasta Mesajları'; } })()}
             </h1>
-            <p className="text-sm text-gray-500">Hastalarinizla iletisim kurun</p>
+            <p className="text-sm text-gray-500">Hastalarınızla iletişim kurun</p>
           </div>
         </div>
 
@@ -76,7 +76,7 @@ export default function DoctorMessagesPage() {
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-red-500">{stats.total_unread}</div>
-              <div className="text-xs text-gray-400">Okunmamis</div>
+              <div className="text-xs text-gray-400">Okunmamış</div>
             </div>
           </div>
         )}
@@ -87,16 +87,16 @@ export default function DoctorMessagesPage() {
         {/* Conversation List */}
         <div className="md:col-span-1 bg-white rounded-xl border border-gray-200">
           <div className="p-4 border-b border-gray-100">
-            <h3 className="font-semibold text-gray-800 text-sm">Konusmalar</h3>
+            <h3 className="font-semibold text-gray-800 text-sm">Konuşmalar</h3>
           </div>
           <div className="max-h-[540px] overflow-y-auto">
             {isLoading ? (
-              <div className="p-4 text-center text-gray-400 text-sm">Yukleniyor...</div>
+              <div className="p-4 text-center text-gray-400 text-sm">Yükleniyor...</div>
             ) : conversations.length === 0 ? (
               <div className="p-6 text-center">
                 <Inbox className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-sm text-gray-400">Henuz mesaj yok</p>
-                <p className="text-xs text-gray-300 mt-1">Hastalar size mesaj gonderdiginde burada gorunecek</p>
+                <p className="text-sm text-gray-400">Henüz mesaj yok</p>
+                <p className="text-xs text-gray-300 mt-1">Hastalar size mesaj gönderdiğinde burada görünecek</p>
               </div>
             ) : (
               conversations.map((conv: Conversation) => (
@@ -138,7 +138,7 @@ export default function DoctorMessagesPage() {
                     <span className={`text-[10px] px-1.5 py-0.5 rounded ${
                       conv.status === 'active' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'
                     }`}>
-                      {conv.status === 'active' ? 'Aktif' : 'Kapali'}
+                      {conv.status === 'active' ? 'Aktif' : 'Kapalı'}
                     </span>
                     {conv.last_message_at && (
                       <span className="text-[10px] text-gray-400 flex items-center gap-0.5">
@@ -170,7 +170,7 @@ export default function DoctorMessagesPage() {
                     onClick={handleClose}
                     className="text-xs text-gray-400 hover:text-red-500 transition"
                   >
-                    Konusmayi Kapat
+                    Konuşmayı Kapat
                   </button>
                 )}
               </div>
@@ -192,20 +192,20 @@ export default function DoctorMessagesPage() {
                 <ChatInput
                   onSend={handleSend}
                   isLoading={sendMessage.isPending}
-                  placeholder="Hastaniza yanit yazin..."
+                  placeholder="Hastanıza yanıt yazın..."
                 />
               ) : (
                 <div className="p-3 bg-gray-50 border-t text-center text-sm text-gray-400">
-                  Bu konusma kapatilmis.
+                  Bu konuşma kapatılmış.
                 </div>
               )}
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
               <Inbox className="w-16 h-16 text-gray-200 mb-4" />
-              <p className="text-lg font-medium text-gray-500">Konusma Secin</p>
+              <p className="text-lg font-medium text-gray-500">Konuşma Seçin</p>
               <p className="text-sm text-gray-400 mt-1">
-                Sol panelden bir konusma secerek mesajlari goruntuleyebilirsiniz
+                Sol panelden bir konuşma seçerek mesajları görüntüleyebilirsiniz
               </p>
             </div>
           )}

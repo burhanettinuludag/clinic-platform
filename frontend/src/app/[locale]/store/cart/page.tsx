@@ -21,7 +21,7 @@ export default function CartPage() {
         <Clock className="w-16 h-16 text-blue-400 mx-auto mb-6" />
         <h1 className="text-3xl font-bold text-gray-900 mb-3">{t('nav.comingSoon')}</h1>
         <p className="text-gray-500 text-lg mb-8">
-          Dijital magaza ve odeme sistemi cok yakinda hizmetinizde olacak.
+          {t('store.comingSoonDesc')}
         </p>
         <Link
           href="/"
@@ -37,8 +37,8 @@ export default function CartPage() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center">
         <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('store.cart')} bos</h2>
-        <p className="text-gray-500 mb-6">Henuz sepetinize urun eklemediniz.</p>
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('store.emptyCart')}</h2>
+        <p className="text-gray-500 mb-6">{t('store.emptyCartDesc')}</p>
         <Link
           href="/store"
           className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -57,7 +57,7 @@ export default function CartPage() {
           onClick={clearCart}
           className="text-sm text-red-500 hover:text-red-600"
         >
-          Sepeti Temizle
+          {t('store.clearCart')}
         </button>
       </div>
 
@@ -111,7 +111,7 @@ export default function CartPage() {
           {t('store.checkout')}
         </button>
         <p className="text-xs text-gray-400 text-center mt-3">
-          Odeme iyzico guvenli odeme altyapisi ile gerceklestirilir.
+          {t('store.paymentDisclaimer')}
         </p>
       </div>
     </div>

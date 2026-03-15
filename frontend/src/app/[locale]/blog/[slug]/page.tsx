@@ -10,7 +10,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await getArticleBySlug(params.slug, params.locale);
-  if (!article) return { title: 'Makale Bulunamadi' };
+  if (!article) return { title: params.locale === 'tr' ? 'Makale Bulunamadı' : 'Article Not Found' };
 
   const title = params.locale === 'tr' ? article.title_tr || article.title : article.title_en || article.title;
   const desc = params.locale === 'tr' ? article.seo_description_tr || article.excerpt_tr || '' : article.seo_description_en || article.excerpt_en || '';
@@ -64,8 +64,8 @@ function AuthorCard({ profile }: { profile: any }) {
   );
 }
 
-function fmtDate(d: string) {
-  return new Date(d).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+function fmtDate(d: string, locale: string = 'tr') {
+  return new Date(d).toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 export default async function ArticlePage({ params }: Props) {
@@ -81,7 +81,7 @@ export default async function ArticlePage({ params }: Props) {
       <JsonLd article={article} locale={params.locale} />
       <article className="max-w-3xl mx-auto px-4 py-8">
         <Link href={`/${params.locale}/blog`} className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6">
-          <ArrowLeft className="w-4 h-4" /> Geri
+          <ArrowLeft className="w-4 h-4" /> {params.locale === 'tr' ? 'Geri' : 'Back'}
         </Link>
 
         {article.featured_image && (
@@ -98,7 +98,7 @@ export default async function ArticlePage({ params }: Props) {
             <span className="flex items-center gap-1"><User className="w-4 h-4" /> {article.author_name}</span>
           )}
           {article.published_at && (
-            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {fmtDate(article.published_at)}</span>
+            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {fmtDate(article.published_at, params.locale)}</span>
           )}
         </div>
 

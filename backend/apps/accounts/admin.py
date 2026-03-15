@@ -33,9 +33,31 @@ class PatientProfileAdmin(admin.ModelAdmin):
 
 @admin.register(DoctorProfile)
 class DoctorProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'specialty', 'license_number', 'is_accepting_patients')
-    list_filter = ('is_accepting_patients',)
-    search_fields = ('user__email', 'user__first_name', 'user__last_name')
+    list_display = ('user', 'specialty', 'license_number', 'approval_status', 'is_accepting_patients', 'created_at')
+    list_filter = ('approval_status', 'is_accepting_patients')
+    search_fields = ('user__email', 'user__first_name', 'user__last_name', 'license_number')
+    raw_id_fields = ('user', 'approved_by')
+    readonly_fields = ('approved_by', 'approved_at')
+    actions = ['approve_selected', 'reject_selected']
+
+    def approve_selected(self, request, queryset):
+        from django.utils import timezone
+        count = 0
+        for profile in queryset.filter(approval_status='pending'):
+            profile.approval_status = 'approved'
+            profile.approved_by = request.user
+            profile.approved_at = timezone.now()
+            profile.save(update_fields=['approval_status', 'approved_by', 'approved_at'])
+            profile.user.is_active = True
+            profile.user.save(update_fields=['is_active'])
+            count += 1
+        self.message_user(request, f'{count} doktor onaylandi.')
+    approve_selected.short_description = 'Secilenleri onayla'
+
+    def reject_selected(self, request, queryset):
+        count = queryset.filter(approval_status='pending').update(approval_status='rejected')
+        self.message_user(request, f'{count} doktor reddedildi.')
+    reject_selected.short_description = 'Secilenleri reddet'
 
 
 @admin.register(CaregiverProfile)

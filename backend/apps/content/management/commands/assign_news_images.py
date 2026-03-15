@@ -38,7 +38,7 @@ class Command(BaseCommand):
         qs = NewsArticle.objects.filter(status='published').order_by('-published_at')
 
         if not force:
-            qs = qs.filter(featured_image='', featured_image_url='')
+            qs = qs.filter(featured_image_url='')
 
         if limit:
             qs = qs[:limit]

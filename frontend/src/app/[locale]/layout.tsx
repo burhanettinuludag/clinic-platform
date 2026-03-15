@@ -45,6 +45,19 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true },
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/icon.svg',
+  },
+  alternates: {
+    languages: {
+      'tr': 'https://norosera.com/tr',
+      'en': 'https://norosera.com/en',
+    },
+  },
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION || '',
   },
@@ -76,7 +89,7 @@ export default async function LocaleLayout({
                 <AnnouncementBanner />
                 <DisclaimerBanner />
                 <Header />
-                <main className="flex-1"><ToastProvider>{children}</ToastProvider></main>
+                <main className="flex-1 pt-16"><ToastProvider>{children}</ToastProvider></main>
                 <Footer />
               </CartProvider>
             </AuthProvider>

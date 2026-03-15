@@ -1,4 +1,5 @@
 import uuid
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.conf import settings
 
@@ -174,7 +175,12 @@ class HomepageHero(TimeStampedModel):
     secondary_cta_text_tr = models.CharField(max_length=50, blank=True, default='')
     secondary_cta_text_en = models.CharField(max_length=50, blank=True, default='')
     secondary_cta_url = models.CharField(max_length=200, blank=True, default='')
-    background_image = models.ImageField(upload_to='hero/', blank=True)
+    background_image = models.ImageField(
+        upload_to='hero/', blank=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp']),
+        ],
+    )
     is_active = models.BooleanField(default=True)
 
     class Meta:

@@ -11,39 +11,46 @@ async function getItem(slug: string) {
   } catch { return null; }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string; locale: string } }): Promise<Metadata> {
   const item = await getItem(params.slug);
-  if (!item) return { title: 'Icerik Bulunamadi' };
+  const isTr = params.locale === 'tr';
+  if (!item) return { title: isTr ? 'İçerik Bulunamadı' : 'Content Not Found' };
+  const title = isTr ? item.title_tr : (item.title_en || item.title_tr);
+  const desc = isTr ? item.body_tr?.replace(/<[^>]*>/g, '').slice(0, 160) : (item.body_en || item.body_tr)?.replace(/<[^>]*>/g, '').slice(0, 160);
   return {
-    title: `${item.title_tr} | Norosera Egitim`,
-    description: item.body_tr?.replace(/<[^>]*>/g, '').slice(0, 160),
-    openGraph: { title: item.title_tr, ...(item.image && { images: [item.image] }) },
+    title: `${title} | Norosera ${isTr ? 'Eğitim' : 'Education'}`,
+    description: desc,
+    openGraph: { title, ...(item.image && { images: [item.image] }) },
   };
 }
 
-export default async function EducationDetailPage({ params }: { params: { slug: string } }) {
+export default async function EducationDetailPage({ params }: { params: { slug: string; locale: string } }) {
   const item = await getItem(params.slug);
   if (!item) notFound();
+
+  const isTr = params.locale === 'tr';
+  const title = isTr ? item.title_tr : (item.title_en || item.title_tr);
+  const body = isTr ? item.body_tr : (item.body_en || item.body_tr);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": item.title_tr,
-        "description": item.body_tr?.replace(/<[^>]*>/g, '').slice(0, 160),
+        "headline": title,
+        "description": body?.replace(/<[^>]*>/g, '').slice(0, 160),
         ...(item.image && { "image": item.image }),
         "publisher": { "@type": "Organization", "name": "Norosera" },
       }) }} />
 
-      {item.image && <img src={item.image} alt={item.title_tr} className="w-full h-56 object-cover rounded-xl mb-6" />}
+      {item.image && <img src={item.image} alt={title} className="w-full h-56 object-cover rounded-xl mb-6" />}
 
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{item.title_tr}</h1>
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{title}</h1>
 
       <div className="flex items-center gap-3 mb-6 text-sm text-gray-500">
         <span className="capitalize">{item.content_type}</span>
         <span>·</span>
-        <span>{item.estimated_duration_minutes} dk okuma</span>
+        <span>{item.estimated_duration_minutes} {isTr ? 'dk okuma' : 'min read'}</span>
       </div>
 
       {item.video_url && (
@@ -52,7 +59,7 @@ export default async function EducationDetailPage({ params }: { params: { slug: 
         </div>
       )}
 
-      <div className="prose prose-education dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: item.body_tr }} />
+      <div className="prose prose-education dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: body }} />
     </div>
   );
 }

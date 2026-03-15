@@ -23,6 +23,22 @@ export interface EditorAuthor {
   verified_at: string | null; is_active: boolean;
 }
 
+export interface EditorArticleDetail {
+  id: string; slug: string; title_tr: string; title_en: string;
+  excerpt_tr: string; excerpt_en: string;
+  body_tr: string; body_en: string;
+  featured_image: string | null; category: string | null; category_name: string | null;
+  status: string; is_featured: boolean; published_at: string | null;
+  seo_title_tr: string; seo_title_en: string;
+  seo_description_tr: string; seo_description_en: string;
+  created_at: string; updated_at: string;
+  reviews: Array<{
+    id: string; review_type: string; reviewer_name: string;
+    overall_score: number; decision: string; feedback: string;
+    created_at: string;
+  }>;
+}
+
 export interface ReviewInput {
   medical_accuracy_score: number; language_quality_score: number; seo_score: number;
   style_compliance_score: number; ethics_score: number; decision: string; feedback: string;
@@ -38,13 +54,34 @@ export function useReviewQueueStats() {
 
 export function useEditorArticles(params?: { status?: string; search?: string }) {
   return useQuery<EditorArticle[]>({ queryKey: ['editor-articles', params],
-    queryFn: async () => { const { data } = await api.get('/doctor/editor/articles/', { params }); return data; },
+    queryFn: async () => { const { data } = await api.get('/doctor/editor/articles/', { params }); return Array.isArray(data) ? data : data.results || []; },
   });
 }
 
 export function useEditorNews(params?: { status?: string; search?: string }) {
   return useQuery<EditorNews[]>({ queryKey: ['editor-news', params],
-    queryFn: async () => { const { data } = await api.get('/doctor/editor/news/', { params }); return data; },
+    queryFn: async () => { const { data } = await api.get('/doctor/editor/news/', { params }); return Array.isArray(data) ? data : data.results || []; },
+  });
+}
+
+export function useEditorArticleDetail(id: string) {
+  return useQuery<EditorArticleDetail>({ queryKey: ['editor-article', id],
+    queryFn: async () => { const { data } = await api.get('/doctor/editor/articles/' + id + '/'); return data; },
+    enabled: !!id,
+  });
+}
+
+export function useEditorArticleUpdate() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...payload }: { id: string; title_tr?: string; title_en?: string; body_tr?: string; body_en?: string; excerpt_tr?: string; excerpt_en?: string; seo_title_tr?: string; seo_description_tr?: string }) => {
+      const { data } = await api.patch('/doctor/editor/articles/' + id + '/', payload);
+      return data;
+    },
+    onSuccess: (_d, vars) => {
+      qc.invalidateQueries({ queryKey: ['editor-article', vars.id] });
+      qc.invalidateQueries({ queryKey: ['editor-articles'] });
+    },
   });
 }
 
@@ -78,7 +115,7 @@ export function useEditorNewsTransition() {
 
 export function useEditorAuthors() {
   return useQuery<EditorAuthor[]>({ queryKey: ['editor-authors'],
-    queryFn: async () => { const { data } = await api.get('/doctor/editor/authors/'); return data; },
+    queryFn: async () => { const { data } = await api.get('/doctor/editor/authors/'); return Array.isArray(data) ? data : data.results || []; },
   });
 }
 

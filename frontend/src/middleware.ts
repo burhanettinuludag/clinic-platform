@@ -4,23 +4,17 @@ import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
 
-// Protected routes - auth required
-const PROTECTED_PREFIXES = ['/patient', '/doctor', '/editor', '/caregiver', '/relative'];
-// Role-based routes
-const ROLE_ROUTES: Record<string, string[]> = {
-  '/doctor/site-settings': ['admin'],
-  '/doctor': ['doctor', 'admin'],
-  '/editor': ['doctor', 'admin'],
-  '/caregiver': ['caregiver', 'admin'],
-  '/relative': ['relative', 'admin'],
-  '/patient': ['patient', 'doctor', 'admin'],
-};
-// Public routes (no auth needed)
-const PUBLIC_PREFIXES = ['/blog', '/news', '/doctors', '/education', '/contact', '/auth'];
+// ============================================
+// LAUNCH MODE (production only):
+// Sadece news sayfaları açık, diğerleri "Yakında"ya yönlendirilir
+// Lokal geliştirmede tüm sayfalar açık kalır
+// ============================================
+
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const ALLOWED_PREFIXES = ['/news', '/yakinda', '/coming-soon'];
 
 function getPathWithoutLocale(pathname: string): string {
   const segments = pathname.split('/');
-  // Remove locale segment (e.g., /tr/patient -> /patient)
   if (segments.length > 1 && segments[1].length === 2) {
     return '/' + segments.slice(2).join('/');
   }
@@ -29,37 +23,21 @@ function getPathWithoutLocale(pathname: string): string {
 
 export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  const pathWithoutLocale = getPathWithoutLocale(pathname);
 
-  // Check if protected route
-  const isProtected = PROTECTED_PREFIXES.some(p => pathWithoutLocale.startsWith(p));
+  // Production'da launch mode: sadece izin verilen sayfalar açık
+  if (IS_PRODUCTION) {
+    const pathWithoutLocale = getPathWithoutLocale(pathname);
+    const isAllowed = ALLOWED_PREFIXES.some(p => pathWithoutLocale.startsWith(p));
+    const isRoot = pathWithoutLocale === '/' || pathWithoutLocale === '';
 
-  if (isProtected) {
-    // Check for auth token in cookies
-    const token = request.cookies.get('access_token')?.value
-      || request.cookies.get('token')?.value;
-
-    if (!token) {
-      // Redirect to login with return URL
+    if (!isAllowed && (isRoot || pathWithoutLocale.length > 1)) {
       const locale = pathname.split('/')[1] || 'tr';
-      const loginUrl = new URL(`/${locale}/auth/login`, request.url);
-      loginUrl.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    // Role check via cookie (set at login)
-    const userRole = request.cookies.get('user_role')?.value;
-    if (userRole) {
-      for (const [prefix, roles] of Object.entries(ROLE_ROUTES)) {
-        if (pathWithoutLocale.startsWith(prefix) && !roles.includes(userRole)) {
-          const locale = pathname.split('/')[1] || 'tr';
-          return NextResponse.redirect(new URL(`/${locale}`, request.url));
-        }
-      }
+      const validLocales = ['tr', 'en'];
+      const loc = validLocales.includes(locale) ? locale : 'tr';
+      return NextResponse.redirect(new URL(`/${loc}/yakinda`, request.url));
     }
   }
 
-  // Run intl middleware for all requests
   return intlMiddleware(request);
 }
 

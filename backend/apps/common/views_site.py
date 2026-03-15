@@ -73,7 +73,7 @@ class PublicFeatureFlagsView(generics.ListAPIView):
     pagination_class = None
 
     def get_queryset(self):
-        return FeatureFlag.objects.all()
+        return FeatureFlag.objects.filter(is_public=True)
 
 
 # ============================

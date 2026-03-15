@@ -12,7 +12,7 @@ services:
     environment:
       POSTGRES_DB: norosera_prod
       POSTGRES_USER: norosera
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-DX0s6DqRprjDc9oVePALs3RZGrhnBaLG}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD environment variable is required}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U norosera -d norosera_prod"]
       interval: 10s
@@ -24,11 +24,11 @@ services:
   redis:
     image: redis:7-alpine
     restart: always
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru --requirepass ${REDIS_PASSWORD:?REDIS_PASSWORD environment variable is required}
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5

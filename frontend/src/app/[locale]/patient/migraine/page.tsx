@@ -34,7 +34,7 @@ export default function MigrainePage() {
             href="/patient/migraine/education"
             className="flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 text-sm font-medium rounded-lg hover:bg-purple-200 transition"
           >
-            <BookOpen className="w-4 h-4" /> Egitim
+            <BookOpen className="w-4 h-4" /> Eğitim
           </Link>
           <button
             onClick={() => setShowForm(true)}
@@ -54,8 +54,8 @@ export default function MigrainePage() {
           <Bot className="w-4 h-4 text-purple-600" />
         </div>
         <div className="flex-1">
-          <div className="text-sm font-medium text-purple-900">AI Saglik Asistani</div>
-          <div className="text-xs text-purple-600">Migrenle ilgili sorularinizi yapayzekaya sorun</div>
+          <div className="text-sm font-medium text-purple-900">AI Sağlık Asistanı</div>
+          <div className="text-xs text-purple-600">Migrenle ilgili sorularınızı yapay zekaya sorun</div>
         </div>
         <ChevronRight className="w-4 h-4 text-purple-400" />
       </Link>
@@ -177,7 +177,7 @@ function AttackForm({ onClose }: { onClose: () => void }) {
 
       {/* Symptoms toggles */}
       <div className="mb-4">
-        <label className="block text-xs text-gray-500 mb-2">Eslik eden semptomlar</label>
+        <label className="block text-xs text-gray-500 mb-2">Eşlik eden semptomlar</label>
         <div className="flex flex-wrap gap-2">
           {(['has_aura', 'has_nausea', 'has_vomiting', 'has_photophobia', 'has_phonophobia'] as const).map((key) => {
             const labelKey = key.replace('has_', '') as 'aura' | 'nausea' | 'vomiting' | 'photophobia' | 'phonophobia';
@@ -324,7 +324,7 @@ function StatsView() {
     <div className="space-y-6">
       {/* Chart */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-semibold mb-4">Aylik Atak Grafigi</h3>
+        <h3 className="text-sm font-semibold mb-4">Aylık Atak Grafiği</h3>
         <MigraineChart months={6} />
       </div>
 
@@ -338,7 +338,7 @@ function StatsView() {
           <div className="text-2xl font-bold text-red-600">{stats.attacks_this_month}</div>
           {stats.attacks_last_month > 0 && (
             <div className="text-xs text-gray-400 mt-1">
-              (Gecen ay: {stats.attacks_last_month})
+              (Geçen ay: {stats.attacks_last_month})
             </div>
           )}
         </div>

@@ -10,6 +10,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.html import strip_tags
 from .models import CustomUser, PatientProfile, DoctorProfile, RelativeInvitation
@@ -20,6 +21,7 @@ from .serializers import (
     UserSerializer,
     PatientProfileSerializer,
     DoctorProfileSerializer,
+    DoctorApplicationSerializer,
     ChangePasswordSerializer,
     InviteRelativeSerializer,
     VerifyInvitationSerializer,
@@ -36,9 +38,29 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
+        # Recaptcha verification
+        if not verify_recaptcha(request.data.get('recaptcha_token'), 'register'):
+            return Response(
+                {'error': 'Bot korumasi dogrulanamadi. Sayfayi yenileyip tekrar deneyin.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+
+        # Doctor registration: don't return tokens, return pending message
+        if user.role == CustomUser.Role.DOCTOR:
+            return Response(
+                {
+                    'status': 'pending_approval',
+                    'message': 'Doktor basvurunuz alindi. Onaylandiktan sonra e-posta ile bilgilendirileceksiniz.',
+                    'user': UserSerializer(user).data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+
+        # Non-doctor: return tokens as before
         refresh = RefreshToken.for_user(user)
         return Response(
             {
@@ -50,14 +72,6 @@ class RegisterView(generics.CreateAPIView):
             },
             status=status.HTTP_201_CREATED,
         )
-
-    def create(self, request, *args, **kwargs):
-        if not verify_recaptcha(request.data.get('recaptcha_token'), 'register'):
-            return Response(
-                {'error': 'Bot korumasi dogrulanamadi. Sayfayi yenileyip tekrar deneyin.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        return super().create(request, *args, **kwargs)
 
 
 
@@ -324,3 +338,125 @@ class RegisterRelativeView(APIView):
                 'access': str(refresh.access_token),
             },
         }, status=status.HTTP_201_CREATED)
+
+
+# ==================== DOCTOR APPROVAL ====================
+
+def _notify_doctor_approved(profile):
+    """Create in-app notification and send email to approved doctor."""
+    try:
+        from apps.notifications.models import Notification
+        from apps.notifications.email_service import send_notification_email
+
+        notification = Notification.objects.create(
+            recipient=profile.user,
+            notification_type='system',
+            title_tr='Doktor Basvurunuz Onaylandi',
+            title_en='Your Doctor Application is Approved',
+            message_tr='Tebrikler! Doktor basvurunuz onaylandi. Artik sisteme giris yapabilirsiniz.',
+            message_en='Congratulations! Your doctor application has been approved. You can now log in.',
+            action_url='/auth/login',
+        )
+        send_notification_email(notification)
+    except Exception as e:
+        logger.error(f"Doctor approval notification failed: {e}")
+
+
+def _notify_doctor_rejected(profile, reason):
+    """Create notification and send email for rejected doctor."""
+    try:
+        from apps.notifications.models import Notification
+        from apps.notifications.email_service import send_notification_email
+
+        reason_text_tr = f' Sebep: {reason}' if reason else ''
+        reason_text_en = f' Reason: {reason}' if reason else ''
+
+        notification = Notification.objects.create(
+            recipient=profile.user,
+            notification_type='system',
+            title_tr='Doktor Basvurunuz Reddedildi',
+            title_en='Your Doctor Application was Rejected',
+            message_tr=f'Doktor basvurunuz reddedildi.{reason_text_tr}',
+            message_en=f'Your doctor application was rejected.{reason_text_en}',
+        )
+        send_notification_email(notification)
+    except Exception as e:
+        logger.error(f"Doctor rejection notification failed: {e}")
+
+
+class DoctorApplicationListView(generics.ListAPIView):
+    """Admin: list doctor applications with filtering."""
+    serializer_class = DoctorApplicationSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get_queryset(self):
+        qs = DoctorProfile.objects.select_related('user').order_by('-created_at')
+        status_filter = self.request.query_params.get('status')
+        if status_filter:
+            qs = qs.filter(approval_status=status_filter)
+        search = self.request.query_params.get('search')
+        if search:
+            qs = qs.filter(
+                Q(user__first_name__icontains=search) |
+                Q(user__last_name__icontains=search) |
+                Q(user__email__icontains=search) |
+                Q(license_number__icontains=search)
+            )
+        return qs
+
+
+class DoctorApplicationApproveView(generics.GenericAPIView):
+    """Admin: approve a doctor application."""
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def post(self, request, pk):
+        try:
+            profile = DoctorProfile.objects.select_related('user').get(pk=pk)
+        except DoctorProfile.DoesNotExist:
+            return Response({'error': 'Profil bulunamadi.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if profile.approval_status == 'approved':
+            return Response({'error': 'Bu doktor zaten onaylanmis.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        profile.approval_status = DoctorProfile.ApprovalStatus.APPROVED
+        profile.approved_by = request.user
+        profile.approved_at = timezone.now()
+        profile.rejection_reason = ''
+        profile.save(update_fields=['approval_status', 'approved_by', 'approved_at', 'rejection_reason'])
+
+        # Activate the user account
+        user = profile.user
+        user.is_active = True
+        user.save(update_fields=['is_active'])
+
+        # Send notification
+        _notify_doctor_approved(profile)
+
+        return Response({
+            'status': 'approved',
+            'message': f'Dr. {user.get_full_name()} onaylandi.',
+        })
+
+
+class DoctorApplicationRejectView(generics.GenericAPIView):
+    """Admin: reject a doctor application."""
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def post(self, request, pk):
+        try:
+            profile = DoctorProfile.objects.select_related('user').get(pk=pk)
+        except DoctorProfile.DoesNotExist:
+            return Response({'error': 'Profil bulunamadi.'}, status=status.HTTP_404_NOT_FOUND)
+
+        reason = request.data.get('reason', '')
+        profile.approval_status = DoctorProfile.ApprovalStatus.REJECTED
+        profile.rejection_reason = reason
+        profile.save(update_fields=['approval_status', 'rejection_reason'])
+
+        # Send notification
+        _notify_doctor_rejected(profile, reason)
+
+        return Response({
+            'status': 'rejected',
+            'message': f'Dr. {profile.user.get_full_name()} basvurusu reddedildi.',
+        })

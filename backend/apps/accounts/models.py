@@ -1,9 +1,11 @@
 from uuid import uuid4
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 from apps.common.models import TimeStampedModel
+from apps.common.validators import validate_image_file_size, validate_document_file_size
 
 
 class CustomUserManager(BaseUserManager):
@@ -94,6 +96,11 @@ class PatientProfile(TimeStampedModel):
 
 
 class DoctorProfile(TimeStampedModel):
+    class ApprovalStatus(models.TextChoices):
+        PENDING = 'pending', 'Onay Bekliyor'
+        APPROVED = 'approved', 'Onaylandi'
+        REJECTED = 'rejected', 'Reddedildi'
+
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
@@ -103,6 +110,26 @@ class DoctorProfile(TimeStampedModel):
     license_number = models.CharField(max_length=50, blank=True, default='')
     bio = models.TextField(blank=True, default='')
     is_accepting_patients = models.BooleanField(default=True)
+
+    # Approval fields
+    approval_status = models.CharField(
+        max_length=10,
+        choices=ApprovalStatus.choices,
+        default=ApprovalStatus.PENDING,
+    )
+    approved_by = models.ForeignKey(
+        CustomUser,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='approved_doctors',
+    )
+    approved_at = models.DateTimeField(null=True, blank=True)
+    rejection_reason = models.TextField(blank=True, default='')
+
+    @property
+    def is_approved(self):
+        return self.approval_status == self.ApprovalStatus.APPROVED
 
     def __str__(self):
         return f"Dr. {self.user.get_full_name()}"
@@ -239,8 +266,20 @@ class DoctorAuthor(TimeStampedModel):
     average_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0)
     is_verified = models.BooleanField(default=False)
     verified_at = models.DateTimeField(null=True, blank=True)
-    verification_document = models.FileField(upload_to='doctor_verification/', blank=True)
-    profile_photo = models.ImageField(upload_to='doctor_photos/', blank=True)
+    verification_document = models.FileField(
+        upload_to='doctor_verification/', blank=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx']),
+            validate_document_file_size,
+        ],
+    )
+    profile_photo = models.ImageField(
+        upload_to='doctor_photos/', blank=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp']),
+            validate_image_file_size,
+        ],
+    )
     linkedin_url = models.URLField(blank=True, default='')
     website_url = models.URLField(blank=True, default='')
     is_active = models.BooleanField(default=True)

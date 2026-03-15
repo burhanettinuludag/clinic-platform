@@ -1,0 +1,91 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash hooks/pre-tool-use/block-dangerous.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash hooks/pre-tool-use/check-secrets.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash hooks/post-tool-use/auto-lint.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash(python manage.py makemigrations)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash hooks/post-tool-use/verify-migration.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash hooks/stop/check-content-length.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "Review the changes made in this session. Check: 1) All modified Django models have migrations. 2) All new API views have permission_classes. 3) All TypeScript files pass type checking. 4) No secrets or patient data exposed in code. 5) User-facing strings are in Turkish. 6) CONTENT LENGTH CHECK: If any blog post, article, or content file was created/modified, verify it meets minimum character requirements: blog >= 3000 chars, medikal makale >= 5000 chars, rehber >= 8000 chars. If content is too short, report EXACTLY how many characters are missing and suggest which sections to add (SSS, klinik örnekler, tedavi detayları, ne zaman doktora başvurmalı). Report any issues found. $ARGUMENTS",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash hooks/stop/notify-done.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash hooks/session-start/load-context.sh"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash hooks/notification/desktop-notify.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

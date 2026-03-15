@@ -5,11 +5,16 @@ import Cookies from 'js-cookie';
 import api from '@/lib/api';
 import { User, LoginResponse } from '@/lib/types/user';
 
+interface RegisterResult {
+  user: User;
+  status?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<User>;
-  register: (data: Record<string, string>) => Promise<User>;
+  register: (data: Record<string, string>) => Promise<RegisterResult>;
   logout: () => void;
 }
 
@@ -47,13 +52,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return data.user;
   };
 
-  const register = async (formData: Record<string, string>): Promise<User> => {
-    const { data } = await api.post<LoginResponse>('/auth/register/', formData);
+  const register = async (formData: Record<string, string>): Promise<RegisterResult> => {
+    const { data } = await api.post('/auth/register/', formData);
+
+    // Doctor registration: no tokens returned, pending approval
+    if (data.status === 'pending_approval') {
+      return { user: data.user, status: 'pending_approval' };
+    }
+
+    // Normal registration: tokens returned
     Cookies.set('access_token', data.tokens.access);
     Cookies.set('refresh_token', data.tokens.refresh);
     Cookies.set('user_role', data.user.role);
     setUser(data.user);
-    return data.user;
+    return { user: data.user };
   };
 
   const logout = () => {

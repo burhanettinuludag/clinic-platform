@@ -4,17 +4,17 @@ import Link from 'next/link';
 import { Calendar, User, Tag } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Blog - Norosera | Noroloji Saglik Rehberi',
-  description: 'Noroloji alaninda uzman doktorlar tarafindan hazirlanan guncel saglik icerikleri, makale ve rehberler.',
+  title: 'Blog - Norosera | Nöroloji Sağlık Rehberi',
+  description: 'Nöroloji alanında uzman doktorlar tarafından hazırlanan güncel sağlık içerikleri, makale ve rehberler.',
   openGraph: {
     title: 'Blog - Norosera',
-    description: 'Noroloji alaninda guncel saglik icerikleri ve rehberler.',
+    description: 'Nöroloji alanında güncel sağlık içerikleri ve rehberler.',
     type: 'website',
   },
 };
 
-function fmtDate(d: string) {
-  return new Date(d).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+function fmtDate(d: string, locale: string = 'tr') {
+  return new Date(d).toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 function JsonLd() {
@@ -22,7 +22,7 @@ function JsonLd() {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: 'Norosera Blog',
-    description: 'Noroloji alaninda uzman icerikleri',
+    description: 'Nöroloji alanında uzman içerikleri',
     publisher: {
       '@type': 'Organization',
       name: 'Norosera',
@@ -38,12 +38,14 @@ export default async function BlogPage({ params }: { params: { locale: string } 
     getCategories(params.locale),
   ]);
 
+  const isTr = params.locale === 'tr';
+
   return (
     <>
       <JsonLd />
       <div className="max-w-6xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Blog</h1>
-        <p className="text-gray-500 mb-8">Saglik hakkinda guncel icerikler ve bilgiler.</p>
+        <p className="text-gray-500 mb-8">{isTr ? 'Sağlık hakkında güncel içerikler ve bilgiler.' : 'Current health content and information.'}</p>
 
         {categories && categories.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-8">
@@ -62,7 +64,7 @@ export default async function BlogPage({ params }: { params: { locale: string } 
                 className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition">
                 {article.featured_image && (
                   <div className="aspect-video bg-gray-100 overflow-hidden">
-                    <img src={article.featured_image} alt={article.title_tr || article.title} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                    <img src={article.featured_image} alt={isTr ? (article.title_tr || article.title) : (article.title_en || article.title_tr || article.title)} className="w-full h-full object-cover group-hover:scale-105 transition" />
                   </div>
                 )}
                 <div className="p-5">
@@ -72,17 +74,17 @@ export default async function BlogPage({ params }: { params: { locale: string } 
                     </span>
                   )}
                   <h2 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition mb-2">
-                    {article.title_tr || article.title}
+                    {isTr ? (article.title_tr || article.title) : (article.title_en || article.title_tr || article.title)}
                   </h2>
                   {(article.excerpt_tr || article.excerpt) && (
-                    <p className="text-sm text-gray-500 line-clamp-2 mb-3">{article.excerpt_tr || article.excerpt}</p>
+                    <p className="text-sm text-gray-500 line-clamp-2 mb-3">{isTr ? (article.excerpt_tr || article.excerpt) : (article.excerpt_en || article.excerpt_tr || article.excerpt)}</p>
                   )}
                   <div className="flex items-center gap-4 text-xs text-gray-400">
                     {article.author_name && (
                       <span className="flex items-center gap-1"><User className="w-3 h-3" /> {article.author_name}</span>
                     )}
                     {article.published_at && (
-                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {fmtDate(article.published_at)}</span>
+                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {fmtDate(article.published_at, params.locale)}</span>
                     )}
                   </div>
                 </div>
@@ -90,7 +92,7 @@ export default async function BlogPage({ params }: { params: { locale: string } 
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 text-gray-500">Henuz icerik bulunmuyor.</div>
+          <div className="text-center py-12 text-gray-500">{isTr ? 'Henüz içerik bulunmuyor.' : 'No content available yet.'}</div>
         )}
       </div>
     </>

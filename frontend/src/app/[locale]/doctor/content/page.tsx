@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
 import {
@@ -11,12 +11,21 @@ import {
   AlertTriangle,
   Loader2,
   ChevronDown,
+  Eye,
+  Copy,
+  Check,
+  Clock,
+  BookOpen,
+  MessageSquare,
+  GraduationCap,
 } from 'lucide-react';
 
 interface GenerateResult {
   success: boolean;
   article_id?: string;
   title?: string;
+  body_tr?: string;
+  excerpt_tr?: string;
   seo_title?: string;
   legal_approved?: boolean;
   legal_score?: number;
@@ -31,8 +40,8 @@ const MODULE_OPTIONS = [
   { value: 'migraine', label: 'Migren' },
   { value: 'epilepsy', label: 'Epilepsi' },
   { value: 'dementia', label: 'Demans' },
-  { value: 'wellness', label: 'Sağlıklı Yaşam' },
-  { value: 'general', label: 'Genel Nöroloji' },
+  { value: 'wellness', label: 'Saglikli Yasam' },
+  { value: 'general', label: 'Genel Noroloji' },
 ];
 
 const AUDIENCE_OPTIONS = [
@@ -42,9 +51,15 @@ const AUDIENCE_OPTIONS = [
 ];
 
 const CONTENT_TYPE_OPTIONS = [
-  { value: 'blog', label: 'Blog Yazısı' },
-  { value: 'education', label: 'Eğitim İçeriği' },
-  { value: 'social', label: 'Sosyal Medya' },
+  { value: 'blog', label: 'Blog Yazisi', icon: BookOpen, desc: 'Detayli bilgilendirme yazisi' },
+  { value: 'education', label: 'Egitim Icerigi', icon: GraduationCap, desc: 'Maddeler halinde egitim materyali' },
+  { value: 'social', label: 'Sosyal Medya', icon: MessageSquare, desc: 'Kisa sosyal medya postu' },
+];
+
+const LENGTH_OPTIONS = [
+  { value: 'short', label: 'Kisa', desc: '2-3 dk okuma', words: '400-600 kelime' },
+  { value: 'medium', label: 'Orta', desc: '~5 dk okuma', words: '800-1200 kelime' },
+  { value: 'long', label: 'Uzun', desc: '8-10 dk okuma', words: '1500-2000 kelime' },
 ];
 
 const TONE_OPTIONS = [
@@ -57,9 +72,13 @@ export default function GenerateContentPage() {
   const [module, setModule] = useState('general');
   const [audience, setAudience] = useState('patient');
   const [contentType, setContentType] = useState('blog');
+  const [contentLength, setContentLength] = useState('medium');
   const [tone, setTone] = useState('friendly');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [result, setResult] = useState<GenerateResult | null>(null);
+  const [showPreview, setShowPreview] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
 
   const generateMutation = useMutation({
     mutationFn: async () => {
@@ -68,17 +87,23 @@ export default function GenerateContentPage() {
         module,
         audience,
         content_type: contentType,
+        content_length: contentLength,
         tone,
       });
       return data as GenerateResult;
     },
     onSuccess: (data) => {
       setResult(data);
+      setShowPreview(true);
+      // Scroll to preview
+      setTimeout(() => {
+        previewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 200);
     },
     onError: (error: any) => {
       setResult({
         success: false,
-        error: error.response?.data?.error || 'Bir hata oluştu',
+        error: error.response?.data?.error || 'Bir hata olustu',
       });
     },
   });
@@ -90,27 +115,51 @@ export default function GenerateContentPage() {
     generateMutation.mutate();
   };
 
+  const handleCopyContent = async () => {
+    if (result?.body_tr) {
+      await navigator.clipboard.writeText(result.body_tr);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   const stepLabels: Record<string, string> = {
-    content_agent: 'İçerik Üretimi',
+    content_agent: 'Icerik Uretimi',
     seo_agent: 'SEO Optimizasyonu',
     legal_agent: 'Hukuki Kontrol',
   };
 
+  // Simple markdown to HTML renderer
+  const renderMarkdown = (md: string) => {
+    if (!md) return '';
+    return md
+      .replace(/^### (.*$)/gm, '<h3 class="text-lg font-semibold text-gray-900 mt-4 mb-2">$1</h3>')
+      .replace(/^## (.*$)/gm, '<h2 class="text-xl font-bold text-gray-900 mt-6 mb-3">$1</h2>')
+      .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold text-gray-900 mt-6 mb-3">$1</h1>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/^- (.*$)/gm, '<li class="ml-4 list-disc text-gray-700">$1</li>')
+      .replace(/^(\d+)\. (.*$)/gm, '<li class="ml-4 list-decimal text-gray-700">$2</li>')
+      .replace(/\n\n/g, '</p><p class="text-gray-700 leading-relaxed mb-3">')
+      .replace(/\n/g, '<br/>')
+      ;
+  };
+
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <Sparkles className="h-6 w-6 text-purple-600" />
-          İçerik Üret
+          Icerik Uret
         </h1>
         <p className="mt-1 text-sm text-gray-500">
-          AI destekli içerik üretimi. Üretilen içerik taslak olarak kaydedilir,
-          yayınlamadan önce incelemeniz gerekir.
+          AI destekli icerik uretimi. Icerik tipini ve uzunlugunu belirleyin,
+          uretilen icerigi hemen onizleyin.
         </p>
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {/* Konu */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -120,49 +169,89 @@ export default function GenerateContentPage() {
             type="text"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            placeholder="Örn: Migren atağı sırasında ne yapmalı"
+            placeholder="Orn: Migren atagi sirasinda ne yapmali"
             className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             required
           />
         </div>
 
-        {/* Modül ve İçerik Tipi */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Hastalık Modülü
-            </label>
-            <select
-              value={module}
-              onChange={(e) => setModule(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              {MODULE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              İçerik Tipi
-            </label>
-            <select
-              value={contentType}
-              onChange={(e) => setContentType(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              {CONTENT_TYPE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+        {/* Modul */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Hastalik Modulu
+          </label>
+          <select
+            value={module}
+            onChange={(e) => setModule(e.target.value)}
+            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            {MODULE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Icerik Tipi - Kart secimi */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Icerik Tipi
+          </label>
+          <div className="grid grid-cols-3 gap-3">
+            {CONTENT_TYPE_OPTIONS.map((opt) => {
+              const Icon = opt.icon;
+              const isSelected = contentType === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setContentType(opt.value)}
+                  className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all ${
+                    isSelected
+                      ? 'border-purple-500 bg-purple-50 text-purple-700'
+                      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <Icon className={`h-6 w-6 ${isSelected ? 'text-purple-600' : 'text-gray-400'}`} />
+                  <span className="text-sm font-medium">{opt.label}</span>
+                  <span className="text-xs opacity-70">{opt.desc}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Gelişmiş Seçenekler */}
+        {/* Uzunluk - Kart secimi */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Icerik Uzunlugu
+          </label>
+          <div className="grid grid-cols-3 gap-3">
+            {LENGTH_OPTIONS.map((opt) => {
+              const isSelected = contentLength === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setContentLength(opt.value)}
+                  className={`flex flex-col items-center gap-1 rounded-xl border-2 p-4 transition-all ${
+                    isSelected
+                      ? 'border-blue-500 bg-blue-50 text-blue-700'
+                      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <Clock className={`h-5 w-5 mb-1 ${isSelected ? 'text-blue-600' : 'text-gray-400'}`} />
+                  <span className="text-sm font-semibold">{opt.label}</span>
+                  <span className="text-xs opacity-70">{opt.desc}</span>
+                  <span className="text-[10px] opacity-50">{opt.words}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Gelismis Secenekler */}
         <button
           type="button"
           onClick={() => setShowAdvanced(!showAdvanced)}
@@ -171,7 +260,7 @@ export default function GenerateContentPage() {
           <ChevronDown
             className={`h-4 w-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`}
           />
-          Gelişmiş Seçenekler
+          Gelismis Secenekler
         </button>
 
         {showAdvanced && (
@@ -211,7 +300,7 @@ export default function GenerateContentPage() {
           </div>
         )}
 
-        {/* Üret Butonu */}
+        {/* Uret Butonu */}
         <button
           type="submit"
           disabled={generateMutation.isPending || !topic.trim()}
@@ -220,12 +309,12 @@ export default function GenerateContentPage() {
           {generateMutation.isPending ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              Üretiliyor... (10-15 saniye)
+              Uretiliyor... (10-15 saniye)
             </>
           ) : (
             <>
               <Sparkles className="h-5 w-5" />
-              İçerik Üret
+              Icerik Uret
             </>
           )}
         </button>
@@ -235,7 +324,7 @@ export default function GenerateContentPage() {
       {generateMutation.isPending && (
         <div className="mt-6 rounded-lg border border-purple-200 bg-purple-50 p-4">
           <p className="text-sm font-medium text-purple-800 mb-3">
-            Pipeline çalışıyor...
+            Pipeline calisiyor...
           </p>
           <div className="space-y-2">
             {['content_agent', 'seo_agent', 'legal_agent'].map((step) => (
@@ -248,20 +337,20 @@ export default function GenerateContentPage() {
         </div>
       )}
 
-      {/* Sonuç */}
+      {/* Sonuc */}
       {result && (
-        <div className="mt-6 space-y-4">
-          {/* Başarı / Hata */}
+        <div ref={previewRef} className="mt-6 space-y-4">
+          {/* Basari / Hata */}
           {result.success ? (
             <div className="rounded-lg border border-green-200 bg-green-50 p-4">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-5 w-5 text-green-600" />
                 <span className="font-medium text-green-800">
-                  İçerik başarıyla üretildi!
+                  Icerik basariyla uretildi!
                 </span>
               </div>
               <p className="mt-1 text-sm text-green-700">
-                Taslak olarak kaydedildi. Yayınlamadan önce incelemeniz gerekir.
+                Taslak olarak kaydedildi. Asagida onizleyebilir, editorden duzenleme yapabilirsiniz.
               </p>
             </div>
           ) : (
@@ -277,32 +366,75 @@ export default function GenerateContentPage() {
           {/* Detaylar */}
           {result.success && (
             <>
-              {/* Başlık ve SEO */}
-              <div className="rounded-lg border bg-white p-4 space-y-3">
-                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-blue-600" />
-                  Üretilen İçerik
-                </h3>
-                <div>
-                  <span className="text-xs font-medium text-gray-500">Başlık</span>
-                  <p className="text-gray-900">{result.title}</p>
+              {/* Icerik Onizleme */}
+              <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+                <div className="flex items-center justify-between border-b border-gray-200 px-5 py-3 bg-gray-50">
+                  <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                    <Eye className="h-4 w-4 text-blue-600" />
+                    Icerik Onizleme
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleCopyContent}
+                      className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 transition"
+                    >
+                      {copied ? (
+                        <><Check className="h-3.5 w-3.5 text-green-600" /> Kopyalandi</>
+                      ) : (
+                        <><Copy className="h-3.5 w-3.5" /> Kopyala</>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setShowPreview(!showPreview)}
+                      className="text-xs px-3 py-1.5 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 transition"
+                    >
+                      {showPreview ? 'Gizle' : 'Goster'}
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-xs font-medium text-gray-500">SEO Başlık</span>
-                  <p className="text-gray-700">{result.seo_title}</p>
-                </div>
-                {result.keywords && result.keywords.length > 0 && (
-                  <div>
-                    <span className="text-xs font-medium text-gray-500">Anahtar Kelimeler</span>
-                    <div className="mt-1 flex flex-wrap gap-1">
-                      {result.keywords.map((kw, i) => (
-                        <span
-                          key={i}
-                          className="inline-flex rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800"
-                        >
-                          {kw}
-                        </span>
-                      ))}
+
+                {showPreview && (
+                  <div className="p-6">
+                    {/* Baslik */}
+                    <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                      {result.title}
+                    </h1>
+
+                    {/* Ozet */}
+                    {result.excerpt_tr && (
+                      <p className="text-gray-500 italic text-sm mb-4 pb-4 border-b border-gray-100">
+                        {result.excerpt_tr}
+                      </p>
+                    )}
+
+                    {/* Anahtar Kelimeler */}
+                    {result.keywords && result.keywords.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {result.keywords.map((kw, i) => (
+                          <span
+                            key={i}
+                            className="inline-flex rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700"
+                          >
+                            {kw}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Makale Icerik */}
+                    {result.body_tr && (
+                      <article
+                        className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-li:text-gray-700"
+                        dangerouslySetInnerHTML={{
+                          __html: `<p class="text-gray-700 leading-relaxed mb-3">${renderMarkdown(result.body_tr)}</p>`,
+                        }}
+                      />
+                    )}
+
+                    {/* SEO Bilgisi */}
+                    <div className="mt-6 pt-4 border-t border-gray-100">
+                      <div className="text-xs font-medium text-gray-400 mb-1">SEO Basligi</div>
+                      <p className="text-sm text-gray-600">{result.seo_title}</p>
                     </div>
                   </div>
                 )}
@@ -338,7 +470,7 @@ export default function GenerateContentPage() {
                         result.legal_approved ? 'text-green-600' : 'text-red-600'
                       }`}
                     >
-                      {result.legal_approved ? 'Onaylandı' : 'Reddedildi'}
+                      {result.legal_approved ? 'Onaylandi' : 'Reddedildi'}
                     </p>
                   </div>
                 </div>
@@ -363,7 +495,7 @@ export default function GenerateContentPage() {
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   {result.steps_completed?.map((step, i) => (
                     <span key={step} className="flex items-center gap-1">
-                      {i > 0 && <span className="text-gray-300">→</span>}
+                      {i > 0 && <span className="text-gray-300">&rarr;</span>}
                       <CheckCircle className="h-3.5 w-3.5 text-green-500" />
                       {stepLabels[step] || step}
                     </span>

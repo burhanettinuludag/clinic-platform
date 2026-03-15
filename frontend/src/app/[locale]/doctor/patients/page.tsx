@@ -56,7 +56,7 @@ export default function DoctorPatientsPage() {
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          Tumunu Goster
+          Tümünü Göster
         </button>
         <button
           onClick={() => setHasAlerts(true)}
@@ -67,7 +67,7 @@ export default function DoctorPatientsPage() {
           }`}
         >
           <AlertTriangle className="h-4 w-4" />
-          Uyarili Hastalar
+          Uyarılı Hastalar
         </button>
       </div>
 
@@ -75,7 +75,7 @@ export default function DoctorPatientsPage() {
       {!patients || patients.length === 0 ? (
         <div className="text-center py-12">
           <User className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500">Hasta bulunamadi.</p>
+          <p className="text-gray-500">Hasta bulunamadı.</p>
         </div>
       ) : (
         <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -89,13 +89,13 @@ export default function DoctorPatientsPage() {
                   E-posta
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Moduller
+                  Modüller
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Son Aktivite
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Uyarilar
+                  Uyarılar
                 </th>
               </tr>
             </thead>
