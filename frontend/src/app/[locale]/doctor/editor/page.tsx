@@ -146,7 +146,8 @@ function ArticlesTab() {
           <span className="text-sm font-medium text-emerald-700">{sel.length} secili</span>
           <button onClick={() => { bulk.mutate({ ids: sel, action: 'publish' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-green-700 bg-green-100 hover:bg-green-200">Toplu Yayinla</button>
           <button onClick={() => { bulk.mutate({ ids: sel, action: 'archive' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200">Toplu Arsivle</button>
-          <button onClick={() => setSel([])} className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:text-red-800">Temizle</button>
+          <button onClick={() => { if (confirm(`${sel.length} makale silinecek. Emin misiniz?`)) { bulk.mutate({ ids: sel, action: 'delete' }); setSel([]); } }} className="rounded px-2 py-1 text-xs font-medium text-white bg-red-600 hover:bg-red-700">Toplu Sil</button>
+          <button onClick={() => setSel([])} className="rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700">Secimi Kaldir</button>
         </div>
       )}
       {isLoading ? <Ld /> : !articles?.length ? <Mt msg="Makale bulunamadi." />
@@ -194,7 +195,8 @@ function NewsTab() {
           <button onClick={() => { bulk.mutate({ ids: sel, action: 'approve' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200">Toplu Onayla</button>
           <button onClick={() => { bulk.mutate({ ids: sel, action: 'publish' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-green-700 bg-green-100 hover:bg-green-200">Toplu Yayinla</button>
           <button onClick={() => { bulk.mutate({ ids: sel, action: 'archive' }); setSel([]); }} className="rounded px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200">Toplu Arsivle</button>
-          <button onClick={() => setSel([])} className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:text-red-800">Temizle</button>
+          <button onClick={() => { if (confirm(`${sel.length} haber silinecek. Emin misiniz?`)) { bulk.mutate({ ids: sel, action: 'delete' }); setSel([]); } }} className="rounded px-2 py-1 text-xs font-medium text-white bg-red-600 hover:bg-red-700">Toplu Sil</button>
+          <button onClick={() => setSel([])} className="rounded px-2 py-1 text-xs font-medium text-gray-500 hover:text-gray-700">Secimi Kaldir</button>
         </div>
       )}
       {isLoading ? <Ld /> : !news?.length ? <Mt msg="Haber bulunamadi." />

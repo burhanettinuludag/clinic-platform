@@ -655,6 +655,15 @@ class EditorBulkArticleTransitionView(views.APIView):
         feedback = request.data.get('feedback', '')
         if not ids or not action:
             return Response({'detail': 'ids ve action zorunlu.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Kalici silme
+        if action == 'delete':
+            articles = Article.objects.filter(id__in=ids)
+            count = articles.count()
+            articles.delete()
+            logger.info(f"[EDITOR BULK] Articles deleted: {count}, by={request.user.email}")
+            return Response({'detail': f'{count} makale silindi.', 'results': {'deleted': count}})
+
         if action not in self.STATUS_MAP:
             return Response({'detail': f'Gecersiz action: {action}'}, status=status.HTTP_400_BAD_REQUEST)
         new_status = self.STATUS_MAP[action]
@@ -687,6 +696,15 @@ class EditorBulkNewsTransitionView(views.APIView):
         feedback = request.data.get('feedback', '')
         if not ids or not action:
             return Response({'detail': 'ids ve action zorunlu.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Kalici silme
+        if action == 'delete':
+            news_list = NewsArticle.objects.filter(id__in=ids)
+            count = news_list.count()
+            news_list.delete()
+            logger.info(f"[EDITOR BULK] News deleted: {count}, by={request.user.email}")
+            return Response({'detail': f'{count} haber silindi.', 'results': {'deleted': count}})
+
         if action not in self.STATUS_MAP:
             return Response({'detail': f'Gecersiz action: {action}'}, status=status.HTTP_400_BAD_REQUEST)
         new_status = self.STATUS_MAP[action]
