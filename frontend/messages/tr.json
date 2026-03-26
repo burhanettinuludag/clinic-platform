@@ -67,6 +67,7 @@
     "dementia": "Bilişsel Sağlık",
     "epilepsy": "Epilepsi",
     "news": "Haberler",
+    "sleep": "Uyku Sagligi",
     "comingSoon": "Yakında",
     "adminPanel": "Admin Panel",
     "caregiverPanel": "Bakıcı Paneli",
@@ -738,5 +739,77 @@
     "unread": "Okunmamis",
     "replyPlaceholder": "Yanit yazin...",
     "doctorReplyPlaceholder": "Hastaniza yanit yazin..."
+  },
+  "sleep": {
+    "badge": "Uyku Sağlığı Modülü",
+    "hero": {
+      "title": "Uyku Sağlığım",
+      "subtitle": "Uyku bozuklukları, uyku hijyeni, tanı yöntemleri ve hastalıkta uyku hakkında kanıtlara dayalı bilgiler",
+      "articles": "makale",
+      "free": "Ücretsiz Erişim",
+      "evidence": "Kanıtlara Dayalı"
+    },
+    "featured": {
+      "title": "Öne Çıkan Makaleler",
+      "subtitle": "En çok okunan ve önerilen uyku sağlığı içerikleri"
+    },
+    "categories": {
+      "title": "Kategoriler",
+      "articleCount": "makale"
+    },
+    "search": {
+      "placeholder": "Makale ara..."
+    },
+    "articles": {
+      "title": "Tüm Makaleler",
+      "empty": "Bu kategoride henüz makale bulunmuyor."
+    },
+    "tips": {
+      "title": "Uyku İpuçları",
+      "subtitle": "Uyku kalitenizi artırmak için pratik öneriler"
+    },
+    "faq": {
+      "title": "Sıkça Sorulan Sorular"
+    },
+    "disclaimer": {
+      "title": "Önemli Uyarı:",
+      "text": "Bu sayfadaki bilgiler genel sağlık eğitimi amaçlıdır ve tıbbi tavsiye yerine geçmez. Uyku sorununuz varsa mutlaka bir nöroloji veya uyku uzmanı ile görüşün."
+    },
+    "article": {
+      "notFound": "Makale bulunamadı",
+      "backToSleep": "Uyku Sağlığına Dön",
+      "references": "Kaynaklar ve Referanslar",
+      "related": "İlgili Makaleler"
+    },
+    "tests": {
+      "badge": "Uyku Farkındalık Testleri",
+      "backToSleep": "Uyku Sağlığına Dön",
+      "backToTests": "Testlere Dön",
+      "hero": {
+        "title": "Uyku Farkındalık Testleri",
+        "subtitle": "Uyku kalitenizi, gündüz uykululuğunuzu, uykusuzluk ve uyku apnesi riskinizi değerlendirin. Tamamen anonim ve ücretsiz.",
+        "anonymous": "Anonim ve Güvenli",
+        "tests": "test"
+      },
+      "questions": "soru",
+      "minutes": "dk",
+      "question": "Soru",
+      "prev": "Önceki",
+      "next": "Sonraki",
+      "showResult": "Sonucu Gör",
+      "notFound": "Test bulunamadı",
+      "result": {
+        "score": "Puanınız",
+        "low": "Düşük",
+        "high": "Yüksek",
+        "recommendation": "Öneriler",
+        "retake": "Testi Tekrarla",
+        "otherTests": "Diğer Testler"
+      },
+      "disclaimer": {
+        "title": "Önemli Uyarı:",
+        "text": "Bu testler tıbbi tanı aracı değildir. Yalnızca farkındalık amaçlıdır ve profesyonel tıbbi değerlendirmenin yerini tutmaz. Uyku sorunlarınız için mutlaka bir nöroloji veya uyku uzmanına başvurunuz."
+      }
+    }
   }
 }

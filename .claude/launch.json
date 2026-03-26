@@ -10,8 +10,8 @@
     },
     {
       "name": "backend",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["backend/manage.py", "runserver", "0.0.0.0:8000"],
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd backend && source .venv/bin/activate && DJANGO_SETTINGS_MODULE=config.settings.development python3 manage.py runserver 8000"],
       "port": 8000
     },
     {

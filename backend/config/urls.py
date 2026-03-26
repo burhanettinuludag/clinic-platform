@@ -51,6 +51,7 @@ urlpatterns = [
     path('api/v1/gamification/', include('apps.gamification.urls')),
     path('api/v1/social/', include('apps.social.urls')),
     path('api/v1/chat/', include('apps.chat.urls')),
+    path('api/v1/sleep/', include('apps.sleep.urls')),
 ]
 
 # Store & Payments: sadece DEBUG modda aktif (production'da gecici olarak kapali)

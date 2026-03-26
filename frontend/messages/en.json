@@ -67,6 +67,7 @@
     "dementia": "Cognitive Health",
     "epilepsy": "Epilepsy",
     "news": "News",
+    "sleep": "Sleep Health",
     "comingSoon": "Coming Soon",
     "adminPanel": "Admin Panel",
     "caregiverPanel": "Caregiver Panel",
@@ -738,5 +739,77 @@
     "unread": "Unread",
     "replyPlaceholder": "Type your reply...",
     "doctorReplyPlaceholder": "Type your reply to the patient..."
+  },
+  "sleep": {
+    "badge": "Sleep Health Module",
+    "hero": {
+      "title": "My Sleep Health",
+      "subtitle": "Evidence-based information on sleep disorders, sleep hygiene, diagnostic methods and sleep in disease",
+      "articles": "articles",
+      "free": "Free Access",
+      "evidence": "Evidence-Based"
+    },
+    "featured": {
+      "title": "Featured Articles",
+      "subtitle": "Most read and recommended sleep health content"
+    },
+    "categories": {
+      "title": "Categories",
+      "articleCount": "articles"
+    },
+    "search": {
+      "placeholder": "Search articles..."
+    },
+    "articles": {
+      "title": "All Articles",
+      "empty": "No articles found in this category."
+    },
+    "tips": {
+      "title": "Sleep Tips",
+      "subtitle": "Practical tips to improve your sleep quality"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions"
+    },
+    "disclaimer": {
+      "title": "Important Notice:",
+      "text": "The information on this page is for general health education purposes and does not replace medical advice. If you have sleep problems, please consult a neurologist or sleep specialist."
+    },
+    "article": {
+      "notFound": "Article not found",
+      "backToSleep": "Back to Sleep Health",
+      "references": "References",
+      "related": "Related Articles"
+    },
+    "tests": {
+      "badge": "Sleep Awareness Tests",
+      "backToSleep": "Back to Sleep Health",
+      "backToTests": "Back to Tests",
+      "hero": {
+        "title": "Sleep Awareness Tests",
+        "subtitle": "Evaluate your sleep quality, daytime sleepiness, insomnia and sleep apnea risk. Completely anonymous and free.",
+        "anonymous": "Anonymous & Secure",
+        "tests": "tests"
+      },
+      "questions": "questions",
+      "minutes": "min",
+      "question": "Question",
+      "prev": "Previous",
+      "next": "Next",
+      "showResult": "See Result",
+      "notFound": "Test not found",
+      "result": {
+        "score": "Your Score",
+        "low": "Low",
+        "high": "High",
+        "recommendation": "Recommendations",
+        "retake": "Retake Test",
+        "otherTests": "Other Tests"
+      },
+      "disclaimer": {
+        "title": "Important Notice:",
+        "text": "These tests are not diagnostic tools. They are for awareness purposes only and do not replace professional medical evaluation. Please consult a neurologist or sleep specialist for your sleep problems."
+      }
+    }
   }
 }

@@ -330,6 +330,7 @@ Backend (Gunicorn), Frontend (Next.js standalone), PostgreSQL, Redis, Celery Wor
 8. **Store/Payments routes:** Only available in DEBUG mode (not production)
 9. **Token refresh loop:** Check both `access_token` and `token` cookie names in middleware
 10. **Bilingual fields:** Always provide both `_tr` and `_en` variants; serializers resolve by Accept-Language header
+11. **Turkish characters (MANDATORY):** When creating Turkish content (`_tr` fields, seed data, translations, any user-facing Turkish text), ALWAYS use proper Turkish Unicode characters: ğ, ş, ç, ı, ö, ü, İ, Ğ, Ş, Ç, Ö, Ü. NEVER use ASCII equivalents (g instead of ğ, s instead of ş, c instead of ç, i instead of ı, o instead of ö, u instead of ü). This applies to seed/management commands, translation JSON files, and any hardcoded Turkish strings.
 
 ## Testing
 

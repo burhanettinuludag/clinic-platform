@@ -8,9 +8,15 @@ from pathlib import Path
 from datetime import timedelta
 
 from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# .env dosyasını yükle (varsa)
+_env_file = BASE_DIR / '.env'
+if _env_file.exists():
+    load_dotenv(_env_file)
 
 def _get_secret_key():
     key = os.environ.get('DJANGO_SECRET_KEY')
@@ -67,6 +73,7 @@ LOCAL_APPS = [
     'apps.gamification',
     'apps.social',
     'apps.chat',
+    'apps.sleep',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

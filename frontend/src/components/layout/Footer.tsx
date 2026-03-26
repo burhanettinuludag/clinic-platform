@@ -32,9 +32,10 @@ export default function Footer() {
   const quickLinks = [
     { label: t('nav.home'), href: '/' },
     { label: t('nav.education'), href: '/education' },
-    { label: t('nav.store'), href: '/store' },
     { label: t('nav.blog'), href: '/blog' },
     { label: t('nav.news'), href: '/news' },
+    { label: t('nav.sleep'), href: '/sleep' },
+    { label: t('nav.store'), href: '/store' },
     { label: t('nav.contact'), href: '/contact' },
   ];
 
@@ -167,8 +168,8 @@ export default function Footer() {
               </p>
               <p className="text-gray-400 text-xs mt-1">
                 {locale === 'en'
-                  ? 'All rights reserved by UlgarTech. Developer: Prof. Dr. Burhanettin Uluda\u011f'
-                  : 'T\u00fcm haklar\u0131 UlgarTech\u2019a aittir. Geli\u015ftirici: Prof. Dr. Burhanettin Uluda\u011f'}
+                  ? 'All rights reserved. Developer: Prof. Dr. Burhanettin Uluda\u011f'
+                  : 'T\u00fcm haklar\u0131 sakl\u0131d\u0131r. Geli\u015ftirici: Prof. Dr. Burhanettin Uluda\u011f'}
               </p>
             </div>
 
