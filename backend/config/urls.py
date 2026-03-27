@@ -52,6 +52,7 @@ urlpatterns = [
     path('api/v1/social/', include('apps.social.urls')),
     path('api/v1/chat/', include('apps.chat.urls')),
     path('api/v1/sleep/', include('apps.sleep.urls')),
+    path('api/v1/parkinson/', include('apps.parkinson.urls')),
 ]
 
 # Store & Payments: sadece DEBUG modda aktif (production'da gecici olarak kapali)

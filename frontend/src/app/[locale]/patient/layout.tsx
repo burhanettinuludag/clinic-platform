@@ -34,6 +34,7 @@ const sidebarItems = [
   { href: '/patient/migraine', icon: Brain, labelKey: 'migraine', fallback: 'Migren' },
   { href: '/patient/epilepsy', icon: Zap, labelKey: 'epilepsy', fallback: 'Epilepsi' },
   { href: '/patient/dementia', icon: Sparkles, labelKey: 'dementia', fallback: 'Demans' },
+  { href: '/patient/parkinson', icon: Activity, labelKey: 'parkinson', fallback: 'Parkinson' },
   { href: '/patient/ai-assistant', icon: Bot, labelKey: 'aiAssistant', fallback: 'AI Asistan' },
   { href: '/patient/messages', icon: MessageSquare, labelKey: 'messages', fallback: 'Mesajlar' },
   { href: '/patient/wellness', icon: Heart, labelKey: 'wellness', fallback: 'Wellness' },
