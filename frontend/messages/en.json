@@ -42,6 +42,7 @@
     "about": "About",
     "blog": "Blog",
     "education": "Education",
+    "neuromodulation": "Neuromodulation",
     "store": "Store",
     "contact": "Contact",
     "dashboard": "Dashboard",
@@ -126,7 +127,9 @@
       "titleHighlight2": "Manage",
       "subtitle": "Home education, symptom tracking, and physician panel for migraine, epilepsy, Parkinson's, and dementia patients.",
       "cta": "Get Started - Free",
-      "secondaryCta": "For Doctors"
+      "secondaryCta": "For Doctors",
+      "explore": "Explore Platform",
+      "orRegister": "or sign up free"
     },
     "stats": {
       "activeUsers": "Active Users",
@@ -187,10 +190,14 @@
       "epilepsyCta": "Try the Epilepsy module free",
       "parkinson": "Parkinson's",
       "parkinsonDesc": "Monitor your motor symptoms daily",
+      "parkinsonCta": "Try the Parkinson module free",
       "earlyAccess": "Register for Early Access",
       "dementia": "Dementia",
       "dementiaDesc": "15+ cognitive exercises, daily assessment, caregiver notes and screening tests",
       "dementiaCta": "Try the Dementia module free",
+      "sleep": "Sleep Health",
+      "sleepDesc": "Sleep disorders, sleep hygiene, diagnostic methods and disease-related sleep guides",
+      "sleepCta": "Explore the sleep health guide",
       "active": "Active",
       "comingSoon": "Coming Soon",
       "startUsing": "Start Using"

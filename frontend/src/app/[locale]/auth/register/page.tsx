@@ -66,7 +66,12 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const result = await register(formData);
+      const result = await register({
+        ...formData,
+        consent_kvkk: consents.kvkk ? 'true' : 'false',
+        consent_health_data: consents.health_data ? 'true' : 'false',
+        consent_terms: consents.terms ? 'true' : 'false',
+      });
 
       // Doctor registration: show pending approval screen
       if (result.status === 'pending_approval') {

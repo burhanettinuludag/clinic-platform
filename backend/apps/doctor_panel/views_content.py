@@ -1,6 +1,6 @@
 """
-Icerik uretim API endpoint'i.
-Doctor panel'den cagirilir, pipeline'i tetikler.
+İçerik üretim API endpoint'i.
+Doktor panelinden çağırılır, pipeline'ı tetikler.
 
 POST /api/v1/doctor/generate-content/
 GET  /api/v1/doctor/generated-content/  (taslak listesi)
@@ -15,7 +15,7 @@ from apps.common.throttles import AIAgentThrottle
 
 
 class GenerateContentView(APIView):
-    """Icerik uretim pipeline'ini tetikler."""
+    """İçerik üretim pipeline'ını tetikler."""
     permission_classes = [IsAuthenticated, IsDoctor]
     throttle_classes = [AIAgentThrottle]
 
@@ -33,7 +33,7 @@ class GenerateContentView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # FeatureFlag bypass - ajanları dogrudan calistir
+        # FeatureFlag bypass - ajanları doğrudan çalıştır
         from services.base_agent import BaseAgent
         original_is_enabled = BaseAgent.is_enabled
         BaseAgent.is_enabled = lambda self: True
@@ -42,27 +42,40 @@ class GenerateContentView(APIView):
             from services.orchestrator import orchestrator
             import services.agents  # noqa: F401
 
+            is_news = content_type == 'news'
+
+            if is_news:
+                # Haber üretimi: news_agent → seo_agent → legal_agent
+                steps = ['news_agent', 'seo_agent', 'legal_agent']
+                pipeline_name = 'news_pipeline'
+            else:
+                steps = ['content_agent', 'seo_agent', 'legal_agent']
+                pipeline_name = 'publish_article'
+
             result = orchestrator.run_chain(
-                'publish_article',
+                pipeline_name,
                 input_data={
                     'topic': topic,
                     'module': module,
                     'audience': audience,
                     'content_type': content_type,
-                    'tone': tone,
                     'content_length': content_length,
+                    'tone': tone,
+                    'type': 'general',  # news_agent type parameter
                 },
-                steps=['content_agent', 'seo_agent', 'legal_agent'],
+                steps=steps,
                 triggered_by=request.user,
             )
 
             if result.success:
-                # Article modeline draft olarak kaydet
-                article = self._save_as_draft(result.final_data, request.user)
+                if is_news:
+                    saved = self._save_as_news_draft(result.final_data, request.user, module)
+                else:
+                    saved = self._save_as_draft(result.final_data, request.user)
 
                 return Response({
                     'success': True,
-                    'article_id': str(article.id) if article else None,
+                    'article_id': str(saved.id) if saved else None,
                     'title': result.final_data.get('title_tr', ''),
                     'body_tr': result.final_data.get('body_tr', ''),
                     'excerpt_tr': result.final_data.get('excerpt_tr', ''),
@@ -73,6 +86,7 @@ class GenerateContentView(APIView):
                     'keywords': result.final_data.get('keywords_tr', []),
                     'steps_completed': result.steps_completed,
                     'duration_ms': result.total_duration_ms,
+                    'content_type': 'news' if is_news else 'article',
                 })
             else:
                 return Response({
@@ -90,13 +104,11 @@ class GenerateContentView(APIView):
         try:
             from apps.content.models import Article
             from django.utils.text import slugify
-            from django.utils import timezone
             import uuid
 
-            title_tr = data.get('title_tr', 'Basliksiz Icerik')
+            title_tr = data.get('title_tr', 'Başlıksız İçerik')
             slug_base = slugify(title_tr[:80]) or f'icerik-{uuid.uuid4().hex[:8]}'
 
-            # Slug benzersizligi
             slug = slug_base
             counter = 1
             while Article.objects.filter(slug=slug).exists():
@@ -108,7 +120,7 @@ class GenerateContentView(APIView):
                 title_tr=title_tr,
                 title_en=data.get('seo_title_en', title_tr),
                 body_tr=data.get('body_tr', ''),
-                body_en='',  # Translation agent sonra dolduracak
+                body_en='',
                 excerpt_tr=data.get('excerpt_tr', ''),
                 excerpt_en='',
                 author=author,
@@ -121,18 +133,78 @@ class GenerateContentView(APIView):
             return article
         except Exception as e:
             import logging
-            logging.getLogger(__name__).error(f"Article kaydetme hatasi: {e}")
+            logging.getLogger(__name__).error(f"Article kaydetme hatası: {e}")
+            return None
+
+    def _save_as_news_draft(self, data, author, module='general'):
+        """Pipeline sonucunu NewsArticle modeline draft olarak kaydet."""
+        try:
+            from apps.content.models import NewsArticle
+            from apps.patients.models import DiseaseModule
+            from django.utils.text import slugify
+            import uuid
+
+            title_tr = data.get('title_tr', 'Başlıksız Haber')
+            slug_base = slugify(title_tr[:80]) or f'haber-{uuid.uuid4().hex[:8]}'
+
+            slug = slug_base
+            counter = 1
+            while NewsArticle.objects.filter(slug=slug).exists():
+                slug = f'{slug_base}-{counter}'
+                counter += 1
+
+            category = data.get('category', 'popular_science')
+            valid_categories = [c[0] for c in NewsArticle.CATEGORY_CHOICES]
+            if category not in valid_categories:
+                category = 'popular_science'
+
+            # author field: NewsArticle.author -> DoctorAuthor
+            from apps.accounts.models import DoctorAuthor
+            doctor_author = DoctorAuthor.objects.filter(user=author).first()
+
+            news = NewsArticle.objects.create(
+                slug=slug,
+                title_tr=title_tr,
+                title_en=data.get('title_en', title_tr),
+                excerpt_tr=data.get('excerpt_tr', ''),
+                excerpt_en=data.get('excerpt_en', ''),
+                body_tr=data.get('body_tr', ''),
+                body_en=data.get('body_en', ''),
+                category=category,
+                priority='medium',
+                status='draft',
+                author=doctor_author,
+                is_auto_generated=False,
+                meta_title=data.get('seo_title_tr', ''),
+                meta_description=data.get('seo_description_tr', ''),
+            )
+
+            # Hastalık modülü ilişkilendir
+            if module and module != 'general':
+                dm = DiseaseModule.objects.filter(slug=module).first()
+                if dm:
+                    news.related_diseases.add(dm)
+
+            return news
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(f"NewsArticle kaydetme hatası: {e}")
             return None
 
 
 class GeneratedContentListView(APIView):
-    """Hekim tarafindan uretilen taslak icerikleri listeler."""
+    """Hekim tarafından üretilen taslak içerikleri listeler."""
     permission_classes = [IsAuthenticated, IsDoctor]
 
     def get(self, request):
-        from apps.content.models import Article
+        from apps.content.models import Article, NewsArticle
 
-        drafts = Article.objects.filter(
+        articles = Article.objects.filter(
+            author=request.user,
+            status='draft',
+        ).order_by('-created_at')[:20]
+
+        news = NewsArticle.objects.filter(
             author=request.user,
             status='draft',
         ).order_by('-created_at')[:20]
@@ -142,10 +214,70 @@ class GeneratedContentListView(APIView):
                 'id': str(d.id),
                 'title': d.title_tr,
                 'excerpt': d.excerpt_tr,
-                'seo_title': d.seo_title_tr,
+                'seo_title': getattr(d, 'seo_title_tr', '') or getattr(d, 'meta_title', ''),
                 'created_at': d.created_at.isoformat(),
                 'status': d.status,
+                'type': 'article',
             }
-            for d in drafts
+            for d in articles
+        ] + [
+            {
+                'id': str(n.id),
+                'title': n.title_tr,
+                'excerpt': n.excerpt_tr,
+                'seo_title': n.meta_title or '',
+                'created_at': n.created_at.isoformat(),
+                'status': n.status,
+                'type': 'news',
+            }
+            for n in news
         ]
-        return Response(data)
+
+        data.sort(key=lambda x: x['created_at'], reverse=True)
+        return Response(data[:20])
+
+
+class FetchNewsFromSourcesView(APIView):
+    """Gerçek kaynaklardan haber topla ve AI ile Türkçe haber üret."""
+    permission_classes = [IsAuthenticated, IsDoctor]
+    throttle_classes = [AIAgentThrottle]
+
+    def post(self, request):
+        max_news = min(int(request.data.get('max_news', 3)), 10)
+        dry_run = request.data.get('dry_run', False)
+
+        from services.news_fetcher import NewsFetcher
+
+        fetcher = NewsFetcher()
+
+        if dry_run:
+            # Sadece kaynakları göster
+            items = fetcher.fetch_all(max_per_source=2)
+            return Response({
+                'success': True,
+                'dry_run': True,
+                'total_sources': len(items),
+                'items': [
+                    {
+                        'title': item.title[:100],
+                        'source': item.source_name,
+                        'url': item.url,
+                        'category': item.category,
+                        'diseases': item.disease_tags,
+                    }
+                    for item in items
+                ],
+            })
+
+        results = fetcher.fetch_and_generate(max_per_source=2, max_news=max_news)
+
+        succeeded = sum(1 for r in results if r.get('success'))
+        failed = sum(1 for r in results if not r.get('success'))
+
+        return Response({
+            'success': True,
+            'total': len(results),
+            'succeeded': succeeded,
+            'failed': failed,
+            'results': results,
+        })

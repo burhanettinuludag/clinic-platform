@@ -124,6 +124,54 @@ def auto_generate_weekly_content():
     }
 
 
+@shared_task(name='apps.content.tasks.fetch_and_generate_news')
+def fetch_and_generate_news():
+    """
+    Gerçek kaynaklardan nöroloji haberleri topla ve AI ile Türkçe haber üret.
+    Kaynaklar: PubMed, FDA RSS, Medscape, ScienceDaily, WHO
+    Celery Beat: Çarşamba ve Cumartesi 10:00
+    """
+    from services.news_fetcher import NewsFetcher
+
+    try:
+        fetcher = NewsFetcher()
+        results = fetcher.fetch_and_generate(max_per_source=2, max_news=3)
+
+        succeeded = sum(1 for r in results if r.get('success'))
+        failed = sum(1 for r in results if not r.get('success'))
+
+        logger.info(f"Otomatik haber üretimi: {succeeded} başarılı, {failed} başarısız")
+
+        # Admin bildirim
+        from apps.accounts.models import CustomUser
+        from apps.notifications.models import Notification
+
+        if succeeded > 0:
+            for admin in CustomUser.objects.filter(is_superuser=True, is_active=True):
+                titles = [r['title'] for r in results if r.get('success')]
+                Notification.objects.create(
+                    recipient=admin,
+                    notification_type='info',
+                    title_tr=f'{succeeded} Yeni Haber Taslağı Oluşturuldu',
+                    title_en=f'{succeeded} New News Drafts Created',
+                    message_tr=f'Kaynaklardan toplanan haberler:\n' + '\n'.join(f'- {t}' for t in titles),
+                    message_en=f'News collected from sources:\n' + '\n'.join(f'- {t}' for t in titles),
+                    action_url='/doctor/editor',
+                )
+
+        return {
+            'success': True,
+            'total': len(results),
+            'succeeded': succeeded,
+            'failed': failed,
+            'results': results,
+        }
+
+    except Exception as e:
+        logger.error(f"Haber üretim hatası: {e}")
+        return {'success': False, 'error': str(e)}
+
+
 @shared_task(name='apps.content.tasks.cleanup_old_agent_tasks')
 def cleanup_old_agent_tasks():
     """30 günden eski completed/failed AgentTask kayitlarini sil."""

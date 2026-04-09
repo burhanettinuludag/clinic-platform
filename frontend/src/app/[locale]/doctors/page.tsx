@@ -1,8 +1,9 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const isTr = params.locale === 'tr';
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const isTr = locale === 'tr';
   return {
     title: isTr ? 'Doktorlarımız | Norosera' : 'Our Doctors | Norosera',
     description: isTr
@@ -22,9 +23,10 @@ async function getDoctors() {
   } catch { return []; }
 }
 
-export default async function DoctorsPage({ params }: { params: { locale: string } }) {
+export default async function DoctorsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const doctors = await getDoctors();
-  const isTr = params.locale === 'tr';
+  const isTr = locale === 'tr';
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">

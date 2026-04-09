@@ -9,6 +9,10 @@ class RegisterSerializer(serializers.ModelSerializer):
     password_confirm = serializers.CharField(write_only=True)
     specialty = serializers.CharField(max_length=100, required=False, default='')
     license_number = serializers.CharField(max_length=50, required=False, default='')
+    # KVKK consent fields
+    consent_kvkk = serializers.BooleanField(write_only=True)
+    consent_health_data = serializers.BooleanField(write_only=True, required=False, default=False)
+    consent_terms = serializers.BooleanField(write_only=True)
 
     class Meta:
         model = CustomUser
@@ -17,6 +21,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             'first_name', 'last_name', 'role',
             'phone', 'preferred_language',
             'specialty', 'license_number',
+            'consent_kvkk', 'consent_health_data', 'consent_terms',
         ]
 
     def validate(self, data):
@@ -28,6 +33,14 @@ class RegisterSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({'specialty': 'Uzmanlik alani zorunludur.'})
             if not data.get('license_number'):
                 raise serializers.ValidationError({'license_number': 'Diploma/sicil numarasi zorunludur.'})
+        # KVKK and terms consent are mandatory
+        if not data.get('consent_kvkk'):
+            raise serializers.ValidationError({'consent_kvkk': 'KVKK onamı zorunludur.'})
+        if not data.get('consent_terms'):
+            raise serializers.ValidationError({'consent_terms': 'Kullanım koşulları onayı zorunludur.'})
+        # Health data consent mandatory for patients
+        if data.get('role') == CustomUser.Role.PATIENT and not data.get('consent_health_data'):
+            raise serializers.ValidationError({'consent_health_data': 'Sağlık verisi işleme onayı zorunludur.'})
         return data
 
     def create(self, validated_data):
@@ -35,6 +48,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         specialty = validated_data.pop('specialty', '')
         license_number = validated_data.pop('license_number', '')
+        # Extract consent data
+        consent_kvkk = validated_data.pop('consent_kvkk', False)
+        consent_health_data = validated_data.pop('consent_health_data', False)
+        consent_terms = validated_data.pop('consent_terms', False)
 
         user = CustomUser(**validated_data)
         user.set_password(password)
@@ -54,6 +71,35 @@ class RegisterSerializer(serializers.ModelSerializer):
                 profile.save(update_fields=['specialty', 'license_number'])
             except DoctorProfile.DoesNotExist:
                 pass
+
+        # Create KVKK consent records
+        from apps.common.models import ConsentRecord
+        request = self.context.get('request')
+        ip_address = None
+        user_agent = ''
+        if request:
+            ip_address = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', ''))
+            if ip_address and ',' in ip_address:
+                ip_address = ip_address.split(',')[0].strip()
+            user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        now = timezone.now()
+        consent_records = [
+            ('kvkk', consent_kvkk),
+            ('health_data', consent_health_data),
+            ('terms', consent_terms),
+        ]
+        for consent_type, granted in consent_records:
+            if granted:
+                ConsentRecord.objects.create(
+                    user=user,
+                    consent_type=consent_type,
+                    version='1.0',
+                    granted=True,
+                    granted_at=now,
+                    ip_address=ip_address,
+                    user_agent=user_agent[:500],
+                )
 
         return user
 

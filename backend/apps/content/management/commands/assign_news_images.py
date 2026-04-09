@@ -1,12 +1,12 @@
 """
-Mevcut haberlere ucretsiz stok gorsel ata.
-API key gerektirmez - onceden secilmis Unsplash CDN URL'lerini kullanir.
+Mevcut haberlere Servier Medical Art (SMART) tıbbi illüstrasyonları ata.
+Lisans: CC BY 4.0 - API key gerektirmez.
 
-Kullanim:
-    python3 manage.py assign_news_images           # Gorselsiz tum haberlere ata
+Kullanım:
+    python3 manage.py assign_news_images           # Görselsiz tüm haberlere ata
     python3 manage.py assign_news_images --limit 5  # Sadece 5 habere ata
-    python3 manage.py assign_news_images --force     # Mevcut gorselleri de guncelle
-    python3 manage.py assign_news_images --dry-run   # Degisiklik yapmadan goster
+    python3 manage.py assign_news_images --force     # Mevcut görselleri de güncelle
+    python3 manage.py assign_news_images --dry-run   # Değişiklik yapmadan göster
 """
 from django.core.management.base import BaseCommand
 from apps.content.models import NewsArticle

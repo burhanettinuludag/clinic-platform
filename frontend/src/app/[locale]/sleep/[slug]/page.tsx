@@ -183,11 +183,23 @@ export default function SleepArticlePage() {
   }
 
   const diseaseInfo = article.related_disease ? DISEASE_LABELS[article.related_disease] : null;
+  const coverUrl = article.cover_image_url || article.cover_image || '';
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Cover Image */}
+      {coverUrl && (
+        <div className="relative w-full h-56 sm:h-72 md:h-80 overflow-hidden">
+          <img
+            src={coverUrl}
+            alt={article.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/90 via-indigo-900/40 to-transparent" />
+        </div>
+      )}
       {/* Header */}
-      <div className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 text-white">
+      <div className={`bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 text-white ${coverUrl ? '-mt-24 relative z-10' : ''}`}>
         <div className="max-w-3xl mx-auto px-4 py-12">
           <Link
             href={`/${locale}/sleep`}

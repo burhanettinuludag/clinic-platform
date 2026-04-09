@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { BookOpen, Lock, ArrowRight, GraduationCap } from 'lucide-react';
+import { Lock, ArrowRight, GraduationCap } from 'lucide-react';
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const isTr = params.locale === 'tr';
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const isTr = locale === 'tr';
   return {
     title: isTr ? 'Eğitim İçerikleri | Norosera' : 'Educational Content | Norosera',
     description: isTr
@@ -14,9 +15,12 @@ export async function generateMetadata({ params }: { params: { locale: string } 
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
-async function getEducation() {
+async function getEducation(locale: string) {
   try {
-    const res = await fetch(`${API}/content/public-education/`, { next: { revalidate: 600, tags: ['education'] } });
+    const res = await fetch(`${API}/content/public-education/`, {
+      headers: { 'Accept-Language': locale },
+      next: { revalidate: 600, tags: ['education'] },
+    });
     if (!res.ok) return [];
     const data = await res.json();
     return data.results || data;
@@ -36,9 +40,10 @@ const TYPE_LABEL: Record<string, { tr: string; en: string }> = {
   interactive: { tr: 'İnteraktif', en: 'Interactive' },
 };
 
-export default async function EducationPage({ params }: { params: { locale: string } }) {
-  const items = await getEducation();
-  const isTr = params.locale === 'tr';
+export default async function EducationPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const items = await getEducation(locale);
+  const isTr = locale === 'tr';
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
@@ -52,7 +57,7 @@ export default async function EducationPage({ params }: { params: { locale: stri
               className="rounded-xl border bg-white overflow-hidden hover:shadow-lg transition-shadow group">
               {item.image && (
                 <div className="h-40 overflow-hidden">
-                  <img src={item.image} alt={item.title_tr} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                  <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                 </div>
               )}
               <div className="p-4">
@@ -62,8 +67,8 @@ export default async function EducationPage({ params }: { params: { locale: stri
                   </span>
                   <span className="text-xs text-gray-400">{item.estimated_duration_minutes} {isTr ? 'dk' : 'min'}</span>
                 </div>
-                <h2 className="text-lg font-semibold text-gray-900 group-hover:text-cyan-600 transition-colors line-clamp-2">{isTr ? item.title_tr : (item.title_en || item.title_tr)}</h2>
-                {(isTr ? item.body_tr : (item.body_en || item.body_tr)) && <p className="text-sm text-gray-500 mt-2 line-clamp-3">{(isTr ? item.body_tr : (item.body_en || item.body_tr)).replace(/<[^>]*>/g, '').slice(0, 150)}...</p>}
+                <h2 className="text-lg font-semibold text-gray-900 group-hover:text-cyan-600 transition-colors line-clamp-2">{item.title}</h2>
+                {item.body && <p className="text-sm text-gray-500 mt-2 line-clamp-3">{item.body.replace(/<[^>]*>/g, '').slice(0, 150)}...</p>}
               </div>
             </Link>
           ))}

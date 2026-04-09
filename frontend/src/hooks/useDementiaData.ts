@@ -1,7 +1,13 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
 import api from '@/lib/api';
+
+function hasAuth() { return !!Cookies.get('access_token'); }
+function useAuthQuery<T>(options: Parameters<typeof useQuery<T>>[0]) {
+  return useAuthQuery<T>({ ...options, enabled: hasAuth() && (options.enabled !== false), retry: false });
+}
 
 // Types
 export interface CognitiveExercise {
@@ -98,7 +104,7 @@ export interface ExercisesByType {
 // ==================== COGNITIVE EXERCISES ====================
 
 export function useCognitiveExercises(params?: { exercise_type?: string; difficulty?: string }) {
-  return useQuery<CognitiveExercise[]>({
+  return useAuthQuery<CognitiveExercise[]>({
     queryKey: ['cognitive-exercises', params],
     queryFn: async () => {
       const { data } = await api.get('/dementia/exercises/', { params });
@@ -108,7 +114,7 @@ export function useCognitiveExercises(params?: { exercise_type?: string; difficu
 }
 
 export function useCognitiveExercisesByType() {
-  return useQuery<ExercisesByType[]>({
+  return useAuthQuery<ExercisesByType[]>({
     queryKey: ['cognitive-exercises', 'by-type'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/exercises/by_type/');
@@ -118,7 +124,7 @@ export function useCognitiveExercisesByType() {
 }
 
 export function useCognitiveExercise(id: string) {
-  return useQuery<CognitiveExercise>({
+  return useAuthQuery<CognitiveExercise>({
     queryKey: ['cognitive-exercises', id],
     queryFn: async () => {
       const { data } = await api.get(`/dementia/exercises/${id}/`);
@@ -131,7 +137,7 @@ export function useCognitiveExercise(id: string) {
 // ==================== EXERCISE SESSIONS ====================
 
 export function useExerciseSessions() {
-  return useQuery<ExerciseSession[]>({
+  return useAuthQuery<ExerciseSession[]>({
     queryKey: ['exercise-sessions'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/sessions/');
@@ -141,7 +147,7 @@ export function useExerciseSessions() {
 }
 
 export function useRecentExerciseSessions() {
-  return useQuery<ExerciseSession[]>({
+  return useAuthQuery<ExerciseSession[]>({
     queryKey: ['exercise-sessions', 'recent'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/sessions/recent/');
@@ -151,7 +157,7 @@ export function useRecentExerciseSessions() {
 }
 
 export function useExerciseStats() {
-  return useQuery<CognitiveStats>({
+  return useAuthQuery<CognitiveStats>({
     queryKey: ['exercise-stats'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/sessions/stats/');
@@ -197,7 +203,7 @@ export function useCreateExerciseSession() {
 // ==================== DAILY ASSESSMENTS ====================
 
 export function useDailyAssessments() {
-  return useQuery<DailyAssessment[]>({
+  return useAuthQuery<DailyAssessment[]>({
     queryKey: ['daily-assessments'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/assessments/');
@@ -207,7 +213,7 @@ export function useDailyAssessments() {
 }
 
 export function useTodayAssessment() {
-  return useQuery<DailyAssessment | null>({
+  return useAuthQuery<DailyAssessment | null>({
     queryKey: ['daily-assessments', 'today'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/assessments/today/');
@@ -255,7 +261,7 @@ export function useUpdateAssessment() {
 // ==================== CAREGIVER NOTES ====================
 
 export function useCaregiverNotes() {
-  return useQuery<CaregiverNote[]>({
+  return useAuthQuery<CaregiverNote[]>({
     queryKey: ['caregiver-notes'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/notes/');
@@ -265,7 +271,7 @@ export function useCaregiverNotes() {
 }
 
 export function useFlaggedNotes() {
-  return useQuery<CaregiverNote[]>({
+  return useAuthQuery<CaregiverNote[]>({
     queryKey: ['caregiver-notes', 'flagged'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/notes/flagged/');
@@ -309,7 +315,7 @@ export interface CognitiveScore {
 }
 
 export function useCognitiveScores() {
-  return useQuery<CognitiveScore[]>({
+  return useAuthQuery<CognitiveScore[]>({
     queryKey: ['cognitive-scores'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/scores/');
@@ -319,7 +325,7 @@ export function useCognitiveScores() {
 }
 
 export function useLatestCognitiveScore() {
-  return useQuery<CognitiveScore | null>({
+  return useAuthQuery<CognitiveScore | null>({
     queryKey: ['cognitive-scores', 'latest'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/scores/latest/');
@@ -479,7 +485,7 @@ export interface CognitiveScreening {
 }
 
 export function useCognitiveScreenings() {
-  return useQuery<CognitiveScreening[]>({
+  return useAuthQuery<CognitiveScreening[]>({
     queryKey: ['cognitive-screenings'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/screening/');
@@ -489,7 +495,7 @@ export function useCognitiveScreenings() {
 }
 
 export function useLatestCognitiveScreening() {
-  return useQuery<CognitiveScreening | null>({
+  return useAuthQuery<CognitiveScreening | null>({
     queryKey: ['cognitive-screenings', 'latest'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/screening/latest/');
@@ -499,7 +505,7 @@ export function useLatestCognitiveScreening() {
 }
 
 export function useCognitiveScreeningHistory() {
-  return useQuery<Array<{
+  return useAuthQuery<Array<{
     assessment_date: string;
     total_score: number;
     orientation_score: number | null;
@@ -572,7 +578,7 @@ export interface ReportShareRecord {
 }
 
 export function useReportRecipients() {
-  return useQuery<ReportRecipient[]>({
+  return useAuthQuery<ReportRecipient[]>({
     queryKey: ['report-recipients'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/recipients/');
@@ -645,7 +651,7 @@ export function useShareReport() {
 }
 
 export function useShareHistory() {
-  return useQuery<ReportShareRecord[]>({
+  return useAuthQuery<ReportShareRecord[]>({
     queryKey: ['share-history'],
     queryFn: async () => {
       const { data } = await api.get('/dementia/recipients/history/');

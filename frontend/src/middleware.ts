@@ -5,7 +5,8 @@ import { routing } from './i18n/routing';
 const intlMiddleware = createMiddleware(routing);
 
 // Protected routes - auth required
-const PROTECTED_PREFIXES = ['/patient', '/doctor', '/editor', '/caregiver'];
+// NOT: /patient gecici olarak auth gerektirmiyor (ucretsiz deneme modu)
+const PROTECTED_PREFIXES = ['/doctor', '/editor', '/caregiver'];
 // Role-based routes
 const ROLE_ROUTES: Record<string, string[]> = {
   '/doctor/site-settings': ['admin'],

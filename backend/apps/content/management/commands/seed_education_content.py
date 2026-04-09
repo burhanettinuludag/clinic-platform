@@ -1162,6 +1162,636 @@ It occurs due to loss of dopamine-producing cells in the brain. Dopamine is a ne
                 'order': 2,
                 'estimated_duration_minutes': 8,
             },
+            {
+                'slug': 'parkinson-symptoms-detailed',
+                'title_tr': 'Parkinson Belirtileri: Motor ve Motor Dışı',
+                'title_en': 'Parkinson Symptoms: Motor and Non-Motor',
+                'body_tr': '''Parkinson hastalığının belirtileri motor ve motor dışı olmak üzere iki ana gruba ayrılır.
+
+## Motor Belirtiler
+
+### Tremor (Titreme)
+Parkinson tremoru genellikle istirahat halinde ortaya çıkar ve hareketle azalır. En sık elde, "hap yuvarlama" şeklinde görülür.
+
+- Dinlenme tremoru: Parkinson'un en karakteristik belirtisi
+- Genellikle tek taraflı başlar
+- Stres ve yorgunlukla artar
+- Uyku sırasında kaybolur
+
+### Bradikinezi (Hareket Yavaşlığı)
+Hareketlerin başlatılmasında ve sürdürülmesinde güçlük yaşanır.
+
+- Günlük aktivitelerde yavaşlama (giyinme, yemek yeme)
+- Yüz ifadesinin azalması (maske yüz)
+- Yazının küçülmesi (mikrografi)
+- Ses tonunun monotonlaşması
+- Göz kırpma sıklığının azalması
+
+### Rijidite (Kas Sertliği)
+Eklemlerde pasif hareket sırasında hissedilen direnç artışıdır.
+
+- Dişli çark rijiditi: Aralıklı dirençli hareket
+- Kurşun boru rijiditi: Sürekli direnç
+- Omuz, boyun ve sırtta ağrıya neden olabilir
+
+### Postüral İnstabilite
+Hastalığın ileri evrelerinde denge kaybı gelişir.
+
+- Öne eğik duruş
+- Küçük adımlarla yürüme
+- Dönüşlerde dengesizlik
+- Düşme riski artar
+
+### Donma (Freezing of Gait)
+Yürüme sırasında ayakların yere yapışmış gibi hissedilmesidir.
+
+- Yürümeye başlarken donma
+- Dar alanlardan geçerken donma
+- Dönüşlerde donma
+- Stres ve aceleyle kötüleşir
+- Görsel ipuçları (yerdeki çizgiler) yardımcı olabilir
+- Ritimli komutlar ("sol-sağ") faydalı olabilir
+
+### Diskinezi (Aşırı Hareketler)
+Uzun süreli ilaç kullanımı sonrası ortaya çıkabilen istemsiz hareketlerdir.
+
+- Kıvranma, bükülme tarzında hareketler
+- Genellikle ilaç etkisinin en yüksek olduğu dönemde
+- Bazen ilaç etkisi azalırken (diphasic diskinezi)
+- İlaç doz ayarlaması ile yönetilir
+
+### Siyalore (Ağızdan Salya Akması)
+Yutma refleksinin azalması nedeniyle tükürüğün ağızda birikmesi ve akmasıdır.
+
+- Parkinson hastalarının %70-80'inde görülür
+- Tükürük üretimi artmaz, yutma sıklığı azalır
+- Sosyal utanç ve cilt tahrişine neden olabilir
+- Antikolinerjik ilaçlar veya botulinum toksin enjeksiyonu ile tedavi edilebilir
+
+### Hipomimi (Yüz Donukluğu / Maske Yüz)
+Yüz kaslarının hareketinin azalması sonucu ifadesiz görünümdür.
+
+- Gülümseme, kaş kaldırma gibi mimiklerde azalma
+- Göz kırpma sıklığında azalma
+- Duygusal ifade güçlüğü
+- Çevre tarafından ilgisiz veya mutsuz olarak yanlış yorumlanabilir
+- Yüz egzersizleri faydalı olabilir
+
+## Motor Dışı Belirtiler
+
+### Otonom Sinir Sistemi
+- Kabızlık (en sık motor dışı belirti)
+- Ortostatik hipotansiyon (ayağa kalkınca tansiyon düşmesi)
+- İdrar sorunları
+- Aşırı terleme
+- Yutma güçlüğü
+- Siyalore (ağızdan salya akması)
+
+### Uyku Bozuklukları
+- REM uyku davranış bozukluğu (motor belirtilerden yıllar önce başlayabilir)
+- Uykusuzluk
+- Gündüz aşırı uyuklama
+- Huzursuz bacak sendromu
+
+### Nöropsikiyatrik Belirtiler
+- Depresyon (%40-50 hastada)
+- Anksiyete
+- Apati (motivasyon kaybı)
+- Bilişsel bozukluk
+- İleri evrede demans gelişebilir
+
+### Duyusal Belirtiler
+- Koku alma kaybı (hiposmi/anosmi)
+- Ağrı
+- Karıncalanma ve uyuşukluk
+
+## Belirtilerin Seyri
+Parkinson belirtileri genellikle tek taraflı başlar ve yıllar içinde her iki tarafa yayılır. Belirtilerin şiddeti ve ilerleme hızı kişiden kişiye değişir.''',
+                'body_en': '''Parkinson's disease symptoms are divided into two main groups: motor and non-motor.
+
+## Motor Symptoms
+
+### Tremor
+Parkinson tremor typically appears at rest and decreases with movement. Most commonly seen in the hand as "pill-rolling."
+
+- Rest tremor: Most characteristic symptom of Parkinson's
+- Usually starts unilaterally
+- Increases with stress and fatigue
+- Disappears during sleep
+
+### Bradykinesia (Slowness of Movement)
+Difficulty in initiating and maintaining movements.
+
+- Slowdown in daily activities (dressing, eating)
+- Decreased facial expression (masked face)
+- Handwriting becoming smaller (micrographia)
+- Voice becoming monotone
+- Decreased blink frequency
+
+### Rigidity (Muscle Stiffness)
+Increased resistance felt during passive movement of joints.
+
+- Cogwheel rigidity: Intermittent resistant movement
+- Lead-pipe rigidity: Continuous resistance
+- Can cause pain in shoulders, neck and back
+
+### Postural Instability
+Balance loss develops in advanced stages of the disease.
+
+- Forward-leaning posture
+- Walking with small steps
+- Instability during turns
+- Increased risk of falling
+
+### Freezing of Gait
+Feeling as if feet are glued to the floor while walking.
+
+- Freezing when starting to walk
+- Freezing when passing through narrow spaces
+- Freezing during turns
+- Worsens with stress and hurry
+- Visual cues (lines on the floor) can help
+- Rhythmic commands ("left-right") can be helpful
+
+### Dyskinesia (Excessive Movements)
+Involuntary movements that may occur after long-term medication use.
+
+- Writhing, twisting-type movements
+- Usually during peak medication effect
+- Sometimes when medication wears off (diphasic dyskinesia)
+- Managed with medication dose adjustment
+
+### Sialorrhea (Drooling)
+Accumulation and dripping of saliva due to decreased swallowing reflex.
+
+- Occurs in 70-80% of Parkinson patients
+- Saliva production doesn't increase; swallowing frequency decreases
+- Can cause social embarrassment and skin irritation
+- Can be treated with anticholinergic drugs or botulinum toxin injection
+
+### Hypomimia (Facial Masking)
+Expressionless appearance due to decreased facial muscle movement.
+
+- Reduced mimicry such as smiling, raising eyebrows
+- Decreased blink frequency
+- Difficulty in emotional expression
+- May be misinterpreted as disinterest or unhappiness by others
+- Facial exercises can be helpful
+
+## Non-Motor Symptoms
+
+### Autonomic Nervous System
+- Constipation (most common non-motor symptom)
+- Orthostatic hypotension (blood pressure drop when standing)
+- Urinary problems
+- Excessive sweating
+- Swallowing difficulty
+- Sialorrhea (drooling)
+
+### Sleep Disorders
+- REM sleep behavior disorder (may start years before motor symptoms)
+- Insomnia
+- Excessive daytime sleepiness
+- Restless leg syndrome
+
+### Neuropsychiatric Symptoms
+- Depression (in 40-50% of patients)
+- Anxiety
+- Apathy (loss of motivation)
+- Cognitive impairment
+- Dementia may develop in advanced stages
+
+### Sensory Symptoms
+- Loss of smell (hyposmia/anosmia)
+- Pain
+- Tingling and numbness
+
+## Course of Symptoms
+Parkinson symptoms usually start unilaterally and spread to both sides over years. The severity and rate of progression varies from person to person.''',
+                'content_type': 'text',
+                'category': categories['basics'],
+                'order': 3,
+                'estimated_duration_minutes': 12,
+            },
+            {
+                'slug': 'parkinson-medication',
+                'title_tr': 'Parkinson İlaç Tedavisi',
+                'title_en': 'Parkinson Medication Treatment',
+                'body_tr': '''Parkinson hastalığında ilaç tedavisi, eksilen dopamini yerine koymayı veya dopamin etkisini artırmayı hedefler.
+
+## Levodopa (L-DOPA)
+Parkinson tedavisinin temel taşıdır.
+
+### Nasıl Çalışır?
+- Beyinde dopamine dönüştürülür
+- Motor belirtilerde en etkili ilaçtır
+- Genellikle karbidopa veya benserazid ile birlikte verilir
+
+### Kullanım İpuçları
+- Düzenli saatlerde alınmalıdır
+- Protein açısından zengin yemeklerden 30-60 dakika önce veya 1 saat sonra alınmalıdır
+- Doz atlanmamalıdır
+- Doktor onayı olmadan kesilmemelidir
+
+### Uzun Dönem Komplikasyonlar
+- "On-Off" dalgalanmaları: İlacın etkili ve etkisiz olduğu dönemlerin değişimi
+- Diskineziler: İstemsiz hareketler (genellikle 5-10 yıl kullanım sonrası)
+
+## Dopamin Agonistleri
+Dopamin reseptörlerini doğrudan uyarırlar.
+
+- Pramipeksol, ropinirol, rotigotin
+- Genç hastalarda ilk tercih olabilir
+- Levodopa'ya kıyasla daha az diskinezi riski
+- Olası yan etkiler: uyuklama, dürtü kontrol bozuklukları
+
+## MAO-B İnhibitörleri
+Dopaminin parçalanmasını yavaşlatırlar.
+
+- Rasajilin, selejilin, safinamid
+- Erken evrede tek başına kullanılabilir
+- İleri evrede levodopa ile kombinasyon
+
+## COMT İnhibitörleri
+Levodopa'nın etkisini uzatırlar.
+
+- Entakapon, opikapon
+- "Off" sürelerini kısaltır
+- Her zaman levodopa ile birlikte kullanılır
+
+## Antikolinerjikler
+Tremor tedavisinde kullanılabilir.
+
+- Triheksifenidil, biperiden
+- Özellikle genç hastalarda
+- Yaşlılarda bilişsel yan etkiler nedeniyle dikkatli kullanılmalıdır
+
+## Amantadin
+Diskinezilerin tedavisinde faydalıdır.
+
+## İlaç Yönetimi İpuçları
+- İlaçları aynı saatlerde alın
+- Alarm veya hatırlatıcı uygulaması kullanın
+- İlaç günlüğü tutun
+- Yan etkileri doktorunuza bildirin
+- İlaçları kendi başınıza değiştirmeyin veya kesmeyin
+- Uzun yolculuklarda yedek ilaç bulundurun''',
+                'body_en': '''Medication treatment in Parkinson's disease aims to replace depleted dopamine or enhance dopamine effect.
+
+## Levodopa (L-DOPA)
+The cornerstone of Parkinson treatment.
+
+### How Does It Work?
+- Converted to dopamine in the brain
+- Most effective medication for motor symptoms
+- Usually given with carbidopa or benserazide
+
+### Usage Tips
+- Should be taken at regular times
+- Take 30-60 minutes before or 1 hour after protein-rich meals
+- Don't skip doses
+- Don't stop without doctor approval
+
+### Long-term Complications
+- "On-Off" fluctuations: Alternation between effective and ineffective periods
+- Dyskinesias: Involuntary movements (usually after 5-10 years of use)
+
+## Dopamine Agonists
+Directly stimulate dopamine receptors.
+
+- Pramipexole, ropinirole, rotigotine
+- May be first choice in younger patients
+- Less dyskinesia risk compared to levodopa
+- Possible side effects: drowsiness, impulse control disorders
+
+## MAO-B Inhibitors
+Slow down dopamine breakdown.
+
+- Rasagiline, selegiline, safinamide
+- Can be used alone in early stage
+- Combination with levodopa in advanced stage
+
+## COMT Inhibitors
+Extend levodopa's effect.
+
+- Entacapone, opicapone
+- Shortens "off" periods
+- Always used with levodopa
+
+## Anticholinergics
+Can be used for tremor treatment.
+
+- Trihexyphenidyl, biperiden
+- Especially in younger patients
+- Use cautiously in elderly due to cognitive side effects
+
+## Amantadine
+Useful in treating dyskinesias.
+
+## Medication Management Tips
+- Take medications at the same times
+- Use alarm or reminder app
+- Keep a medication diary
+- Report side effects to your doctor
+- Don't change or stop medications on your own
+- Carry spare medication on long trips''',
+                'content_type': 'text',
+                'category': categories['treatment'],
+                'order': 4,
+                'estimated_duration_minutes': 14,
+            },
+            {
+                'slug': 'parkinson-lifestyle',
+                'title_tr': 'Parkinson ile Günlük Yaşam',
+                'title_en': 'Daily Life with Parkinson\'s',
+                'body_tr': '''Parkinson hastalığı ile yaşarken günlük yaşam kalitesini artırmak için pratik öneriler.
+
+## Beslenme
+
+### Genel Öneriler
+- Lifli gıdalar tüketin (kabızlık için)
+- Bol su için (günde 6-8 bardak)
+- Küçük ve sık öğünler tercih edin
+- Protein alımını akşam öğününe yoğunlaştırın (levodopa ile etkileşim)
+
+### Yutma Güçlüğü İçin
+- Yavaş yiyin, küçük lokmalar alın
+- Dik oturun
+- Kıvamlı sıvılar tercih edin
+- Gerekirse konuşma terapistine başvurun
+
+## Ev Güvenliği
+
+### Düşme Önleme
+- Halı kenarlarını sabitleyin veya kaldırın
+- Banyo ve tuvalette tutunma barları yerleştirin
+- Yeterli aydınlatma sağlayın (özellikle gece)
+- Eşik ve engelleri kaldırın
+- Kaymaz terlik veya ayakkabı kullanın
+
+### Banyo Güvenliği
+- Kaymaz paspas kullanın
+- Banyo sandalyesi edinin
+- El duşu tercih edin
+- Su sıcaklığını kontrol edin
+
+## İletişim
+
+### Konuşma Sorunları
+- Lee Silverman Ses Tedavisi (LSVT LOUD) faydalı olabilir
+- Yüz yüze konuşmayı tercih edin
+- Sessiz ortamlarda konuşun
+- Gerekirse konuşma terapistinden destek alın
+
+### Yazma
+- Büyük harflerle yazmayı deneyin
+- Kalın kalem kullanın
+- Tablet veya bilgisayar kullanmayı düşünün
+
+## Uyku Hijyeni
+- Düzenli uyku saatleri belirleyin
+- Yatak odası karanlık ve sessiz olmalı
+- Yatmadan önce kafein ve alkol almayın
+- Gündüz kısa şekerlemeler yapabilirsiniz (20 dakika)
+- Uyku sorunlarını doktorunuza bildirin
+
+## Ruh Sağlığı
+- Depresyon belirtilerine dikkat edin
+- Sosyal aktivitelere katılın
+- Destek gruplarına katılmayı düşünün
+- Gerekirse psikolojik destek alın
+- Hobi ve ilgi alanlarınızı sürdürün
+
+## Bakıcı Desteği
+- Bakıcılar da destek grubuna katılmalı
+- Mola vermek önemli (respite care)
+- Sorumlulukları paylaşın
+- Profesyonel yardım almaktan çekinmeyin''',
+                'body_en': '''Practical tips to improve daily quality of life while living with Parkinson's disease.
+
+## Nutrition
+
+### General Recommendations
+- Eat fiber-rich foods (for constipation)
+- Drink plenty of water (6-8 glasses daily)
+- Prefer small, frequent meals
+- Concentrate protein intake at evening meal (levodopa interaction)
+
+### For Swallowing Difficulty
+- Eat slowly, take small bites
+- Sit upright
+- Prefer thickened liquids
+- Consult speech therapist if needed
+
+## Home Safety
+
+### Fall Prevention
+- Secure or remove carpet edges
+- Install grab bars in bathroom and toilet
+- Ensure adequate lighting (especially at night)
+- Remove thresholds and obstacles
+- Use non-slip slippers or shoes
+
+### Bathroom Safety
+- Use non-slip bath mat
+- Get a shower chair
+- Prefer hand-held shower
+- Check water temperature
+
+## Communication
+
+### Speech Problems
+- Lee Silverman Voice Treatment (LSVT LOUD) can be helpful
+- Prefer face-to-face conversation
+- Speak in quiet environments
+- Get speech therapy support if needed
+
+### Writing
+- Try writing in large letters
+- Use thick pens
+- Consider using tablet or computer
+
+## Sleep Hygiene
+- Set regular sleep times
+- Bedroom should be dark and quiet
+- Avoid caffeine and alcohol before bed
+- Short daytime naps are OK (20 minutes)
+- Report sleep problems to your doctor
+
+## Mental Health
+- Watch for signs of depression
+- Participate in social activities
+- Consider joining support groups
+- Get psychological support if needed
+- Continue your hobbies and interests
+
+## Caregiver Support
+- Caregivers should also join support groups
+- Taking breaks is important (respite care)
+- Share responsibilities
+- Don't hesitate to seek professional help''',
+                'content_type': 'text',
+                'category': categories['lifestyle'],
+                'order': 5,
+                'estimated_duration_minutes': 11,
+            },
+            {
+                'slug': 'parkinson-advanced-treatments',
+                'title_tr': 'İleri Tedavi Yöntemleri',
+                'title_en': 'Advanced Treatment Methods',
+                'body_tr': '''İlaç tedavisinin yeterli olmadığı durumlarda uygulanan ileri tedavi seçenekleri.
+
+## Derin Beyin Stimülasyonu (DBS)
+
+### Nedir?
+Beyindeki belirli bölgelere elektrot yerleştirilerek sürekli elektrik stimülasyonu uygulanmasıdır.
+
+### Kimler İçin Uygun?
+- En az 4-5 yıldır Parkinson tanısı olan hastalar
+- İlaç tedavisine başlangıçta iyi yanıt vermiş olan hastalar
+- Motor dalgalanmaları veya diskinezileri kontrol edilemeyen hastalar
+- Ciddi bilişsel bozukluğu veya psikiyatrik hastalığı olmayan hastalar
+
+### Hedefler
+- Subtalamik nükleus (STN): En sık kullanılan hedef
+- Globus pallidus interna (GPi)
+- Ventral intermediate nükleus (VIM): Özellikle tremor için
+
+### Faydaları
+- Motor dalgalanmalarda belirgin azalma
+- İlaç dozlarında azaltma imkânı
+- Diskinezilerde azalma
+- Yaşam kalitesinde artış
+
+### Riskler
+- Cerrahi komplikasyonlar (kanama, enfeksiyon)
+- Konuşma bozukluğu
+- Denge sorunları
+- Batarya değişimi gereksinimi
+
+## Levodopa-Karbidopa İntestinal Jel (LCIG)
+
+### Nedir?
+Levodopa'nın doğrudan ince bağırsağa sürekli infüzyon yoluyla verilmesidir.
+
+### Avantajları
+- Daha stabil ilaç düzeyi
+- Motor dalgalanmaların azalması
+- "Off" sürelerinin kısalması
+
+### Dezavantajları
+- Cerrahi olarak PEG-J tüpü takılması gerekir
+- Tüp komplikasyonları olabilir
+- Günlük kaset değişimi
+
+## Apomorfin Tedavisi
+
+### Subkutan İnjeksiyon
+- Ani "off" dönemlerinde hızlı etki
+- Hasta tarafından kendi kendine uygulanabilir
+- "Kurtarma" tedavisi olarak kullanılır
+
+### Subkutan İnfüzyon
+- Pompa ile sürekli infüzyon
+- Motor dalgalanmaları olan hastalarda
+- DBS'ye alternatif olabilir
+
+## Odaklanmış Ultrason (FUS)
+
+### MR Kılavuzluğunda Odaklanmış Ultrason
+- Cerrahi kesi gerektirmez
+- Tek taraflı tremor tedavisinde etkili
+- FDA onaylı
+- İşlem sırasında hasta uyanık
+
+## Araştırma Aşamasındaki Tedaviler
+- Gen tedavisi
+- Kök hücre tedavisi
+- Nöroplastisite artırıcı tedaviler
+- Alfa-sinüklein hedefli immünoterapi
+- GLP-1 agonistleri (nöroprotektif etki araştırılıyor)
+
+## Hangi Tedavi Kime?
+Tedavi seçimi hastanın yaşına, hastalık süresine, belirtilerin tipine ve kişisel tercihlerine göre belirlenir. Mutlaka hareket bozuklukları konusunda deneyimli bir nöroloji uzmanı ile değerlendirilmelidir.''',
+                'body_en': '''Advanced treatment options applied when medication is insufficient.
+
+## Deep Brain Stimulation (DBS)
+
+### What Is It?
+Continuous electrical stimulation by placing electrodes in specific brain regions.
+
+### Who Is Eligible?
+- Patients diagnosed with Parkinson's for at least 4-5 years
+- Patients who initially responded well to medication
+- Patients with uncontrollable motor fluctuations or dyskinesias
+- Patients without severe cognitive impairment or psychiatric illness
+
+### Targets
+- Subthalamic nucleus (STN): Most commonly used target
+- Globus pallidus interna (GPi)
+- Ventral intermediate nucleus (VIM): Especially for tremor
+
+### Benefits
+- Significant reduction in motor fluctuations
+- Possibility of reducing medication doses
+- Reduction in dyskinesias
+- Improved quality of life
+
+### Risks
+- Surgical complications (bleeding, infection)
+- Speech impairment
+- Balance problems
+- Battery replacement needed
+
+## Levodopa-Carbidopa Intestinal Gel (LCIG)
+
+### What Is It?
+Continuous infusion of levodopa directly into the small intestine.
+
+### Advantages
+- More stable drug levels
+- Reduction in motor fluctuations
+- Shortened "off" periods
+
+### Disadvantages
+- Requires surgical PEG-J tube placement
+- Tube complications may occur
+- Daily cassette change
+
+## Apomorphine Treatment
+
+### Subcutaneous Injection
+- Rapid effect during sudden "off" periods
+- Can be self-administered by patient
+- Used as "rescue" therapy
+
+### Subcutaneous Infusion
+- Continuous infusion via pump
+- For patients with motor fluctuations
+- May be alternative to DBS
+
+## Focused Ultrasound (FUS)
+
+### MR-Guided Focused Ultrasound
+- No surgical incision required
+- Effective in unilateral tremor treatment
+- FDA approved
+- Patient awake during procedure
+
+## Treatments Under Research
+- Gene therapy
+- Stem cell therapy
+- Neuroplasticity-enhancing treatments
+- Alpha-synuclein targeted immunotherapy
+- GLP-1 agonists (neuroprotective effect being studied)
+
+## Which Treatment for Whom?
+Treatment selection is determined by patient age, disease duration, symptom type, and personal preferences. Must be evaluated by a neurologist experienced in movement disorders.''',
+                'content_type': 'text',
+                'category': categories['treatment'],
+                'order': 6,
+                'estimated_duration_minutes': 15,
+            },
         ]
 
         for item_data in education_items:

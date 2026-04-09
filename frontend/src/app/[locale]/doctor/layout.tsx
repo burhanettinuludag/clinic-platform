@@ -24,16 +24,16 @@ interface SidebarItem {
 const sidebarItems: SidebarItem[] = [
   { href: '/doctor/dashboard', icon: LayoutDashboard, labelKey: 'dashboard', fallback: 'Dashboard' },
   { href: '/doctor/patients', icon: Users, labelKey: 'patients', fallback: 'Hastalar' },
-  { href: '/doctor/alerts', icon: AlertTriangle, labelKey: 'alerts', fallback: 'Uyarilar' },
+  { href: '/doctor/alerts', icon: AlertTriangle, labelKey: 'alerts', fallback: 'Uyarılar' },
   { href: '/doctor/messages', icon: MessageSquare, labelKey: 'messages', fallback: 'Mesajlar' },
-  { href: '/doctor/content', icon: Sparkles, labelKey: 'content', fallback: 'Icerik Uret' },
+  { href: '/doctor/content', icon: Sparkles, labelKey: 'content', fallback: 'İçerik Üret' },
   { href: '/doctor/author', icon: BookOpen, labelKey: 'author', fallback: 'Yazar Paneli' },
-  { href: '/doctor/editor', icon: ShieldCheck, labelKey: 'editor', fallback: 'Editor Paneli' },
+  { href: '/doctor/editor', icon: ShieldCheck, labelKey: 'editor', fallback: 'Editör Paneli' },
   { href: '/doctor/devops', icon: Terminal, labelKey: 'devops', fallback: 'DevOps Agent' },
   { href: '/doctor/marketing', icon: Megaphone, labelKey: 'marketing', fallback: 'Marketing' },
   { href: '/doctor/social', icon: Share2, labelKey: 'social', fallback: 'Sosyal Medya' },
   { href: '/doctor/analytics', icon: BarChart3, labelKey: 'analytics', fallback: 'Analytics' },
-  { href: '/doctor/site-settings', icon: Settings, labelKey: 'siteSettings', fallback: 'Site Yonetimi', adminOnly: true },
+  { href: '/doctor/site-settings', icon: Settings, labelKey: 'siteSettings', fallback: 'Site Yönetimi', adminOnly: true },
   { href: '/doctor/profile', icon: User, labelKey: 'profile', fallback: 'Profil' },
 ];
 
@@ -73,7 +73,7 @@ export default function DoctorLayout({ children }: { children: ReactNode }) {
     <div className="flex min-h-screen">
       <aside className="hidden md:flex md:w-64 md:flex-col md:border-r md:bg-white">
         <div className="flex h-16 items-center justify-between border-b px-6">
-          <h2 className="text-lg font-semibold text-gray-800">Doctor Panel</h2>
+          <h2 className="text-lg font-semibold text-gray-800">Doktor Paneli</h2>
           <NotificationBell />
         </div>
         <nav className="flex-1 space-y-1 p-4">

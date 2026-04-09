@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import type { NewsArticle } from '@/lib/types/content';
@@ -62,6 +62,9 @@ interface NewsMagazineProps {
   title?: string;
 }
 
+const INITIAL_DISPLAY = 12;
+const LOAD_MORE_COUNT = 12;
+
 export default function NewsMagazine({
   articles,
   diseaseFilter,
@@ -74,6 +77,7 @@ export default function NewsMagazine({
   const locale = useLocale();
   const [activeDisease, setActiveDisease] = useState(diseaseFilter || 'all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY);
 
   const t = (tr: string, en: string) => (locale === 'tr' ? tr : en);
   const getTitle = (a: NewsArticle) => (locale === 'tr' ? a.title_tr : a.title_en) || a.title_tr;
@@ -103,8 +107,14 @@ export default function NewsMagazine({
     return result;
   }, [articles, activeDisease, searchQuery, maxItems]);
 
-  const featured = filtered[0];
-  const rest = filtered.slice(1);
+  // Reset display count when filter/search changes
+  useEffect(() => { setDisplayCount(INITIAL_DISPLAY); }, [activeDisease, searchQuery]);
+  const totalFiltered = filtered.length;
+  const visibleItems = maxItems ? filtered : filtered.slice(0, displayCount);
+  const hasMore = !maxItems && displayCount < totalFiltered;
+
+  const featured = visibleItems[0];
+  const rest = visibleItems.slice(1);
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', {
@@ -257,6 +267,21 @@ export default function NewsMagazine({
         </div>
       )}
 
+      {/* Load More */}
+      {hasMore && (
+        <div className="text-center pt-2">
+          <button
+            onClick={() => setDisplayCount((prev) => prev + LOAD_MORE_COUNT)}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-teal-50 text-teal-700 hover:bg-teal-100 rounded-xl font-medium text-sm transition-colors border border-teal-200"
+          >
+            {t('Daha Fazla Göster', 'Show More')}
+            <span className="text-xs text-teal-500">
+              ({displayCount}/{totalFiltered})
+            </span>
+          </button>
+        </div>
+      )}
+
       {/* View All Link */}
       {maxItems && filtered.length >= maxItems && (
         <div className="text-center">
@@ -268,6 +293,16 @@ export default function NewsMagazine({
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
+      )}
+
+      {/* Image Attribution */}
+      {!compact && filtered.length > 0 && (
+        <p className="text-center text-xs text-gray-400 mt-2">
+          {t(
+            'Görseller: Servier Medical Art (CC BY 4.0) ve Unsplash',
+            'Images: Servier Medical Art (CC BY 4.0) and Unsplash'
+          )}
+        </p>
       )}
     </div>
   );

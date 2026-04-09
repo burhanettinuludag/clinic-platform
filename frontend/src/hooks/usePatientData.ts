@@ -1,7 +1,22 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
 import api from '@/lib/api';
+
+/** Token varsa true, yoksa false. Guest modda query'ler calismaz. */
+function hasAuth() {
+  return !!Cookies.get('access_token');
+}
+
+/** Auth gerektiren query'ler icin wrapper - token yoksa bos data doner, hata vermez. */
+function useAuthQuery<T>(options: Parameters<typeof useQuery<T>>[0]) {
+  return useAuthQuery<T>({
+    ...options,
+    enabled: hasAuth() && (options.enabled !== false),
+    retry: false,
+  });
+}
 import type {
   DiseaseModule,
   PatientModule,
@@ -29,7 +44,7 @@ import type {
 // ==================== MODULES ====================
 
 export function useDiseaseModules() {
-  return useQuery<DiseaseModule[]>({
+  return useAuthQuery<DiseaseModule[]>({
     queryKey: ['disease-modules'],
     queryFn: async () => {
       const { data } = await api.get('/modules/');
@@ -39,7 +54,7 @@ export function useDiseaseModules() {
 }
 
 export function usePatientModules() {
-  return useQuery<PatientModule[]>({
+  return useAuthQuery<PatientModule[]>({
     queryKey: ['patient-modules'],
     queryFn: async () => {
       const { data } = await api.get('/modules/enrollments/');
@@ -78,7 +93,7 @@ export function useUnenrollModule() {
 // ==================== TASKS ====================
 
 export function useTodayTasks() {
-  return useQuery<TaskTemplate[]>({
+  return useAuthQuery<TaskTemplate[]>({
     queryKey: ['tasks', 'today'],
     queryFn: async () => {
       const { data } = await api.get('/tasks/templates/today/');
@@ -88,7 +103,7 @@ export function useTodayTasks() {
 }
 
 export function useWeekTasks() {
-  return useQuery<TaskTemplate[]>({
+  return useAuthQuery<TaskTemplate[]>({
     queryKey: ['tasks', 'week'],
     queryFn: async () => {
       const { data } = await api.get('/tasks/templates/week/');
@@ -98,7 +113,7 @@ export function useWeekTasks() {
 }
 
 export function useTaskStats() {
-  return useQuery<TaskStats>({
+  return useAuthQuery<TaskStats>({
     queryKey: ['tasks', 'stats'],
     queryFn: async () => {
       const { data } = await api.get('/tasks/completions/stats/');
@@ -128,7 +143,7 @@ export function useCompleteTask() {
 // ==================== SYMPTOMS ====================
 
 export function useSymptomDefinitions(moduleId?: string) {
-  return useQuery<SymptomDefinition[]>({
+  return useAuthQuery<SymptomDefinition[]>({
     queryKey: ['symptom-definitions', moduleId],
     queryFn: async () => {
       const params = moduleId ? { disease_module: moduleId } : {};
@@ -139,7 +154,7 @@ export function useSymptomDefinitions(moduleId?: string) {
 }
 
 export function useTodaySymptoms() {
-  return useQuery<SymptomEntry[]>({
+  return useAuthQuery<SymptomEntry[]>({
     queryKey: ['symptoms', 'today'],
     queryFn: async () => {
       const { data } = await api.get('/tracking/symptoms/today/');
@@ -149,7 +164,7 @@ export function useTodaySymptoms() {
 }
 
 export function useSymptomChart(symptomId?: string, days = 30) {
-  return useQuery<SymptomEntry[]>({
+  return useAuthQuery<SymptomEntry[]>({
     queryKey: ['symptoms', 'chart', symptomId, days],
     queryFn: async () => {
       const params: Record<string, string | number> = { days };
@@ -181,7 +196,7 @@ export function useLogSymptom() {
 // ==================== MEDICATIONS ====================
 
 export function useMedications() {
-  return useQuery<Medication[]>({
+  return useAuthQuery<Medication[]>({
     queryKey: ['medications'],
     queryFn: async () => {
       const { data } = await api.get('/tracking/medications/');
@@ -191,7 +206,7 @@ export function useMedications() {
 }
 
 export function useActiveMedications() {
-  return useQuery<Medication[]>({
+  return useAuthQuery<Medication[]>({
     queryKey: ['medications', 'active'],
     queryFn: async () => {
       const { data } = await api.get('/tracking/medications/active/');
@@ -227,7 +242,7 @@ export function useUpdateMedication() {
 }
 
 export function useTodayMedicationLogs() {
-  return useQuery<MedicationLog[]>({
+  return useAuthQuery<MedicationLog[]>({
     queryKey: ['medication-logs', 'today'],
     queryFn: async () => {
       const { data } = await api.get('/tracking/medication-logs/today/');
@@ -255,7 +270,7 @@ export function useLogMedication() {
 }
 
 export function useMedicationAdherence() {
-  return useQuery<MedicationAdherence>({
+  return useAuthQuery<MedicationAdherence>({
     queryKey: ['medication-adherence'],
     queryFn: async () => {
       const { data } = await api.get('/tracking/medication-logs/adherence/');
@@ -267,7 +282,7 @@ export function useMedicationAdherence() {
 // ==================== REMINDERS ====================
 
 export function useReminders() {
-  return useQuery<ReminderConfig[]>({
+  return useAuthQuery<ReminderConfig[]>({
     queryKey: ['reminders'],
     queryFn: async () => {
       const { data } = await api.get('/tracking/reminders/');
@@ -292,7 +307,7 @@ export function useCreateReminder() {
 // ==================== MIGRAINE ====================
 
 export function useMigraineAttacks(params?: { start_date?: string; end_date?: string }) {
-  return useQuery<MigraineAttackListItem[]>({
+  return useAuthQuery<MigraineAttackListItem[]>({
     queryKey: ['migraine-attacks', params],
     queryFn: async () => {
       const { data } = await api.get('/migraine/attacks/', { params });
@@ -302,7 +317,7 @@ export function useMigraineAttacks(params?: { start_date?: string; end_date?: st
 }
 
 export function useMigraineAttack(id: string) {
-  return useQuery<MigraineAttack>({
+  return useAuthQuery<MigraineAttack>({
     queryKey: ['migraine-attacks', id],
     queryFn: async () => {
       const { data } = await api.get(`/migraine/attacks/${id}/`);
@@ -341,7 +356,7 @@ export function useUpdateAttack() {
 }
 
 export function useMigraineStats() {
-  return useQuery<MigraineStats>({
+  return useAuthQuery<MigraineStats>({
     queryKey: ['migraine-stats'],
     queryFn: async () => {
       const { data } = await api.get('/migraine/attacks/stats/');
@@ -351,7 +366,7 @@ export function useMigraineStats() {
 }
 
 export function useMigraineChart(months = 6) {
-  return useQuery<MigraineChartData[]>({
+  return useAuthQuery<MigraineChartData[]>({
     queryKey: ['migraine-chart', months],
     queryFn: async () => {
       const { data } = await api.get('/migraine/attacks/chart/', {
@@ -363,7 +378,7 @@ export function useMigraineChart(months = 6) {
 }
 
 export function useMigraineTriggers() {
-  return useQuery<MigraineTrigger[]>({
+  return useAuthQuery<MigraineTrigger[]>({
     queryKey: ['migraine-triggers'],
     queryFn: async () => {
       const { data } = await api.get('/migraine/triggers/');
@@ -386,7 +401,7 @@ export function useCreateTrigger() {
 }
 
 export function useTriggerAnalysis() {
-  return useQuery<TriggerAnalysis[]>({
+  return useAuthQuery<TriggerAnalysis[]>({
     queryKey: ['trigger-analysis'],
     queryFn: async () => {
       const { data } = await api.get('/migraine/triggers/analysis/');
@@ -398,7 +413,7 @@ export function useTriggerAnalysis() {
 // ==================== EPILEPSY ====================
 
 export function useSeizureEvents(params?: { start_date?: string; end_date?: string }) {
-  return useQuery<SeizureEventListItem[]>({
+  return useAuthQuery<SeizureEventListItem[]>({
     queryKey: ['seizure-events', params],
     queryFn: async () => {
       const { data } = await api.get('/epilepsy/seizures/', { params });
@@ -408,7 +423,7 @@ export function useSeizureEvents(params?: { start_date?: string; end_date?: stri
 }
 
 export function useSeizureEvent(id: string) {
-  return useQuery<SeizureEvent>({
+  return useAuthQuery<SeizureEvent>({
     queryKey: ['seizure-events', id],
     queryFn: async () => {
       const { data } = await api.get(`/epilepsy/seizures/${id}/`);
@@ -447,7 +462,7 @@ export function useUpdateSeizure() {
 }
 
 export function useSeizureStats() {
-  return useQuery<SeizureStats>({
+  return useAuthQuery<SeizureStats>({
     queryKey: ['seizure-stats'],
     queryFn: async () => {
       const { data } = await api.get('/epilepsy/seizures/stats/');
@@ -457,7 +472,7 @@ export function useSeizureStats() {
 }
 
 export function useSeizureChart(months = 6) {
-  return useQuery<{ month: string; count: number; avg_intensity: number }[]>({
+  return useAuthQuery<{ month: string; count: number; avg_intensity: number }[]>({
     queryKey: ['seizure-chart', months],
     queryFn: async () => {
       const { data } = await api.get('/epilepsy/seizures/chart/', {
@@ -469,7 +484,7 @@ export function useSeizureChart(months = 6) {
 }
 
 export function useEpilepsyTriggers() {
-  return useQuery<EpilepsyTrigger[]>({
+  return useAuthQuery<EpilepsyTrigger[]>({
     queryKey: ['epilepsy-triggers'],
     queryFn: async () => {
       const { data } = await api.get('/epilepsy/triggers/');
@@ -492,7 +507,7 @@ export function useCreateEpilepsyTrigger() {
 }
 
 export function useEpilepsyTriggerAnalysis() {
-  return useQuery<{ id: string; name_tr: string; name_en: string; category: string; seizure_count: number }[]>({
+  return useAuthQuery<{ id: string; name_tr: string; name_en: string; category: string; seizure_count: number }[]>({
     queryKey: ['epilepsy-trigger-analysis'],
     queryFn: async () => {
       const { data } = await api.get('/epilepsy/triggers/analysis/');
@@ -534,7 +549,7 @@ export interface EducationProgress {
 }
 
 export function useEducationItems(params?: { disease_module?: string; category?: string }) {
-  return useQuery<EducationItem[]>({
+  return useAuthQuery<EducationItem[]>({
     queryKey: ['education-items', params],
     queryFn: async () => {
       const { data } = await api.get('/content/education/', { params });
@@ -544,7 +559,7 @@ export function useEducationItems(params?: { disease_module?: string; category?:
 }
 
 export function useEducationItem(slug: string) {
-  return useQuery<EducationItem>({
+  return useAuthQuery<EducationItem>({
     queryKey: ['education-items', slug],
     queryFn: async () => {
       const { data } = await api.get(`/content/education/${slug}/`);
@@ -555,7 +570,7 @@ export function useEducationItem(slug: string) {
 }
 
 export function useEducationProgress() {
-  return useQuery<EducationProgress[]>({
+  return useAuthQuery<EducationProgress[]>({
     queryKey: ['education-progress'],
     queryFn: async () => {
       const { data } = await api.get('/content/education-progress/');
@@ -662,7 +677,7 @@ export interface QuizAttempt {
 }
 
 export function useQuizzes(params?: { disease_module?: string }) {
-  return useQuery<EducationQuiz[]>({
+  return useAuthQuery<EducationQuiz[]>({
     queryKey: ['quizzes', params],
     queryFn: async () => {
       const { data } = await api.get('/content/quizzes/', { params });
@@ -672,7 +687,7 @@ export function useQuizzes(params?: { disease_module?: string }) {
 }
 
 export function useQuiz(slug: string) {
-  return useQuery<EducationQuiz>({
+  return useAuthQuery<EducationQuiz>({
     queryKey: ['quizzes', slug],
     queryFn: async () => {
       const { data } = await api.get(`/content/quizzes/${slug}/`);
@@ -697,7 +712,7 @@ export function useSubmitQuiz() {
 }
 
 export function useQuizAttempts() {
-  return useQuery<QuizAttempt[]>({
+  return useAuthQuery<QuizAttempt[]>({
     queryKey: ['quiz-attempts'],
     queryFn: async () => {
       const { data } = await api.get('/content/quiz-attempts/');

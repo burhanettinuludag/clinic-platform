@@ -28,6 +28,7 @@ import {
   Gamepad2,
   Newspaper,
   Smartphone,
+  Moon,
 } from 'lucide-react';
 import { useActiveHero } from '@/hooks/useSiteData';
 import { useLocale } from 'next-intl';
@@ -99,7 +100,7 @@ export default function HomePage() {
       name: t('home.modules.parkinson'),
       icon: Heart,
       description: t('home.modules.parkinsonDesc'),
-      cta: t('home.modules.earlyAccess'),
+      cta: t('home.modules.parkinsonCta'),
       bgColor: 'bg-emerald-50',
       borderColor: 'border-emerald-200',
       iconBg: 'bg-emerald-100',
@@ -107,8 +108,8 @@ export default function HomePage() {
       badgeBg: 'bg-emerald-100 text-emerald-600',
       linkColor: 'text-emerald-600 hover:text-emerald-700',
       ctaBg: 'bg-emerald-600 hover:bg-emerald-700',
-      active: false,
-      href: '/auth/register',
+      active: true,
+      href: '/patient/parkinson',
     },
     {
       name: t('home.modules.dementia'),
@@ -124,6 +125,21 @@ export default function HomePage() {
       ctaBg: 'bg-rose-600 hover:bg-rose-700',
       active: true,
       href: '/patient/dementia',
+    },
+    {
+      name: t('home.modules.sleep'),
+      icon: Moon,
+      description: t('home.modules.sleepDesc'),
+      cta: t('home.modules.sleepCta'),
+      bgColor: 'bg-indigo-50',
+      borderColor: 'border-indigo-200',
+      iconBg: 'bg-indigo-100',
+      iconColor: 'text-indigo-600',
+      badgeBg: 'bg-indigo-100 text-indigo-700',
+      linkColor: 'text-indigo-600 hover:text-indigo-700',
+      ctaBg: 'bg-indigo-600 hover:bg-indigo-700',
+      active: true,
+      href: '/sleep',
     },
   ];
 
@@ -277,9 +293,7 @@ export default function HomePage() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              {hero ? (
-                <span>{locale === 'en' ? hero.title_en : hero.title_tr}</span>
-              ) : (
+              {(locale === 'en' ? hero?.title_en : hero?.title_tr) || (
                 <>
                   {t('home.hero.titleFallback1')}{' '}
                   <span className="text-teal-600">{t('home.hero.titleHighlight1')}</span>,{' '}
@@ -289,30 +303,23 @@ export default function HomePage() {
             </h1>
 
             <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-              {hero
-                ? (locale === 'en' ? hero.subtitle_en : hero.subtitle_tr)
-                : t('home.hero.subtitle')}
+              {(locale === 'en' ? hero?.subtitle_en : hero?.subtitle_tr) || t('home.hero.subtitle')}
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-              <Link
-                href={hero?.cta_url || '/auth/register'}
+            {/* CTA Buttons - bilgilendirme odakli */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center mb-8">
+              <button
+                onClick={() => document.getElementById('who-is-it-for')?.scrollIntoView({ behavior: 'smooth' })}
                 className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-teal-600 text-white rounded-2xl text-lg font-bold hover:bg-teal-700 transition-all shadow-xl shadow-teal-600/25 hover:shadow-teal-600/40 hover:scale-[1.02]"
               >
-                {hero
-                  ? (locale === 'en' ? hero.cta_text_en : hero.cta_text_tr) || t('home.hero.cta')
-                  : t('home.hero.cta')}
+                {t('home.hero.explore')}
                 <ArrowRight className="w-5 h-5" />
-              </Link>
+              </button>
               <Link
-                href={hero?.secondary_cta_url || '/doctors'}
-                className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-white text-gray-700 rounded-2xl text-lg font-semibold border-2 border-gray-200 hover:border-teal-300 hover:bg-teal-50 hover:text-teal-700 transition-all"
+                href="/auth/register"
+                className="text-sm text-gray-500 hover:text-teal-600 transition-colors underline underline-offset-2"
               >
-                <Stethoscope className="w-5 h-5" />
-                {hero
-                  ? (locale === 'en' ? hero.secondary_cta_text_en : hero.secondary_cta_text_tr) || t('home.hero.secondaryCta')
-                  : t('home.hero.secondaryCta')}
+                {t('home.hero.orRegister')}
               </Link>
             </div>
 
@@ -353,7 +360,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══ Who Is It For? (Personas) ═══ */}
-      <section className="py-20">
+      <section id="who-is-it-for" className="py-20 scroll-mt-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <span className="inline-block px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-sm font-medium mb-4">

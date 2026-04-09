@@ -69,11 +69,24 @@ function ArticleCard({ article, locale }: { article: SleepArticle; locale: strin
   const typeLabel = ARTICLE_TYPE_LABELS[article.article_type]?.[locale as 'tr' | 'en'] || article.article_type;
   const diseaseInfo = article.related_disease ? DISEASE_LABELS[article.related_disease] : null;
 
+  const imageUrl = article.cover_image_url || article.cover_image || '';
+
   return (
     <Link
       href={`/${locale}/sleep/${article.slug}`}
       className="group bg-white rounded-2xl border border-gray-100 hover:border-teal-200 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col"
     >
+      {/* Cover Image */}
+      {imageUrl && (
+        <div className="relative w-full h-44 overflow-hidden bg-gray-100">
+          <img
+            src={imageUrl}
+            alt={article.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+        </div>
+      )}
       {/* Header */}
       <div className="p-5 flex-1">
         <div className="flex items-center gap-2 mb-3 flex-wrap">
@@ -183,27 +196,7 @@ export default function SleepPage() {
       </section>
 
       <div className="max-w-6xl mx-auto px-4 py-12">
-        {/* Featured Articles */}
-        {featuredArticles.length > 0 && (
-          <section className="mb-16">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                <Star className="w-5 h-5 text-amber-600" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">{t('featured.title')}</h2>
-                <p className="text-sm text-gray-500">{t('featured.subtitle')}</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {featuredArticles.map(article => (
-                <ArticleCard key={article.id} article={article} locale={locale} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Screening Tests CTA */}
+        {/* Screening Tests CTA — en üstte */}
         {screeningTests.length > 0 && (
           <section className="mb-16">
             <div className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 rounded-3xl p-8 md:p-10 text-white relative overflow-hidden">
@@ -224,15 +217,15 @@ export default function SleepPage() {
                     ? 'Uyku kalitenizi, gündüz uykululuğunuzu, uykusuzluk ve uyku apnesi riskinizi değerlendirin. Tamamen anonim, kayıt gerektirmez.'
                     : 'Evaluate your sleep quality, daytime sleepiness, insomnia and sleep apnea risk. Completely anonymous, no registration required.'}
                 </p>
-                <div className="flex flex-wrap gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {screeningTests.slice(0, 4).map(test => (
                     <Link
                       key={test.id}
                       href={`/${locale}/sleep/tests/${test.slug}`}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-sm font-medium transition-colors"
+                      className="inline-flex items-center justify-between gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-sm font-medium transition-colors"
                     >
                       {test.title}
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                     </Link>
                   ))}
                 </div>
@@ -244,6 +237,26 @@ export default function SleepPage() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
+            </div>
+          </section>
+        )}
+
+        {/* Featured Articles */}
+        {featuredArticles.length > 0 && (
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                <Star className="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">{t('featured.title')}</h2>
+                <p className="text-sm text-gray-500">{t('featured.subtitle')}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {featuredArticles.map(article => (
+                <ArticleCard key={article.id} article={article} locale={locale} />
+              ))}
             </div>
           </section>
         )}

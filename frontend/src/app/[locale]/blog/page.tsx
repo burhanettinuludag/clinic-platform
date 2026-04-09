@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import { getArticles, getCategories } from '@/lib/server-api';
 import Link from 'next/link';
 import { Calendar, User, Tag } from 'lucide-react';
 
@@ -12,6 +11,32 @@ export const metadata: Metadata = {
     type: 'website',
   },
 };
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
+async function getArticles(locale: string) {
+  try {
+    const res = await fetch(`${API}/content/articles/`, {
+      headers: { 'Accept-Language': locale },
+      next: { revalidate: 300, tags: ['articles'] },
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.results || data;
+  } catch { return []; }
+}
+
+async function getCategories(locale: string) {
+  try {
+    const res = await fetch(`${API}/content/categories/`, {
+      headers: { 'Accept-Language': locale },
+      next: { revalidate: 3600, tags: ['categories'] },
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.results || data;
+  } catch { return []; }
+}
 
 function fmtDate(d: string, locale: string = 'tr') {
   return new Date(d).toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -32,13 +57,14 @@ function JsonLd() {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
 }
 
-export default async function BlogPage({ params }: { params: { locale: string } }) {
+export default async function BlogPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const [articles, categories] = await Promise.all([
-    getArticles(params.locale),
-    getCategories(params.locale),
+    getArticles(locale),
+    getCategories(locale),
   ]);
 
-  const isTr = params.locale === 'tr';
+  const isTr = locale === 'tr';
 
   return (
     <>
@@ -60,11 +86,11 @@ export default async function BlogPage({ params }: { params: { locale: string } 
         {articles && articles.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {articles.map((article: any) => (
-              <Link key={article.id} href={`/${params.locale}/blog/${article.slug}`}
+              <Link key={article.id} href={`/${locale}/blog/${article.slug}`}
                 className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition">
                 {article.featured_image && (
                   <div className="aspect-video bg-gray-100 overflow-hidden">
-                    <img src={article.featured_image} alt={isTr ? (article.title_tr || article.title) : (article.title_en || article.title_tr || article.title)} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                    <img src={article.featured_image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition" />
                   </div>
                 )}
                 <div className="p-5">
@@ -74,17 +100,17 @@ export default async function BlogPage({ params }: { params: { locale: string } 
                     </span>
                   )}
                   <h2 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition mb-2">
-                    {isTr ? (article.title_tr || article.title) : (article.title_en || article.title_tr || article.title)}
+                    {article.title}
                   </h2>
-                  {(article.excerpt_tr || article.excerpt) && (
-                    <p className="text-sm text-gray-500 line-clamp-2 mb-3">{isTr ? (article.excerpt_tr || article.excerpt) : (article.excerpt_en || article.excerpt_tr || article.excerpt)}</p>
+                  {article.excerpt && (
+                    <p className="text-sm text-gray-500 line-clamp-2 mb-3">{article.excerpt}</p>
                   )}
                   <div className="flex items-center gap-4 text-xs text-gray-400">
                     {article.author_name && (
                       <span className="flex items-center gap-1"><User className="w-3 h-3" /> {article.author_name}</span>
                     )}
                     {article.published_at && (
-                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {fmtDate(article.published_at, params.locale)}</span>
+                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {fmtDate(article.published_at, locale)}</span>
                     )}
                   </div>
                 </div>

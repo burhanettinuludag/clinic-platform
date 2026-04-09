@@ -1,9 +1,19 @@
+import markdown
 from rest_framework import serializers
 from .models import (
     ContentCategory, Article, NewsArticle, EducationItem, EducationProgress,
     EducationQuiz, QuizQuestion, QuizAttempt,
 )
 from apps.accounts.models import DoctorAuthor
+
+
+def md_to_html(text):
+    """Markdown metni HTML'e donusturur. Zaten HTML ise dokunmaz."""
+    if not text:
+        return text
+    if '<p>' in text or '<h' in text or '<div' in text:
+        return text
+    return markdown.markdown(text, extensions=['extra', 'nl2br'])
 
 
 class ContentCategorySerializer(serializers.ModelSerializer):
@@ -35,6 +45,7 @@ class ArticleListSerializer(serializers.ModelSerializer):
     excerpt = serializers.SerializerMethodField()
     category_name = serializers.SerializerMethodField()
     author_name = serializers.SerializerMethodField()
+    featured_image = serializers.SerializerMethodField()
 
     class Meta:
         model = Article
@@ -61,6 +72,16 @@ class ArticleListSerializer(serializers.ModelSerializer):
             return getattr(obj.category, f'name_{self._get_lang()}', obj.category.name_tr)
         return None
 
+    def get_featured_image(self, obj):
+        if obj.featured_image_url:
+            return obj.featured_image_url
+        if obj.featured_image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.featured_image.url)
+            return obj.featured_image.url
+        return None
+
     def get_author_name(self, obj):
         if obj.author:
             return f"{obj.author.first_name} {obj.author.last_name}"
@@ -79,12 +100,13 @@ class ArticleDetailSerializer(ArticleListSerializer):
         fields = [
             'id', 'slug', 'title', 'excerpt', 'body', 'featured_image',
             'category', 'category_name', 'author_name', 'author_profile',
-            'is_featured', 'published_at',
+            'is_featured', 'published_at', 'updated_at',
             'seo_title', 'seo_description', 'schema_markup',
         ]
 
     def get_body(self, obj):
-        return getattr(obj, f'body_{self._get_lang()}', obj.body_tr)
+        raw = getattr(obj, f'body_{self._get_lang()}', obj.body_tr)
+        return md_to_html(raw)
 
     def get_seo_title(self, obj):
         return getattr(obj, f'seo_title_{self._get_lang()}', obj.seo_title_tr)
@@ -146,7 +168,8 @@ class EducationItemSerializer(serializers.ModelSerializer):
         return getattr(obj, f'title_{self._get_lang()}', obj.title_tr)
 
     def get_body(self, obj):
-        return getattr(obj, f'body_{self._get_lang()}', obj.body_tr)
+        raw = getattr(obj, f'body_{self._get_lang()}', obj.body_tr)
+        return md_to_html(raw)
 
     def get_disease_module_slug(self, obj):
         if obj.disease_module:

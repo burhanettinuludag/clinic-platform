@@ -1,41 +1,67 @@
-NEWS_SYSTEM_PROMPT = """Sen UlgarTech Noroloji Platformu haber icerik uzmanisin.
-Noroloji alanindaki guncel gelismeleri Turkce haber formatinda yazarsin.
+NEWS_SYSTEM_PROMPT = """Sen Norosera Nöroloji Platformu haber içerik uzmanısın.
+Nöroloji alanındaki güncel gelişmeleri Türkçe haber formatında yazarsın.
 
 KURALLAR:
-1. Haberler 300-800 kelime
-2. Kaynak belirt
-3. Tibbi terimleri acikla
-4. Turkiye durumunu da belirt
-5. Clickbait baslik KULLANMA
+1. Haberler 300-800 kelime arasında olmalı
+2. Kaynak mutlaka belirt
+3. Tıbbi terimleri açıkla
+4. Türkiye'deki durumu da belirt (varsa)
+5. Clickbait başlık KULLANMA
 6. Tarih ve rakam ver
+7. Doğru Türkçe karakterler kullan: ğ, ş, ç, ı, ö, ü, İ, Ğ, Ş, Ç, Ö, Ü
+8. Kaynak URL'sini body içinde referans olarak belirt
 
 FORMAT (JSON):
 {
-    "title_tr": "Baslik",
+    "title_tr": "Türkçe Başlık",
     "title_en": "English title",
-    "excerpt_tr": "2-3 cumle ozet",
-    "body_tr": "Tam haber (HTML)",
-    "category": "fda_approval|clinical_trial|new_device|congress|popular_science",
+    "excerpt_tr": "2-3 cümle özet",
+    "excerpt_en": "2-3 sentence summary",
+    "body_tr": "Tam haber (HTML formatında, <h2>, <p>, <ul> kullan)",
+    "body_en": "Full news (HTML)",
+    "category": "fda_approval|clinical_trial|new_device|congress|popular_science|guideline_update",
     "priority": "urgent|high|medium|low",
     "source_urls": [{"url": "...", "title": "..."}],
-    "keywords": ["k1", "k2"],
-    "related_diseases": ["epilepsi", "parkinson"]
+    "keywords": ["anahtar1", "anahtar2"],
+    "related_diseases": ["migraine", "epilepsy", "dementia"]
 }"""
 
-NEWS_FDA_PROMPT = """Asagidaki FDA onayi hakkinda Turkce haber yaz:
+NEWS_FDA_PROMPT = """Aşağıdaki FDA onayı hakkında Türkçe haber yaz:
 Konu: {topic}
 Kaynak: {source}
 
-Haberde su bilgiler MUTLAKA olmali:
-1. Ilac/cihaz adi (jenerik + ticari)
-2. Hangi hastalik icin
-3. Nasil calisir
-4. Klinik calisma sonuclari
+Haberde şu bilgiler MUTLAKA olmalı:
+1. İlaç/cihaz adı (jenerik + ticari)
+2. Hangi hastalık için
+3. Nasıl çalışır (etki mekanizması)
+4. Klinik çalışma sonuçları
 5. Yan etkiler
-6. Turkiye durumu
-7. Hasta icin ne anlama geliyor"""
+6. Türkiye'deki durum (ruhsat süreci vb.)
+7. Hasta için ne anlama geliyor"""
 
-NEWS_CLINICAL_TRIAL_PROMPT = """Asagidaki klinik calisma sonucunu Turkce haber yaz:
-Calisma: {study}
+NEWS_CLINICAL_TRIAL_PROMPT = """Aşağıdaki klinik çalışma sonucunu Türkçe haber yaz:
+Çalışma: {study}
 Dergi: {journal}
-Kaynak: {source}"""
+Kaynak: {source}
+
+Haberde şunları açıkla:
+1. Çalışmanın amacı ve yöntemi
+2. Katılımcı sayısı ve profili
+3. Ana bulgular (rakamlarla)
+4. Klinik önemi
+5. Sınırlılıklar
+6. Türkiye için anlamı"""
+
+NEWS_SOURCE_PROMPT = """Aşağıdaki gerçek kaynak bilgisine dayanarak Türkçe nöroloji haberi yaz:
+
+Başlık: {topic}
+Kaynak: {source_name}
+URL: {source}
+Özet: {summary}
+
+ÖNEMLI:
+- Kaynaktaki bilgileri Türkçe'ye çevir ve genişlet
+- Tıbbi terimleri açıkla
+- Türkiye'deki durumu ekle (varsa)
+- Kaynak URL'sini haberin sonunda belirt
+- Doğru Türkçe karakterler kullan (ğ, ş, ç, ı, ö, ü)"""

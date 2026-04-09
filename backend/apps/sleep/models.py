@@ -69,6 +69,12 @@ class SleepArticle(TimeStampedModel):
         blank=True,
         null=True,
     )
+    cover_image_url = models.URLField(
+        max_length=500,
+        blank=True,
+        default='',
+        help_text='Harici görsel URL (Unsplash vb.). cover_image boşsa kullanılır.',
+    )
     icon = models.CharField(max_length=50, blank=True, default='')
 
     # Meta

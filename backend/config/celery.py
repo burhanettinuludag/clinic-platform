@@ -57,9 +57,19 @@ app.conf.beat_schedule = {
         'task': 'apps.content.tasks.send_daily_education_drip',
         'schedule': crontab(hour=9, minute=0),  # Her gun 09:00
     },
+    # Otomatik haber toplama (gerçek kaynaklardan)
+    'fetch-and-generate-news': {
+        'task': 'apps.content.tasks.fetch_and_generate_news',
+        'schedule': crontab(hour=10, minute=0, day_of_week='3,6'),  # Çarşamba ve Cumartesi 10:00
+    },
     # Broken Link Scanner
     'scan-broken-links-weekly': {
         'task': 'apps.common.tasks.scan_broken_links',
         'schedule': crontab(hour=4, minute=0, day_of_week=3),  # Carsamba 04:00
+    },
+    # Backend-Frontend Uyum Kontrolü
+    'backend-frontend-health-check': {
+        'task': 'apps.common.tasks.backend_frontend_health_check',
+        'schedule': crontab(hour=6, minute=0),  # Her gün 06:00
     },
 }

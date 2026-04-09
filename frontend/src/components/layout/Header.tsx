@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import { useAuth } from '@/context/AuthContext';
-import { Menu, X, User, Brain, Activity, BookOpen, ShoppingBag, FileText, Newspaper, Mail, Shield, Moon } from 'lucide-react';
+import { Menu, X, User, Brain, Activity, BookOpen, ShoppingBag, FileText, Newspaper, Mail, Shield, Moon, Zap } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function Header() {
@@ -61,6 +61,9 @@ export default function Header() {
             </NavLink>
             <NavLink href="/education" icon={<BookOpen className="w-4 h-4" />}>
               {t('nav.education')}
+            </NavLink>
+            <NavLink href="/neuromodulation" icon={<Zap className="w-4 h-4" />}>
+              {t('nav.neuromodulation')}
             </NavLink>
             <NavLink href="/blog" icon={<FileText className="w-4 h-4" />}>
               {t('nav.blog')}
@@ -148,6 +151,10 @@ export default function Header() {
               <MobileNavLink href="/education" onClick={() => setMenuOpen(false)}>
                 <BookOpen className="w-5 h-5 text-teal-600" />
                 {t('nav.education')}
+              </MobileNavLink>
+              <MobileNavLink href="/neuromodulation" onClick={() => setMenuOpen(false)}>
+                <Zap className="w-5 h-5 text-teal-600" />
+                {t('nav.neuromodulation')}
               </MobileNavLink>
               <MobileNavLink href="/blog" onClick={() => setMenuOpen(false)}>
                 <FileText className="w-5 h-5 text-teal-600" />

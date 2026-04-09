@@ -48,7 +48,7 @@ export default function Footer() {
   const diseaseModules = [
     { label: t('footer.migraineTracking'), href: '/patient/migraine', active: true },
     { label: t('footer.epilepsyTracking'), href: '/patient/epilepsy', active: true },
-    { label: t('footer.parkinsonTracking'), href: '#', active: false },
+    { label: t('footer.parkinsonTracking'), href: '/patient/parkinson', active: true },
     { label: t('footer.dementiaTracking'), href: '/patient/dementia', active: true },
   ];
 

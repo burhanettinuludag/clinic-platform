@@ -10,7 +10,7 @@ import {
   useTriggerAnalysis,
   useCreateTrigger,
 } from '@/hooks/usePatientData';
-import { Brain, Plus, BarChart3, List, Target, X, PlusCircle, Check, Loader2, BookOpen, Bot, ChevronRight } from 'lucide-react';
+import { Brain, Plus, BarChart3, List, Target, X, PlusCircle, Check, Loader2, BookOpen, Bot, ChevronRight, ClipboardCheck } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import MigraineChart from '@/components/patient/MigraineChart';
 import type { MigraineAttack } from '@/lib/types/patient';
@@ -30,6 +30,12 @@ export default function MigrainePage() {
           <h1 className="text-2xl font-bold text-gray-900">{t('patient.migraine.title')}</h1>
         </div>
         <div className="flex items-center gap-2">
+          <Link
+            href="/patient/migraine/test"
+            className="flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 text-sm font-medium rounded-lg hover:bg-orange-200 transition"
+          >
+            <ClipboardCheck className="w-4 h-4" /> Migren Testi
+          </Link>
           <Link
             href="/patient/migraine/education"
             className="flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 text-sm font-medium rounded-lg hover:bg-purple-200 transition"
@@ -58,6 +64,21 @@ export default function MigrainePage() {
           <div className="text-xs text-purple-600">Migrenle ilgili sorularınızı yapay zekaya sorun</div>
         </div>
         <ChevronRight className="w-4 h-4 text-purple-400" />
+      </Link>
+
+      {/* Migraine Self-Test Quick Link */}
+      <Link
+        href="/patient/migraine/test"
+        className="flex items-center gap-3 p-3 mb-4 bg-orange-50 border border-orange-200 rounded-xl hover:bg-orange-100 transition"
+      >
+        <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+          <ClipboardCheck className="w-4 h-4 text-orange-600" />
+        </div>
+        <div className="flex-1">
+          <div className="text-sm font-medium text-orange-900">Başağrım Migren mi?</div>
+          <div className="text-xs text-orange-600">Hızlı self-test ile başağrınızın migren olup olmadığını öğrenin</div>
+        </div>
+        <ChevronRight className="w-4 h-4 text-orange-400" />
       </Link>
 
       {/* Tabs */}

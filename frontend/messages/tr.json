@@ -42,6 +42,7 @@
     "about": "Hakkımızda",
     "blog": "Blog",
     "education": "Eğitim",
+    "neuromodulation": "Nöromodülasyon",
     "store": "Mağaza",
     "contact": "İletişim",
     "dashboard": "Panel",
@@ -126,7 +127,9 @@
       "titleHighlight2": "Yönetin",
       "subtitle": "Migren, epilepsi, parkinson ve demans hastaları için ev eğitimi, semptom takibi ve hekim paneli.",
       "cta": "Hemen Başlayın - Ücretsiz",
-      "secondaryCta": "Doktorlar İçin"
+      "secondaryCta": "Doktorlar İçin",
+      "explore": "Platformu Keşfet",
+      "orRegister": "veya ücretsiz kayıt olun"
     },
     "stats": {
       "activeUsers": "Aktif Kullanıcı",
@@ -187,10 +190,14 @@
       "epilepsyCta": "Epilepsi modülünü ücretsiz dene",
       "parkinson": "Parkinson",
       "parkinsonDesc": "Motor belirtilerinizi günlük olarak izleyin",
+      "parkinsonCta": "Parkinson modülünü ücretsiz dene",
       "earlyAccess": "Erken Erişim İçin Kayıt Ol",
       "dementia": "Demans",
       "dementiaDesc": "15+ bilişsel egzersiz, günlük değerlendirme, bakıcı notları ve tarama testleri",
       "dementiaCta": "Demans modülünü ücretsiz dene",
+      "sleep": "Uyku Sağlığı",
+      "sleepDesc": "Uyku bozuklukları, uyku hijyeni, tanı yöntemleri ve hastalıklarda uyku rehberleri",
+      "sleepCta": "Uyku sağlığı rehberini keşfet",
       "active": "Aktif",
       "comingSoon": "Yakında",
       "startUsing": "Kullanmaya Başla"

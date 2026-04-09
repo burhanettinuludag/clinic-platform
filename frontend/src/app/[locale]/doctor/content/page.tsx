@@ -18,6 +18,9 @@ import {
   BookOpen,
   MessageSquare,
   GraduationCap,
+  Newspaper,
+  Globe,
+  ExternalLink,
 } from 'lucide-react';
 
 interface GenerateResult {
@@ -34,14 +37,15 @@ interface GenerateResult {
   steps_completed?: string[];
   duration_ms?: number;
   error?: string;
+  content_type?: string;
 }
 
 const MODULE_OPTIONS = [
   { value: 'migraine', label: 'Migren' },
   { value: 'epilepsy', label: 'Epilepsi' },
   { value: 'dementia', label: 'Demans' },
-  { value: 'wellness', label: 'Saglikli Yasam' },
-  { value: 'general', label: 'Genel Noroloji' },
+  { value: 'wellness', label: 'Sağlıklı Yaşam' },
+  { value: 'general', label: 'Genel Nöroloji' },
 ];
 
 const AUDIENCE_OPTIONS = [
@@ -51,13 +55,14 @@ const AUDIENCE_OPTIONS = [
 ];
 
 const CONTENT_TYPE_OPTIONS = [
-  { value: 'blog', label: 'Blog Yazisi', icon: BookOpen, desc: 'Detayli bilgilendirme yazisi' },
-  { value: 'education', label: 'Egitim Icerigi', icon: GraduationCap, desc: 'Maddeler halinde egitim materyali' },
-  { value: 'social', label: 'Sosyal Medya', icon: MessageSquare, desc: 'Kisa sosyal medya postu' },
+  { value: 'blog', label: 'Blog Yazısı', icon: BookOpen, desc: 'Detaylı bilgilendirme yazısı' },
+  { value: 'news', label: 'Haber', icon: Newspaper, desc: 'Güncel nöroloji haberi' },
+  { value: 'education', label: 'Eğitim İçeriği', icon: GraduationCap, desc: 'Maddeler halinde eğitim materyali' },
+  { value: 'social', label: 'Sosyal Medya', icon: MessageSquare, desc: 'Kısa sosyal medya postu' },
 ];
 
 const LENGTH_OPTIONS = [
-  { value: 'short', label: 'Kisa', desc: '2-3 dk okuma', words: '400-600 kelime' },
+  { value: 'short', label: 'Kısa', desc: '2-3 dk okuma', words: '400-600 kelime' },
   { value: 'medium', label: 'Orta', desc: '~5 dk okuma', words: '800-1200 kelime' },
   { value: 'long', label: 'Uzun', desc: '8-10 dk okuma', words: '1500-2000 kelime' },
 ];
@@ -103,7 +108,26 @@ export default function GenerateContentPage() {
     onError: (error: any) => {
       setResult({
         success: false,
-        error: error.response?.data?.error || 'Bir hata olustu',
+        error: error.response?.data?.error || 'Bir hata oluştu',
+      });
+    },
+  });
+
+  const [fetchResult, setFetchResult] = useState<any>(null);
+
+  const fetchNewsMutation = useMutation({
+    mutationFn: async (dryRun: boolean) => {
+      const { data } = await api.post('/doctor/fetch-news/', {
+        max_news: 3,
+        dry_run: dryRun,
+      });
+      return data;
+    },
+    onSuccess: (data) => setFetchResult(data),
+    onError: (error: any) => {
+      setFetchResult({
+        success: false,
+        error: error.response?.data?.error || 'Kaynak tarama hatası',
       });
     },
   });
@@ -124,7 +148,8 @@ export default function GenerateContentPage() {
   };
 
   const stepLabels: Record<string, string> = {
-    content_agent: 'Icerik Uretimi',
+    content_agent: 'İçerik Üretimi',
+    news_agent: 'Haber Üretimi',
     seo_agent: 'SEO Optimizasyonu',
     legal_agent: 'Hukuki Kontrol',
   };
@@ -150,11 +175,11 @@ export default function GenerateContentPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <Sparkles className="h-6 w-6 text-purple-600" />
-          Icerik Uret
+          İçerik Üret
         </h1>
         <p className="mt-1 text-sm text-gray-500">
-          AI destekli icerik uretimi. Icerik tipini ve uzunlugunu belirleyin,
-          uretilen icerigi hemen onizleyin.
+          AI destekli içerik üretimi. İçerik tipini ve uzunluğunu belirleyin,
+          üretilen içeriği hemen önizleyin.
         </p>
       </div>
 
@@ -169,7 +194,7 @@ export default function GenerateContentPage() {
             type="text"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            placeholder="Orn: Migren atagi sirasinda ne yapmali"
+            placeholder="Örn: Migren atağı sırasında ne yapmalı"
             className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             required
           />
@@ -178,7 +203,7 @@ export default function GenerateContentPage() {
         {/* Modul */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Hastalik Modulu
+            Hastalık Modülü
           </label>
           <select
             value={module}
@@ -196,9 +221,9 @@ export default function GenerateContentPage() {
         {/* Icerik Tipi - Kart secimi */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Icerik Tipi
+            İçerik Tipi
           </label>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {CONTENT_TYPE_OPTIONS.map((opt) => {
               const Icon = opt.icon;
               const isSelected = contentType === opt.value;
@@ -225,7 +250,7 @@ export default function GenerateContentPage() {
         {/* Uzunluk - Kart secimi */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Icerik Uzunlugu
+            İçerik Uzunluğu
           </label>
           <div className="grid grid-cols-3 gap-3">
             {LENGTH_OPTIONS.map((opt) => {
@@ -260,7 +285,7 @@ export default function GenerateContentPage() {
           <ChevronDown
             className={`h-4 w-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`}
           />
-          Gelismis Secenekler
+          Gelişmiş Seçenekler
         </button>
 
         {showAdvanced && (
@@ -309,22 +334,117 @@ export default function GenerateContentPage() {
           {generateMutation.isPending ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              Uretiliyor... (10-15 saniye)
+              Üretiliyor... (10-15 saniye)
             </>
           ) : (
             <>
               <Sparkles className="h-5 w-5" />
-              Icerik Uret
+              İçerik Üret
             </>
           )}
         </button>
       </form>
 
+      {/* Kaynaklardan Haber Topla */}
+      <div className="mt-8 rounded-xl border-2 border-dashed border-blue-200 bg-blue-50/50 p-6">
+        <div className="flex items-start gap-3 mb-4">
+          <Globe className="h-6 w-6 text-blue-600 mt-0.5" />
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">Kaynaklardan Haber Topla</h2>
+            <p className="text-sm text-gray-500 mt-1">
+              PubMed, FDA, Medscape ve ScienceDaily gibi gerçek kaynaklardan güncel nöroloji haberlerini
+              otomatik çeker ve AI ile Türkçe habere dönüştürür.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => { setFetchResult(null); fetchNewsMutation.mutate(true); }}
+            disabled={fetchNewsMutation.isPending}
+            className="flex items-center gap-2 rounded-lg border border-blue-300 bg-white px-4 py-2.5 text-sm font-medium text-blue-700 hover:bg-blue-50 disabled:opacity-50 transition-colors"
+          >
+            {fetchNewsMutation.isPending && fetchNewsMutation.variables === true ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+            Kaynakları Önizle
+          </button>
+          <button
+            type="button"
+            onClick={() => { setFetchResult(null); fetchNewsMutation.mutate(false); }}
+            disabled={fetchNewsMutation.isPending}
+            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          >
+            {fetchNewsMutation.isPending && fetchNewsMutation.variables === false ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Newspaper className="h-4 w-4" />
+            )}
+            Haberleri Üret (3 haber)
+          </button>
+        </div>
+
+        {/* Fetch Sonuçları */}
+        {fetchResult && (
+          <div className="mt-4 space-y-2">
+            {fetchResult.dry_run ? (
+              <>
+                <p className="text-sm font-medium text-blue-800">
+                  {fetchResult.total_sources} kaynak bulundu:
+                </p>
+                <div className="max-h-60 overflow-y-auto space-y-1.5">
+                  {fetchResult.items?.map((item: any, i: number) => (
+                    <div key={i} className="flex items-start gap-2 rounded-lg bg-white p-2.5 text-sm border border-blue-100">
+                      <ExternalLink className="h-3.5 w-3.5 text-blue-500 mt-0.5 shrink-0" />
+                      <div>
+                        <span className="text-gray-800 font-medium">{item.title}</span>
+                        <div className="flex gap-2 mt-0.5 text-xs text-gray-400">
+                          <span className="text-blue-600">{item.source}</span>
+                          {item.diseases?.length > 0 && <span>{item.diseases.join(', ')}</span>}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : fetchResult.success ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-sm font-medium text-green-800">
+                    {fetchResult.succeeded} haber üretildi (taslak olarak kaydedildi)
+                  </span>
+                </div>
+                <div className="space-y-1.5">
+                  {fetchResult.results?.map((r: any, i: number) => (
+                    <div key={i} className={`flex items-start gap-2 rounded-lg p-2.5 text-sm border ${r.success ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
+                      {r.success ? <CheckCircle className="h-3.5 w-3.5 text-green-500 mt-0.5" /> : <XCircle className="h-3.5 w-3.5 text-red-500 mt-0.5" />}
+                      <div>
+                        <span className={r.success ? 'text-green-800' : 'text-red-800'}>{r.title}</span>
+                        <span className="text-xs text-gray-400 ml-2">[{r.source}]</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center gap-2 text-red-700 text-sm">
+                <XCircle className="h-4 w-4" />
+                {fetchResult.error}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Pipeline Durumu */}
       {generateMutation.isPending && (
         <div className="mt-6 rounded-lg border border-purple-200 bg-purple-50 p-4">
           <p className="text-sm font-medium text-purple-800 mb-3">
-            Pipeline calisiyor...
+            Pipeline çalışıyor...
           </p>
           <div className="space-y-2">
             {['content_agent', 'seo_agent', 'legal_agent'].map((step) => (
@@ -346,11 +466,11 @@ export default function GenerateContentPage() {
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-5 w-5 text-green-600" />
                 <span className="font-medium text-green-800">
-                  Icerik basariyla uretildi!
+                  {result.content_type === 'news' ? 'Haber başarıyla üretildi!' : 'İçerik başarıyla üretildi!'}
                 </span>
               </div>
               <p className="mt-1 text-sm text-green-700">
-                Taslak olarak kaydedildi. Asagida onizleyebilir, editorden duzenleme yapabilirsiniz.
+                Taslak olarak kaydedildi. Aşağıda önizleyebilir, {result.content_type === 'news' ? 'yazar panelinden haberi' : 'editörden'} düzenleyebilirsiniz.
               </p>
             </div>
           ) : (
@@ -371,7 +491,7 @@ export default function GenerateContentPage() {
                 <div className="flex items-center justify-between border-b border-gray-200 px-5 py-3 bg-gray-50">
                   <h3 className="font-semibold text-gray-900 flex items-center gap-2">
                     <Eye className="h-4 w-4 text-blue-600" />
-                    Icerik Onizleme
+                    İçerik Önizleme
                   </h3>
                   <div className="flex items-center gap-2">
                     <button
@@ -379,7 +499,7 @@ export default function GenerateContentPage() {
                       className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 transition"
                     >
                       {copied ? (
-                        <><Check className="h-3.5 w-3.5 text-green-600" /> Kopyalandi</>
+                        <><Check className="h-3.5 w-3.5 text-green-600" /> Kopyalandı</>
                       ) : (
                         <><Copy className="h-3.5 w-3.5" /> Kopyala</>
                       )}
@@ -388,7 +508,7 @@ export default function GenerateContentPage() {
                       onClick={() => setShowPreview(!showPreview)}
                       className="text-xs px-3 py-1.5 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 transition"
                     >
-                      {showPreview ? 'Gizle' : 'Goster'}
+                      {showPreview ? 'Gizle' : 'Göster'}
                     </button>
                   </div>
                 </div>
@@ -433,7 +553,7 @@ export default function GenerateContentPage() {
 
                     {/* SEO Bilgisi */}
                     <div className="mt-6 pt-4 border-t border-gray-100">
-                      <div className="text-xs font-medium text-gray-400 mb-1">SEO Basligi</div>
+                      <div className="text-xs font-medium text-gray-400 mb-1">SEO Başlığı</div>
                       <p className="text-sm text-gray-600">{result.seo_title}</p>
                     </div>
                   </div>
@@ -470,7 +590,7 @@ export default function GenerateContentPage() {
                         result.legal_approved ? 'text-green-600' : 'text-red-600'
                       }`}
                     >
-                      {result.legal_approved ? 'Onaylandi' : 'Reddedildi'}
+                      {result.legal_approved ? 'Onaylandı' : 'Reddedildi'}
                     </p>
                   </div>
                 </div>

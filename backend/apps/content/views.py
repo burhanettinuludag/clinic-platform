@@ -32,11 +32,13 @@ class ContentCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ContentCategory.objects.filter(parent__isnull=True)
     serializer_class = ContentCategorySerializer
     permission_classes = [permissions.AllowAny]
+    pagination_class = None
     lookup_field = 'slug'
 
 
 class ArticleViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
+    pagination_class = None
     lookup_field = 'slug'
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['category', 'is_featured']
@@ -179,6 +181,7 @@ class PublicEducationViewSet(viewsets.ReadOnlyModelViewSet):
 class PublicNewsViewSet(viewsets.ReadOnlyModelViewSet):
     """Public haberler - SSR friendly."""
     permission_classes = [AllowAny]
+    pagination_class = None
     lookup_field = 'slug'
 
     def get_queryset(self):

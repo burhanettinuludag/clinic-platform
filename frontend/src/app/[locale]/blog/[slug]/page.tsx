@@ -1,43 +1,53 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getArticleBySlug } from '@/lib/server-api';
 import Link from 'next/link';
 import { ArrowLeft, Calendar, User, Tag, Shield } from 'lucide-react';
 
 interface Props {
-  params: { slug: string; locale: string };
+  params: Promise<{ slug: string; locale: string }>;
+}
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
+async function getArticleBySlug(slug: string, locale: string) {
+  try {
+    const res = await fetch(`${API}/content/articles/${slug}/`, {
+      headers: { 'Accept-Language': locale },
+      next: { revalidate: 600, tags: ['article', slug] },
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch { return null; }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const article = await getArticleBySlug(params.slug, params.locale);
-  if (!article) return { title: params.locale === 'tr' ? 'Makale Bulunamadı' : 'Article Not Found' };
-
-  const title = params.locale === 'tr' ? article.title_tr || article.title : article.title_en || article.title;
-  const desc = params.locale === 'tr' ? article.seo_description_tr || article.excerpt_tr || '' : article.seo_description_en || article.excerpt_en || '';
+  const { slug, locale } = await params;
+  const article = await getArticleBySlug(slug, locale);
+  if (!article) return { title: locale === 'tr' ? 'Makale Bulunamadı' : 'Article Not Found' };
 
   return {
-    title: article.seo_title_tr || title,
-    description: desc.slice(0, 160),
+    title: article.seo_title || article.title,
+    description: (article.seo_description || article.excerpt || '').slice(0, 160),
     openGraph: {
-      title,
-      description: desc.slice(0, 160),
+      title: article.title,
+      description: (article.seo_description || article.excerpt || '').slice(0, 160),
       type: 'article',
       publishedTime: article.published_at,
       authors: article.author_name ? [article.author_name] : [],
       images: article.featured_image ? [{ url: article.featured_image }] : [],
     },
     alternates: {
-      canonical: `/${params.locale}/blog/${params.slug}`,
-      languages: { tr: `/tr/blog/${params.slug}`, en: `/en/blog/${params.slug}` },
+      canonical: `/${locale}/blog/${slug}`,
+      languages: { tr: `/tr/blog/${slug}`, en: `/en/blog/${slug}` },
     },
   };
 }
 
-function JsonLd({ article, locale }: { article: any; locale: string }) {
+function JsonLd({ article }: { article: any }) {
   const schema = article.schema_markup || {
     '@context': 'https://schema.org',
     '@type': 'MedicalWebPage',
-    headline: article.title_tr || article.title,
+    headline: article.title,
     datePublished: article.published_at,
     dateModified: article.updated_at,
   };
@@ -69,24 +79,21 @@ function fmtDate(d: string, locale: string = 'tr') {
 }
 
 export default async function ArticlePage({ params }: Props) {
-  const article = await getArticleBySlug(params.slug, params.locale);
+  const { slug, locale } = await params;
+  const article = await getArticleBySlug(slug, locale);
   if (!article) notFound();
-
-  const title = params.locale === 'tr' ? article.title_tr || article.title : article.title_en || article.title;
-  const body = params.locale === 'tr' ? article.body_tr || article.body : article.body_en || article.body;
-  const excerpt = params.locale === 'tr' ? article.excerpt_tr || article.excerpt : article.excerpt_en || article.excerpt;
 
   return (
     <>
-      <JsonLd article={article} locale={params.locale} />
+      <JsonLd article={article} />
       <article className="max-w-3xl mx-auto px-4 py-8">
-        <Link href={`/${params.locale}/blog`} className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6">
-          <ArrowLeft className="w-4 h-4" /> {params.locale === 'tr' ? 'Geri' : 'Back'}
+        <Link href={`/${locale}/blog`} className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6">
+          <ArrowLeft className="w-4 h-4" /> {locale === 'tr' ? 'Geri' : 'Back'}
         </Link>
 
         {article.featured_image && (
           <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden mb-6">
-            <img src={article.featured_image} alt={title} className="w-full h-full object-cover" />
+            <img src={article.featured_image} alt={article.title} className="w-full h-full object-cover" />
           </div>
         )}
 
@@ -98,15 +105,15 @@ export default async function ArticlePage({ params }: Props) {
             <span className="flex items-center gap-1"><User className="w-4 h-4" /> {article.author_name}</span>
           )}
           {article.published_at && (
-            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {fmtDate(article.published_at, params.locale)}</span>
+            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {fmtDate(article.published_at, locale)}</span>
           )}
         </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">{title}</h1>
-        {excerpt && <p className="text-lg text-gray-600 mb-6">{excerpt}</p>}
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">{article.title}</h1>
+        {article.excerpt && <p className="text-lg text-gray-600 mb-6">{article.excerpt}</p>}
 
-        {body && (
-          <div className="prose prose-gray max-w-none" dangerouslySetInnerHTML={{ __html: body }} />
+        {article.body && (
+          <div className="prose prose-gray max-w-none" dangerouslySetInnerHTML={{ __html: article.body }} />
         )}
 
         <AuthorCard profile={article.author_profile} />

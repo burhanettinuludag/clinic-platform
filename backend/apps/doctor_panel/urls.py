@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
-from .views_content import GenerateContentView, GeneratedContentListView
+from .views_content import GenerateContentView, GeneratedContentListView, FetchNewsFromSourcesView
 from .views_author import (
     AuthorProfileView,
     AuthorArticleListCreateView,
@@ -65,6 +65,7 @@ urlpatterns = [
     # Icerik uretim (AI pipeline)
     path('generate-content/', GenerateContentView.as_view(), name='generate-content'),
     path('generated-content/', GeneratedContentListView.as_view(), name='generated-content-list'),
+    path('fetch-news/', FetchNewsFromSourcesView.as_view(), name='fetch-news-sources'),
 
     # ═══ Yazar (Author) Islemleri ═══
     # Profil

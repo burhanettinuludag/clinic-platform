@@ -38,49 +38,41 @@ import {
 import ReactMarkdown from 'react-markdown';
 
 const MODULE_META: Record<string, { icon: typeof BookOpen; color: string; gradient: string; label_tr: string; label_en: string }> = {
-  'parkinson-basics': {
+  'basics': {
     icon: Brain,
     color: 'teal',
     gradient: 'from-teal-500 to-teal-700',
     label_tr: 'Parkinson Hastalığını Tanıyalım',
     label_en: 'Understanding Parkinson\'s Disease',
   },
-  'parkinson-symptoms': {
-    icon: Activity,
-    color: 'purple',
-    gradient: 'from-purple-500 to-purple-700',
-    label_tr: 'Semptomlar ve Belirtiler',
-    label_en: 'Symptoms and Signs',
-  },
-  'parkinson-medication': {
+  'treatment': {
     icon: Pill,
     color: 'blue',
     gradient: 'from-blue-500 to-indigo-600',
-    label_tr: 'İlaç Tedavisi',
-    label_en: 'Medication Treatment',
+    label_tr: 'İlaç Tedavisi ve İleri Yöntemler',
+    label_en: 'Medication & Advanced Treatment',
   },
-  'parkinson-lifestyle': {
+  'exercises': {
+    icon: Activity,
+    color: 'purple',
+    gradient: 'from-purple-500 to-purple-700',
+    label_tr: 'Egzersizler',
+    label_en: 'Exercises',
+  },
+  'lifestyle': {
     icon: Heart,
     color: 'green',
     gradient: 'from-emerald-500 to-teal-600',
-    label_tr: 'Yaşam Tarzı ve Egzersiz',
-    label_en: 'Lifestyle and Exercise',
-  },
-  'parkinson-advanced': {
-    icon: GraduationCap,
-    color: 'indigo',
-    gradient: 'from-indigo-500 to-blue-600',
-    label_tr: 'İleri Konular',
-    label_en: 'Advanced Topics',
+    label_tr: 'Yaşam Tarzı',
+    label_en: 'Lifestyle',
   },
 };
 
 const MODULE_ORDER = [
-  'parkinson-basics',
-  'parkinson-symptoms',
-  'parkinson-medication',
-  'parkinson-lifestyle',
-  'parkinson-advanced',
+  'basics',
+  'treatment',
+  'exercises',
+  'lifestyle',
 ];
 
 interface CategoryGroup {

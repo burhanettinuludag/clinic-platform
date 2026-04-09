@@ -441,3 +441,242 @@ def fix_broken_link(broken_link_id, new_url, user_id=None):
         return {'success': True, 'message': 'Link tamir edildi'}
     else:
         return {'success': False, 'message': 'Link icerikte bulunamadi'}
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Backend-Frontend Uyum Kontrol Agent'ı
+# ═══════════════════════════════════════════════════════════════════
+
+@shared_task(name='apps.common.tasks.backend_frontend_health_check')
+def backend_frontend_health_check():
+    """
+    Backend verileri ile frontend sayfaları arasındaki uyumu kontrol eder.
+    Her gün çalışır ve uyumsuzlukları admin'e bildirim olarak gönderir.
+
+    Kontroller:
+    - Hastalık modüllerinin eğitim içerikleri var mı
+    - Haber sayısı ve erişilebilirliği
+    - Blog/makale erişilebilirliği
+    - API endpoint'lerinin yanıt durumu
+    - Veri tutarsızlıkları
+    """
+    from django.contrib.auth import get_user_model
+    from django.test import RequestFactory
+    from django.utils import timezone
+    from rest_framework.test import APIRequestFactory
+    from apps.patients.models import DiseaseModule
+    from apps.content.models import Article, EducationItem, NewsArticle
+    from apps.notifications.models import Notification
+
+    User = get_user_model()
+    issues = []
+    warnings = []
+    stats = {}
+
+    logger.info('🔍 Backend-Frontend uyum kontrolü başlatılıyor...')
+
+    # ─── 1. Hastalık Modülleri Kontrolü ───
+    expected_modules = ['migraine', 'epilepsy', 'dementia', 'parkinson']
+    existing_modules = set(DiseaseModule.objects.filter(is_active=True).values_list('slug', flat=True))
+
+    for mod_slug in expected_modules:
+        if mod_slug not in existing_modules:
+            issues.append(f'❌ DiseaseModule "{mod_slug}" aktif değil veya mevcut değil')
+
+    stats['disease_modules'] = len(existing_modules)
+
+    # ─── 2. Her Modül İçin Eğitim İçeriği Kontrolü ───
+    for mod_slug in expected_modules:
+        try:
+            module = DiseaseModule.objects.get(slug=mod_slug, is_active=True)
+            edu_count = EducationItem.objects.filter(
+                disease_module=module,
+                is_published=True
+            ).count()
+            stats[f'education_{mod_slug}'] = edu_count
+
+            if edu_count == 0:
+                issues.append(f'❌ {mod_slug.title()} modülünde hiç eğitim içeriği yok')
+            elif edu_count < 3:
+                warnings.append(f'⚠️ {mod_slug.title()} modülünde sadece {edu_count} eğitim içeriği var (min 3 önerilir)')
+        except DiseaseModule.DoesNotExist:
+            pass  # Zaten yukarıda raporlandı
+
+    # ─── 3. Haber Kontrolü ───
+    news_total = NewsArticle.objects.filter(status='published').count()
+    stats['news_total'] = news_total
+    if news_total == 0:
+        issues.append('❌ Hiç yayınlanmış haber yok')
+
+    # Hastalık bazlı haber dağılımı
+    for mod_slug in expected_modules:
+        news_count = NewsArticle.objects.filter(
+            status='published',
+            related_diseases__slug=mod_slug
+        ).count()
+        stats[f'news_{mod_slug}'] = news_count
+        if news_count == 0:
+            warnings.append(f'⚠️ {mod_slug.title()} ile ilgili hiç haber yok')
+
+    # Görselsiz haberler
+    news_no_image = NewsArticle.objects.filter(
+        status='published',
+        featured_image=''
+    ).count()
+    if news_no_image > 0:
+        warnings.append(f'⚠️ {news_no_image} haberde görsel eksik')
+
+    # ─── 4. Blog/Makale Kontrolü ───
+    articles_total = Article.objects.filter(status='published').count()
+    stats['articles_total'] = articles_total
+    if articles_total == 0:
+        warnings.append('⚠️ Hiç yayınlanmış blog makalesi yok')
+
+    # ─── 5. API Endpoint Erişim Kontrolü ───
+    public_endpoints = [
+        ('/api/v1/content/public-news/', 'Haberler API'),
+        ('/api/v1/content/public-education/', 'Eğitim API'),
+        ('/api/v1/content/articles/', 'Makaleler API'),
+        ('/api/v1/health/', 'Health Check API'),
+        ('/api/v1/modules/', 'Modüller API'),
+    ]
+
+    from django.test import Client
+    from django.conf import settings
+    server_name = settings.ALLOWED_HOSTS[0] if settings.ALLOWED_HOSTS else 'localhost'
+    client = Client(SERVER_NAME=server_name)
+    for endpoint, label in public_endpoints:
+        try:
+            response = client.get(endpoint, follow=True)
+            if response.status_code >= 400:
+                issues.append(f'❌ {label} ({endpoint}) → HTTP {response.status_code}')
+            else:
+                stats[f'api_{label}'] = f'OK ({response.status_code})'
+        except Exception as e:
+            issues.append(f'❌ {label} ({endpoint}) → Hata: {str(e)[:100]}')
+
+    # Auth gerektiren endpoint'leri admin ile test et
+    admin_user = User.objects.filter(is_superuser=True).first()
+    if admin_user:
+        from rest_framework_simplejwt.tokens import AccessToken
+        token = str(AccessToken.for_user(admin_user))
+        auth_header = {'HTTP_AUTHORIZATION': f'Bearer {token}'}
+
+        auth_endpoints = [
+            ('/api/v1/content/education/', 'Eğitim (Auth) API'),
+            ('/api/v1/doctor/dashboard/stats/', 'Doktor Dashboard API'),
+        ]
+        for endpoint, label in auth_endpoints:
+            try:
+                response = client.get(endpoint, follow=True, **auth_header)
+                if response.status_code >= 400:
+                    warnings.append(f'⚠️ {label} ({endpoint}) → HTTP {response.status_code}')
+            except Exception as e:
+                warnings.append(f'⚠️ {label} ({endpoint}) → Hata: {str(e)[:100]}')
+
+        # Parkinson eğitim API'si özel kontrol
+        try:
+            response = client.get('/api/v1/content/education/?disease_module=parkinson', follow=True, **auth_header)
+            if response.status_code == 200:
+                import json
+                data = json.loads(response.content)
+                items = data if isinstance(data, list) else data.get('results', [])
+                if len(items) == 0:
+                    issues.append('❌ Parkinson eğitim API\'si veri döndürmüyor (0 item)')
+                else:
+                    stats['parkinson_edu_api'] = f'{len(items)} item'
+            else:
+                issues.append(f'❌ Parkinson eğitim API → HTTP {response.status_code}')
+        except Exception as e:
+            issues.append(f'❌ Parkinson eğitim API → Hata: {str(e)[:100]}')
+
+    # ─── 6. Veri Tutarsızlığı Kontrolü ───
+    # Yayınlanmış ama slug'ı olmayan içerikler
+    no_slug_news = NewsArticle.objects.filter(status='published', slug='').count()
+    if no_slug_news > 0:
+        issues.append(f'❌ {no_slug_news} haberde slug eksik (detay sayfası açılmaz)')
+
+    no_slug_articles = Article.objects.filter(status='published', slug='').count()
+    if no_slug_articles > 0:
+        issues.append(f'❌ {no_slug_articles} makalede slug eksik')
+
+    # Duplike slug kontrolü
+    from django.db.models import Count
+    dup_news = NewsArticle.objects.filter(status='published').values('slug').annotate(
+        cnt=Count('id')
+    ).filter(cnt__gt=1)
+    if dup_news.exists():
+        for d in dup_news:
+            issues.append(f'❌ Duplike haber slug: "{d["slug"]}" ({d["cnt"]} adet)')
+
+    # ─── 7. Frontend Sayfa-Backend Veri Eşleşmesi ───
+    # Her modül için frontend sayfasının beklediği verileri kontrol et
+    module_education_mapping = {
+        'migraine': {'min_items': 2, 'expected_categories': ['basics', 'treatment']},
+        'epilepsy': {'min_items': 2, 'expected_categories': ['basics']},
+        'dementia': {'min_items': 2, 'expected_categories': ['basics', 'exercises']},
+        'parkinson': {'min_items': 3, 'expected_categories': ['basics', 'treatment', 'exercises']},
+    }
+
+    for mod_slug, expected in module_education_mapping.items():
+        items = EducationItem.objects.filter(
+            disease_module__slug=mod_slug,
+            is_published=True
+        )
+        actual_categories = set(items.values_list('category__slug', flat=True))
+        missing = set(expected['expected_categories']) - actual_categories
+        if missing:
+            warnings.append(
+                f'⚠️ {mod_slug.title()} eğitiminde eksik kategori: {", ".join(missing)}'
+            )
+
+    # ─── Rapor Oluştur ───
+    now = timezone.now().strftime('%Y-%m-%d %H:%M')
+    total_issues = len(issues)
+    total_warnings = len(warnings)
+
+    report_lines = [f'📊 Backend-Frontend Uyum Raporu ({now})', '']
+
+    # Stats
+    report_lines.append('📈 İstatistikler:')
+    for key, val in stats.items():
+        report_lines.append(f'  • {key}: {val}')
+    report_lines.append('')
+
+    if issues:
+        report_lines.append(f'🚨 KRİTİK SORUNLAR ({total_issues}):')
+        for issue in issues:
+            report_lines.append(f'  {issue}')
+        report_lines.append('')
+
+    if warnings:
+        report_lines.append(f'⚠️ UYARILAR ({total_warnings}):')
+        for warn in warnings:
+            report_lines.append(f'  {warn}')
+        report_lines.append('')
+
+    if not issues and not warnings:
+        report_lines.append('✅ Tüm kontroller başarılı! Backend-frontend uyumu sorunsuz.')
+
+    report = '\n'.join(report_lines)
+    logger.info(report)
+
+    # Admin'e bildirim gönder (sorun varsa)
+    if issues or warnings:
+        admins = User.objects.filter(is_superuser=True)
+        for admin in admins:
+            Notification.objects.create(
+                recipient=admin,
+                notification_type='system',
+                title_tr=f'Sistem Uyum Raporu: {total_issues} sorun, {total_warnings} uyarı',
+                title_en=f'System Health Report: {total_issues} issues, {total_warnings} warnings',
+                message_tr=report,
+                message_en=report,
+            )
+
+    return {
+        'issues': total_issues,
+        'warnings': total_warnings,
+        'stats': stats,
+        'report': report,
+    }

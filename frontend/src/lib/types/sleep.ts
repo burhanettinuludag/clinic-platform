@@ -26,6 +26,7 @@ export interface SleepArticle {
   category?: SleepCategory;
   related_disease: string;
   cover_image: string | null;
+  cover_image_url: string;
   icon: string;
   reading_time_minutes: number;
   is_featured: boolean;

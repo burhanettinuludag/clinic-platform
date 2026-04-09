@@ -1,7 +1,13 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
 import api from '@/lib/api';
+
+function hasAuth() { return !!Cookies.get('access_token'); }
+function useAuthQuery<T>(options: Parameters<typeof useQuery<T>>[0]) {
+  return useAuthQuery<T>({ ...options, enabled: hasAuth() && (options.enabled !== false), retry: false });
+}
 
 export interface Notification {
   id: string;
@@ -16,7 +22,7 @@ export interface Notification {
 }
 
 export function useUnreadCount() {
-  return useQuery<{ unread_count: number }>({
+  return useAuthQuery<{ unread_count: number }>({
     queryKey: ['notifications-unread'],
     queryFn: async () => { const { data } = await api.get('/notifications/unread-count/'); return data; },
     refetchInterval: 30000,
@@ -24,7 +30,7 @@ export function useUnreadCount() {
 }
 
 export function useNotifications(limit = 10) {
-  return useQuery<Notification[]>({
+  return useAuthQuery<Notification[]>({
     queryKey: ['notifications', limit],
     queryFn: async () => { const { data } = await api.get('/notifications/', { params: { page_size: limit } }); return data.results || data; },
   });

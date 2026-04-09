@@ -42,15 +42,24 @@ class SleepArticleListSerializer(_LangMixin, serializers.ModelSerializer):
     subtitle = serializers.SerializerMethodField()
     summary = serializers.SerializerMethodField()
     category_name = serializers.SerializerMethodField()
+    cover_image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = SleepArticle
         fields = [
             'id', 'slug', 'article_type', 'title', 'subtitle', 'summary',
-            'category_name', 'related_disease', 'cover_image', 'icon',
-            'reading_time_minutes', 'is_featured', 'view_count',
+            'category_name', 'related_disease', 'cover_image', 'cover_image_url',
+            'icon', 'reading_time_minutes', 'is_featured', 'view_count',
             'author_name', 'created_at',
         ]
+
+    def get_cover_image_url(self, obj):
+        if obj.cover_image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.cover_image.url)
+            return obj.cover_image.url
+        return obj.cover_image_url or ''
 
     def get_title(self, obj):
         return getattr(obj, f'title_{self._get_lang()}', obj.title_tr)
@@ -75,16 +84,26 @@ class SleepArticleDetailSerializer(_LangMixin, serializers.ModelSerializer):
     meta_description = serializers.SerializerMethodField()
     category = SleepCategorySerializer(read_only=True)
 
+    cover_image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = SleepArticle
         fields = [
             'id', 'slug', 'article_type', 'title', 'subtitle',
             'content', 'summary', 'category', 'related_disease',
-            'cover_image', 'icon', 'reading_time_minutes',
+            'cover_image', 'cover_image_url', 'icon', 'reading_time_minutes',
             'is_featured', 'view_count', 'references',
             'author_name', 'meta_title', 'meta_description',
             'created_at', 'updated_at',
         ]
+
+    def get_cover_image_url(self, obj):
+        if obj.cover_image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.cover_image.url)
+            return obj.cover_image.url
+        return obj.cover_image_url or ''
 
     def get_title(self, obj):
         return getattr(obj, f'title_{self._get_lang()}', obj.title_tr)

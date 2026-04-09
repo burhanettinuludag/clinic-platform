@@ -1,7 +1,13 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
 import api from '@/lib/api';
+
+function hasAuth() { return !!Cookies.get('access_token'); }
+function useAuthQuery<T>(options: Parameters<typeof useQuery<T>>[0]) {
+  return useAuthQuery<T>({ ...options, enabled: hasAuth() && (options.enabled !== false), retry: false });
+}
 import type {
   ParkinsonTrigger,
   ParkinsonSymptomEntry,
@@ -25,7 +31,7 @@ const PK = '/parkinson';
 // ==================== DASHBOARD ====================
 
 export function useParkinsonDashboard() {
-  return useQuery<ParkinsonDashboard>({
+  return useAuthQuery<ParkinsonDashboard>({
     queryKey: ['parkinson-dashboard'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/dashboard/`);
@@ -37,7 +43,7 @@ export function useParkinsonDashboard() {
 // ==================== TETİKLEYİCİLER ====================
 
 export function useParkinsonTriggers() {
-  return useQuery<ParkinsonTrigger[]>({
+  return useAuthQuery<ParkinsonTrigger[]>({
     queryKey: ['parkinson-triggers'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/triggers/`);
@@ -49,7 +55,7 @@ export function useParkinsonTriggers() {
 // ==================== SEMPTOM GÜNLÜKLERİ ====================
 
 export function useParkinsonSymptoms() {
-  return useQuery<ParkinsonSymptomEntry[]>({
+  return useAuthQuery<ParkinsonSymptomEntry[]>({
     queryKey: ['parkinson-symptoms'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/symptoms/`);
@@ -59,7 +65,7 @@ export function useParkinsonSymptoms() {
 }
 
 export function useParkinsonSymptomChart(days = 30) {
-  return useQuery<SymptomChartData[]>({
+  return useAuthQuery<SymptomChartData[]>({
     queryKey: ['parkinson-symptom-chart', days],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/symptoms/chart/`, { params: { days } });
@@ -69,7 +75,7 @@ export function useParkinsonSymptomChart(days = 30) {
 }
 
 export function useParkinsonSymptomStats() {
-  return useQuery<SymptomStats>({
+  return useAuthQuery<SymptomStats>({
     queryKey: ['parkinson-symptom-stats'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/symptoms/stats/`);
@@ -110,7 +116,7 @@ export function useDeleteParkinsonSymptom() {
 // ==================== İLAÇ YÖNETİMİ ====================
 
 export function useParkinsonMedications() {
-  return useQuery<ParkinsonMedication[]>({
+  return useAuthQuery<ParkinsonMedication[]>({
     queryKey: ['parkinson-medications'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/medications/`);
@@ -161,7 +167,7 @@ export function useDeleteParkinsonMedication() {
 }
 
 export function useLEDSummary() {
-  return useQuery<LEDSummary>({
+  return useAuthQuery<LEDSummary>({
     queryKey: ['parkinson-led-summary'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/medications/led_summary/`);
@@ -173,7 +179,7 @@ export function useLEDSummary() {
 // ==================== İLAÇ PROGRAMI ====================
 
 export function useMedicationSchedules(medicationId: string) {
-  return useQuery<MedicationSchedule[]>({
+  return useAuthQuery<MedicationSchedule[]>({
     queryKey: ['parkinson-med-schedules', medicationId],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/medications/${medicationId}/schedules/`);
@@ -200,7 +206,7 @@ export function useCreateMedicationSchedule() {
 // ==================== İLAÇ KAYITLARI ====================
 
 export function useParkinsonMedLogs() {
-  return useQuery<ParkinsonMedicationLog[]>({
+  return useAuthQuery<ParkinsonMedicationLog[]>({
     queryKey: ['parkinson-med-logs'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/medication-logs/`);
@@ -210,7 +216,7 @@ export function useParkinsonMedLogs() {
 }
 
 export function useTodayMedLogs() {
-  return useQuery<ParkinsonMedicationLog[]>({
+  return useAuthQuery<ParkinsonMedicationLog[]>({
     queryKey: ['parkinson-med-logs-today'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/medication-logs/today/`);
@@ -252,7 +258,7 @@ export function useCreateMedLog() {
 
 // Hoehn & Yahr
 export function useHoehnYahrAssessments() {
-  return useQuery<HoehnYahrAssessment[]>({
+  return useAuthQuery<HoehnYahrAssessment[]>({
     queryKey: ['parkinson-hoehn-yahr'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/assessments/hoehn-yahr/`);
@@ -277,7 +283,7 @@ export function useCreateHoehnYahr() {
 
 // Schwab & England
 export function useSchwabEnglandAssessments() {
-  return useQuery<SchwabEnglandAssessment[]>({
+  return useAuthQuery<SchwabEnglandAssessment[]>({
     queryKey: ['parkinson-schwab-england'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/assessments/schwab-england/`);
@@ -302,7 +308,7 @@ export function useCreateSchwabEngland() {
 
 // NMSQuest
 export function useNMSQuestAssessments() {
-  return useQuery<NMSQuestAssessment[]>({
+  return useAuthQuery<NMSQuestAssessment[]>({
     queryKey: ['parkinson-nmsquest'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/assessments/nmsquest/`);
@@ -327,7 +333,7 @@ export function useCreateNMSQuest() {
 
 // Norosera Motor
 export function useNoseraMotorAssessments() {
-  return useQuery<NoseraMotorAssessment[]>({
+  return useAuthQuery<NoseraMotorAssessment[]>({
     queryKey: ['parkinson-nosera-motor'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/assessments/motor/`);
@@ -352,7 +358,7 @@ export function useCreateNoseraMotor() {
 
 // Norosera Daily Living
 export function useNoseraDailyLivingAssessments() {
-  return useQuery<NoseraDailyLivingAssessment[]>({
+  return useAuthQuery<NoseraDailyLivingAssessment[]>({
     queryKey: ['parkinson-nosera-daily'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/assessments/daily-living/`);
@@ -378,7 +384,7 @@ export function useCreateNoseraDailyLiving() {
 // ==================== VİZİT KAYITLARI ====================
 
 export function useParkinsonVisits() {
-  return useQuery<ParkinsonVisit[]>({
+  return useAuthQuery<ParkinsonVisit[]>({
     queryKey: ['parkinson-visits'],
     queryFn: async () => {
       const { data } = await api.get(`${PK}/visits/`);
