@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import { useAuth } from '@/context/AuthContext';
-import { Menu, X, User, Brain, Activity, BookOpen, ShoppingBag, FileText, Newspaper, Mail, Shield, Moon, Zap } from 'lucide-react';
+import { Menu, X, User, Brain, Activity, BookOpen, ShoppingBag, FileText, Newspaper, Mail, Shield, Moon, Zap, Dna } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function Header() {
@@ -73,6 +73,9 @@ export default function Header() {
             </NavLink>
             <NavLink href="/sleep" icon={<Moon className="w-4 h-4" />}>
               {t('nav.sleep')}
+            </NavLink>
+            <NavLink href="/ms" icon={<Dna className="w-4 h-4" />}>
+              {t('nav.ms')}
             </NavLink>
             <NavLink href="/store" icon={<ShoppingBag className="w-4 h-4" />}>
               {t('nav.store')}
@@ -167,6 +170,10 @@ export default function Header() {
               <MobileNavLink href="/sleep" onClick={() => setMenuOpen(false)}>
                 <Moon className="w-5 h-5 text-indigo-600" />
                 {t('nav.sleep')}
+              </MobileNavLink>
+              <MobileNavLink href="/ms" onClick={() => setMenuOpen(false)}>
+                <Dna className="w-5 h-5 text-cyan-600" />
+                {t('nav.ms')}
               </MobileNavLink>
               <MobileNavLink href="/store" onClick={() => setMenuOpen(false)}>
                 <ShoppingBag className="w-5 h-5 text-teal-600" />

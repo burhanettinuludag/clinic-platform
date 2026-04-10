@@ -35,6 +35,7 @@ export default function Footer() {
     { label: t('nav.blog'), href: '/blog' },
     { label: t('nav.news'), href: '/news' },
     { label: t('nav.sleep'), href: '/sleep' },
+    { label: t('nav.ms'), href: '/ms' },
     { label: t('nav.store'), href: '/store' },
     { label: t('nav.contact'), href: '/contact' },
   ];

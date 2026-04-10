@@ -70,6 +70,7 @@
     "parkinson": "Parkinson",
     "news": "Haberler",
     "sleep": "Uyku Sağlığı",
+    "ms": "Multipl Skleroz (MS)",
     "comingSoon": "Yakında",
     "adminPanel": "Admin Panel",
     "caregiverPanel": "Bakıcı Paneli",
@@ -198,6 +199,9 @@
       "sleep": "Uyku Sağlığı",
       "sleepDesc": "Uyku bozuklukları, uyku hijyeni, tanı yöntemleri ve hastalıklarda uyku rehberleri",
       "sleepCta": "Uyku sağlığı rehberini keşfet",
+      "ms": "Multipl Skleroz",
+      "msDesc": "MS tanımı, tanı kriterleri, MR bulguları, biyobelirteçler, tedavi ve yeni tedavi seçenekleri",
+      "msCta": "MS bilgi rehberini keşfet",
       "active": "Aktif",
       "comingSoon": "Yakında",
       "startUsing": "Kullanmaya Başla"

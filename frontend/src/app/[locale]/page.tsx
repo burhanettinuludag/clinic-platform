@@ -29,6 +29,7 @@ import {
   Newspaper,
   Smartphone,
   Moon,
+  Dna,
 } from 'lucide-react';
 import { useActiveHero } from '@/hooks/useSiteData';
 import { useLocale } from 'next-intl';
@@ -140,6 +141,21 @@ export default function HomePage() {
       ctaBg: 'bg-indigo-600 hover:bg-indigo-700',
       active: true,
       href: '/sleep',
+    },
+    {
+      name: t('home.modules.ms'),
+      icon: Dna,
+      description: t('home.modules.msDesc'),
+      cta: t('home.modules.msCta'),
+      bgColor: 'bg-cyan-50',
+      borderColor: 'border-cyan-200',
+      iconBg: 'bg-cyan-100',
+      iconColor: 'text-cyan-600',
+      badgeBg: 'bg-cyan-100 text-cyan-700',
+      linkColor: 'text-cyan-600 hover:text-cyan-700',
+      ctaBg: 'bg-cyan-600 hover:bg-cyan-700',
+      active: true,
+      href: '/ms',
     },
   ];
 

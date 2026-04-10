@@ -8,6 +8,8 @@ import api from '@/lib/api';
 export default function ContactPage() {
   const locale = useLocale();
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [honeypot, setHoneypot] = useState('');
+  const [loadTime] = useState(Date.now());
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
@@ -56,6 +58,16 @@ export default function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Bot protection: honeypot field must be empty
+    if (honeypot) return;
+
+    // Bot protection: form must take at least 3 seconds to fill
+    if (Date.now() - loadTime < 3000) {
+      setError(locale === 'tr' ? 'Lütfen biraz bekleyip tekrar deneyin.' : 'Please wait a moment and try again.');
+      return;
+    }
+
     setSending(true);
     setError('');
     try {
@@ -109,6 +121,19 @@ export default function ContactPage() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="lg:col-span-2 rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700 p-6 space-y-4">
+          {/* Honeypot - hidden from real users, bots fill it */}
+          <div className="absolute -left-[9999px] opacity-0 h-0 overflow-hidden" aria-hidden="true">
+            <label htmlFor="website">Website</label>
+            <input
+              type="text"
+              id="website"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={honeypot}
+              onChange={e => setHoneypot(e.target.value)}
+            />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs text-gray-500 mb-1">{t.name}</label>

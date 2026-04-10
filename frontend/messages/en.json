@@ -70,6 +70,7 @@
     "parkinson": "Parkinson's",
     "news": "News",
     "sleep": "Sleep Health",
+    "ms": "Multiple Sclerosis (MS)",
     "comingSoon": "Coming Soon",
     "adminPanel": "Admin Panel",
     "caregiverPanel": "Caregiver Panel",
@@ -198,6 +199,9 @@
       "sleep": "Sleep Health",
       "sleepDesc": "Sleep disorders, sleep hygiene, diagnostic methods and disease-related sleep guides",
       "sleepCta": "Explore the sleep health guide",
+      "ms": "Multiple Sclerosis",
+      "msDesc": "MS definition, diagnostic criteria, MRI findings, biomarkers, treatment and new treatment options",
+      "msCta": "Explore the MS information guide",
       "active": "Active",
       "comingSoon": "Coming Soon",
       "startUsing": "Start Using"

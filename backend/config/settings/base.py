@@ -75,6 +75,7 @@ LOCAL_APPS = [
     'apps.chat',
     'apps.sleep',
     'apps.parkinson',
+    'apps.ms',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

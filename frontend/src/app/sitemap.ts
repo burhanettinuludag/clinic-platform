@@ -19,11 +19,13 @@ async function fetchAll(endpoint: string) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [articles, news, doctors, education] = await Promise.all([
+  const [articles, news, doctors, education, sleepArticles, msArticles] = await Promise.all([
     fetchAll('/content/articles/?status=published'),
     fetchAll('/content/public-news/'),
     fetchAll('/content/doctors/'),
     fetchAll('/content/public-education/'),
+    fetchAll('/sleep/articles/'),
+    fetchAll('/ms/articles/'),
   ]);
 
   // Static pages with language alternates
@@ -33,6 +35,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/news', changeFrequency: 'daily' as const, priority: 0.8 },
     { path: '/doctors', changeFrequency: 'weekly' as const, priority: 0.8 },
     { path: '/education', changeFrequency: 'weekly' as const, priority: 0.7 },
+    { path: '/sleep', changeFrequency: 'weekly' as const, priority: 0.7 },
+    { path: '/ms', changeFrequency: 'weekly' as const, priority: 0.7 },
     { path: '/contact', changeFrequency: 'monthly' as const, priority: 0.5 },
     { path: '/privacy-policy', changeFrequency: 'yearly' as const, priority: 0.3 },
     { path: '/terms', changeFrequency: 'yearly' as const, priority: 0.3 },
@@ -109,5 +113,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...statics, ...blogPages, ...newsPages, ...doctorPages, ...eduPages];
+  const sleepPages = sleepArticles.flatMap((a: any) => ['tr', 'en'].map(l => ({
+    url: `${SITE}/${l}/sleep/${a.slug}`,
+    lastModified: safeDate(a.updated_at || a.created_at),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+    alternates: {
+      languages: {
+        tr: `${SITE}/tr/sleep/${a.slug}`,
+        en: `${SITE}/en/sleep/${a.slug}`,
+      },
+    },
+  })));
+
+  const msPages = msArticles.flatMap((a: any) => ['tr', 'en'].map(l => ({
+    url: `${SITE}/${l}/ms/${a.slug}`,
+    lastModified: safeDate(a.updated_at || a.created_at),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+    alternates: {
+      languages: {
+        tr: `${SITE}/tr/ms/${a.slug}`,
+        en: `${SITE}/en/ms/${a.slug}`,
+      },
+    },
+  })));
+
+  return [...statics, ...blogPages, ...newsPages, ...doctorPages, ...eduPages, ...sleepPages, ...msPages];
 }
